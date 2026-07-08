@@ -40,6 +40,13 @@ const TABLES = [
     created_at TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );`,
+  `CREATE TABLE IF NOT EXISTS error_book_mastered (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    question_id TEXT NOT NULL,
+    mastered_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );`,
   `CREATE TABLE IF NOT EXISTS exam_records (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -110,6 +117,7 @@ const INDEXES = [
   "CREATE INDEX IF NOT EXISTS idx_review_cards_user_id ON review_cards(user_id);",
   "CREATE INDEX IF NOT EXISTS idx_review_cards_due_date ON review_cards(due_date);",
   "CREATE INDEX IF NOT EXISTS idx_quiz_records_user_id ON quiz_records(user_id);",
+  "CREATE INDEX IF NOT EXISTS idx_error_book_mastered_user_id ON error_book_mastered(user_id);",
   "CREATE INDEX IF NOT EXISTS idx_exam_records_user_id ON exam_records(user_id);",
   "CREATE INDEX IF NOT EXISTS idx_writings_user_id ON writings(user_id);",
   "CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id);",
