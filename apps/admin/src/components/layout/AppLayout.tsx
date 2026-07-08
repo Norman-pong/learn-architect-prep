@@ -1,19 +1,9 @@
 import { useLocation, useNavigate, Outlet } from "react-router";
 import { Avatar, Button, Layout, Menu, Space, Typography } from "antd";
-import {
-  BookOutlined,
-  DesktopOutlined,
-  EditOutlined,
-  FileTextOutlined,
-  HomeOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  MoonOutlined,
-  SettingOutlined,
-  SunOutlined,
-} from "@ant-design/icons";
+import { LogoutOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
+import { clearTokens } from "../../api/client";
 import { cycleThemeMode, type ThemeMode } from "../../store/theme";
 import { useTheme } from "../../theme/AppThemeProvider";
 
@@ -29,9 +19,7 @@ const menuItems = [
     key: "/settings",
     icon: <SettingOutlined />,
     label: "设置",
-    children: [
-      { key: "/settings/ai", label: "AI 配置" },
-    ],
+    children: [{ key: "/settings/ai", label: "AI 配置" }],
   },
 ];
 
@@ -120,6 +108,19 @@ export function AppLayout() {
               aria-label={`主题:${THEME_LABEL[mode]},点击切换`}
               title={`主题: ${THEME_LABEL[mode]}（点击循环切换）`}
             />
+            <Button
+              danger
+              type="text"
+              icon={<LogoutOutlined />}
+              onClick={() => {
+                clearTokens();
+                navigate("/login");
+              }}
+              aria-label="退出登录"
+              title="退出登录"
+            >
+              退出
+            </Button>
             <Avatar size="small" shape="circle">
               U
             </Avatar>
