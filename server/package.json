@@ -10,11 +10,14 @@
   "dependencies": {
     "@archprep/shared": "workspace:*",
     "@elysiajs/cors": "latest",
+    "@elysiajs/jwt": "^1.4.2",
     "elysia": "latest",
+    "jsonwebtoken": "^9.0.3",
     "nodemailer": "^9.0.3"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/nodemailer": "^8.0.1",
     "typescript": "^5.7.0"
   }
