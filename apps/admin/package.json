@@ -13,12 +13,14 @@
     "@ant-design/icons": "^6.3.2",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@archprep/shared": "workspace:*",
+    "@elysiajs/eden": "^1.4.9",
     "antd": "^6.5.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router": "^8.1.0"
   },
   "devDependencies": {
+    "@archprep/server": "workspace:*",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
