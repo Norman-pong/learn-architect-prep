@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-08T06:53:30.658779+00:00",
+  "updatedAt": "2026-07-08T07:50:24.198372+00:00",
   "questions": [
     {
       "id": "seed-001",
@@ -1021,6 +1021,261 @@
       "source": "调研报告60题种子",
       "hash": "8d85bb46cf1a1b3f07ff123e22f109eeae6b81e983073d2e64060bbac7520894",
       "year": null
+    },
+    {
+      "id": "seed-061",
+      "question": "系统架构的4+1视图模型中，逻辑视图主要面向的干系人是（  ）。",
+      "options": {
+        "A": "最终用户",
+        "B": "系统集成者",
+        "C": "运维工程师",
+        "D": "项目经理"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：1.2。",
+      "chapter": "1.2",
+      "difficulty": "easy",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "ff95667966569cafc9d97c02acb9bce55a4594900d01dc2e2ee278b6130c8ebf"
+    },
+    {
+      "id": "seed-062",
+      "question": "按范围划分，企业架构（Enterprise Architecture）属于（  ）层次的架构。",
+      "options": {
+        "A": "软件架构",
+        "B": "系统架构",
+        "C": "最高层架构",
+        "D": "模块架构"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：1.1。",
+      "chapter": "1.1",
+      "difficulty": "easy",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "077c0f1f4e45a49a82fce44fe8f3f88649362e5507997ca7969712f5d66d6cd8"
+    },
+    {
+      "id": "seed-063",
+      "question": "信息系统从层次上由低到高依次为（  ）。",
+      "options": {
+        "A": "TPS → MIS → DSS → EIS",
+        "B": "EIS → DSS → MIS → TPS",
+        "C": "MIS → TPS → DSS → EIS",
+        "D": "DSS → EIS → MIS → TPS"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：3.1。",
+      "chapter": "3.1",
+      "difficulty": "easy",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "3e5d745626e199629254fa328fe7368a1462840f56b158cf2f18c127129ce322"
+    },
+    {
+      "id": "seed-064",
+      "question": "等保2.0中，结构化保护级对应第（  ）级。",
+      "options": {
+        "A": "第二级",
+        "B": "第三级",
+        "C": "第四级",
+        "D": "第五级"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：4.1。",
+      "chapter": "4.1",
+      "difficulty": "medium",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "59180fe1866f0d6cb12baf633fcf9f347c241ae57b91ddee2970a98636b73191"
+    },
+    {
+      "id": "seed-065",
+      "question": "Amdahl定律中，若某程序可并行部分占80%，使用4个处理器，理论加速比约为（  ）。",
+      "options": {
+        "A": "2.0",
+        "B": "2.5",
+        "C": "3.2",
+        "D": "4.0"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：2.4。",
+      "chapter": "2.4",
+      "difficulty": "hard",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "827d87ba8cb6c5ef160314ea4e23ab648ecb5d4444ab3dd95e3f44dc44306ea5"
+    },
+    {
+      "id": "seed-066",
+      "question": "TCP三次握手过程中，第二次握手发送的报文段中SYN和ACK标志位的状态是（  ）。",
+      "options": {
+        "A": "SYN=1, ACK=0",
+        "B": "SYN=1, ACK=1",
+        "C": "SYN=0, ACK=1",
+        "D": "SYN=0, ACK=0"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：2.3。",
+      "chapter": "2.3",
+      "difficulty": "medium",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "acc12a29622085547db34cfc582a24323e84da2c390d76293cd84bdf8387452e"
+    },
+    {
+      "id": "seed-067",
+      "question": "RUP（统一过程）的三个核心特征是（  ）。",
+      "options": {
+        "A": "用例驱动、架构中心、迭代增量",
+        "B": "瀑布模型、阶段评审、文档驱动",
+        "C": "快速原型、用户参与、持续反馈",
+        "D": "风险驱动、螺旋演进、持续集成"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：5.1。",
+      "chapter": "5.1",
+      "difficulty": "medium",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "3b5a734da3f989f283c7974c0841c07d93c4bf17631c72d9d069ee3b281531b4"
+    },
+    {
+      "id": "seed-068",
+      "question": "关系模式R(A,B,C)中，函数依赖集F={A→B, B→C, A→C}，则R最高满足（  ）。",
+      "options": {
+        "A": "1NF",
+        "B": "2NF",
+        "C": "3NF",
+        "D": "BCNF"
+      },
+      "answer": "D",
+      "explanation": "正确答案：D。对应教材章节：6.1。",
+      "chapter": "6.1",
+      "difficulty": "hard",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "11603ed32cfb55f085273ea11e0f86b08344d3026851bcf3b7e24bbe0aaa77d1"
+    },
+    {
+      "id": "seed-069",
+      "question": "质量属性场景中，刺激源指的是（  ）。",
+      "options": {
+        "A": "系统对刺激的响应",
+        "B": "产生刺激的实体",
+        "C": "响应的量化指标",
+        "D": "刺激发生时的环境条件"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：8.1。",
+      "chapter": "8.1",
+      "difficulty": "easy",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "63d31f4df97fc8fe7f0331bbe6316bdbe52cc3bd6bfe22ca3e02a02d0243c6f5"
+    },
+    {
+      "id": "seed-070",
+      "question": "N版本编程属于（  ）容错策略。",
+      "options": {
+        "A": "硬件冗余",
+        "B": "软件冗余",
+        "C": "信息冗余",
+        "D": "时间冗余"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：9.3。",
+      "chapter": "9.3",
+      "difficulty": "medium",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "1a9563f8a8702b18cdf3430cb694c6308f3e1a7eecb83c9e310b53758ccda7f7"
+    },
+    {
+      "id": "seed-071",
+      "question": "数字孪生技术的核心特征不包括（  ）。",
+      "options": {
+        "A": "物理实体与数字模型的实时映射",
+        "B": "支持仿真验证与预测分析",
+        "C": "必须依赖区块链技术保障数据可信",
+        "D": "全生命周期数据闭环"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：11.3。",
+      "chapter": "11.3",
+      "difficulty": "easy",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "df9adcd11504cd30628d63dc294ad48836b2b98268c0a1d86f1486b10b1b5aa3"
+    },
+    {
+      "id": "seed-072",
+      "question": "微服务架构中，服务间通信的同步协议通常采用（  ）。",
+      "options": {
+        "A": "HTTP/REST 或 gRPC",
+        "B": "SMTP",
+        "C": "FTP",
+        "D": "SNMP"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：12.1。",
+      "chapter": "12.1",
+      "difficulty": "easy",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "8584e4b62d8c05d9b4a8e66e58667d4fb1d6d995830d2fb2e85156800c9a8c93"
+    },
+    {
+      "id": "seed-073",
+      "question": "在DevOps实践中，持续部署（CD）与持续交付的核心区别是（  ）。",
+      "options": {
+        "A": "持续部署自动发布到生产环境，持续交付需手动确认",
+        "B": "持续交付包含测试，持续部署不包含",
+        "C": "持续部署只部署代码，持续交付包含文档",
+        "D": "两者没有区别"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：14.1。",
+      "chapter": "14.1",
+      "difficulty": "medium",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "ede99c998ff1254b80f54ba3d1e02c93a9454df28f1b1a81812b15b2297fb558"
+    },
+    {
+      "id": "seed-074",
+      "question": "软件架构评估的ATAM方法中，质量属性效用树（Utility Tree）的根节点是（  ）。",
+      "options": {
+        "A": "可用性",
+        "B": "性能",
+        "C": "效用（Utility）",
+        "D": "安全性"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：8.2。",
+      "chapter": "8.2",
+      "difficulty": "medium",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "3d307454e113d005176477b7c68d34b8dbbb2621035a44e05b2a1ea941d644ca"
+    },
+    {
+      "id": "seed-075",
+      "question": "在面向服务的架构（SOA）中，ESB（企业服务总线）的主要作用不包括（  ）。",
+      "options": {
+        "A": "协议转换",
+        "B": "服务路由",
+        "C": "服务编排",
+        "D": "直接替代数据库"
+      },
+      "answer": "D",
+      "explanation": "正确答案：D。对应教材章节：13.1。",
+      "chapter": "13.1",
+      "difficulty": "easy",
+      "source": "综合知识模拟考扩展",
+      "year": null,
+      "hash": "fc698eaced43bacf0d527fef9f944965d2adc83e9f29e5b421b244ae891d1901"
     }
   ]
 }
