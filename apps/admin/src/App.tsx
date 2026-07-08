@@ -21,6 +21,7 @@ import SearchPage from "./pages/SearchPage";
 import { AICostPage } from "./pages/AICostPage";
 import { WritingTipsPage } from "./pages/WritingTipsPage";
 import DataTransferPage from "./pages/DataTransferPage";
+import ProgressPage from "./pages/ProgressPage";
 
 export default function App() {
   return (
@@ -39,7 +40,7 @@ export default function App() {
           <Route path="review" element={<ReviewPage />} />
           <Route path="quiz" element={<QuizPage />} />
           <Route path="stats" element={<StatsPage />} />
-          <Route path="error-book" element={<ErrorBookPage />} />
+          <Route path="progress" element={<ProgressPage />} />
           <Route path="exam" element={<ExamModePage />} />
           <Route path="exam/comp" element={<CompExamPage />} />
           <Route path="exam/case" element={<CaseExamPage />} />
