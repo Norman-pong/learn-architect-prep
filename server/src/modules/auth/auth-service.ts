@@ -1,4 +1,4 @@
-import { getDb } from "../db";
+import { getDb } from "../../db";
 import { sendVerificationCode } from "./email";
 import jwt, { type JwtPayload as JsonWebTokenPayload } from "jsonwebtoken";
 import { randomBytes } from "node:crypto";
@@ -14,18 +14,19 @@ export interface JwtPayload {
   email: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface AuthResult<T = unknown> {
   ok: boolean;
   error?: string;
   status?: number;
 }
 
-export interface AuthSuccess<T> extends AuthResult {
+export interface AuthSuccess<T> extends AuthResult<T> {
   ok: true;
   data: T;
 }
 
-export interface AuthFailure extends AuthResult {
+export interface AuthFailure extends AuthResult<never> {
   ok: false;
   error: string;
   status: number;
@@ -161,6 +162,14 @@ export async function refreshAccessToken(
   return { ok: true, data: { accessToken } };
 }
 
+function isJwtPayload(value: unknown): value is JsonWebTokenPayload & JwtPayload {
+  if (typeof value !== "object" || value === null) return false;
+  if (Array.isArray(value)) return false;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+  const v = value as Record<string, unknown>;
+  return typeof v.userId === "string" && typeof v.email === "string";
+}
+
 export async function getUserIdFromToken(
   authorization: string | undefined,
 ): Promise<string | null> {
@@ -175,7 +184,10 @@ export async function getUserIdFromToken(
 
   try {
     assertSecret();
-    const decoded = jwt.verify(token, JWT_SECRET) as JsonWebTokenPayload & JwtPayload;
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (!isJwtPayload(decoded)) {
+      return null;
+    }
     return decoded.userId ?? null;
   } catch {
     return null;

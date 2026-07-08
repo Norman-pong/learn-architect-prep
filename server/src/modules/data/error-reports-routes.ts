@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { createErrorReport, listErrorReports } from "../services/error-reports";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { createErrorReport, listErrorReports } from "./error-reports-service";
 
 const ErrorReportBody = t.Object({
   questionId: t.String(),
@@ -39,6 +39,7 @@ export const errorReportsRoutes = new Elysia({ prefix: "/api/error-reports" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

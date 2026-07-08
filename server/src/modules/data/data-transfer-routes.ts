@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { exportData, importData } from "../services/data-transfer";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { exportData, importData } from "./data-transfer-service";
 
 const AUTH_HEADER = t.Object({ authorization: t.Optional(t.String()) });
 

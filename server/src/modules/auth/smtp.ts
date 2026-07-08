@@ -1,5 +1,3 @@
-import type { TransportOptions } from "nodemailer";
-
 export interface SmtpConfig {
   host: string;
   port: number;

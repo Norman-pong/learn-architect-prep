@@ -5,7 +5,7 @@ import {
   refreshAccessToken,
   getUserIdFromToken,
   getUserById,
-} from "../services/auth";
+} from "./auth-service";
 
 const SendCodeBody = t.Object({
   email: t.String({ format: "email" }),

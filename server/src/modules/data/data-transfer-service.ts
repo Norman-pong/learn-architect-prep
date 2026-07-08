@@ -1,4 +1,4 @@
-import { getDb } from "../db";
+import { getDb } from "../../db";
 import type { SQLQueryBindings } from "bun:sqlite";
 
 export interface UserDataBackup {

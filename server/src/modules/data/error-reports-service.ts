@@ -1,4 +1,4 @@
-import { getDb } from "../db";
+import { getDb } from "../../db";
 
 export type ErrorReportStatus = "pending" | "resolved" | "rejected";
 
@@ -42,15 +42,13 @@ export function createErrorReport(input: CreateErrorReportInput): ErrorReport {
   };
 }
 
+function isValidStatus(value: unknown): value is ErrorReportStatus {
+  return value === "pending" || value === "resolved" || value === "rejected";
+}
+
 export function listErrorReports(): ErrorReport[] {
   const db = getDb();
-  const rows = db
-    .query(
-      `SELECT id, user_id, question_id, description, type, status, created_at
-     FROM error_reports
-     ORDER BY created_at DESC`,
-    )
-    .all() as Array<{
+  type Row = {
     id: string;
     user_id: string;
     question_id: string;
@@ -58,7 +56,14 @@ export function listErrorReports(): ErrorReport[] {
     type: string;
     status: string;
     created_at: string;
-  }>;
+  };
+  const rows = db
+    .query<Row, []>(
+      `SELECT id, user_id, question_id, description, type, status, created_at
+     FROM error_reports
+     ORDER BY created_at DESC`,
+    )
+    .all();
 
   return rows.map((row) => ({
     id: row.id,
@@ -66,7 +71,7 @@ export function listErrorReports(): ErrorReport[] {
     questionId: row.question_id,
     description: row.description,
     type: row.type,
-    status: row.status as ErrorReportStatus,
+    status: isValidStatus(row.status) ? row.status : "pending",
     createdAt: row.created_at,
   }));
 }

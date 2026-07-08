@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
-import { hasSmtpConfig, smtpConfig } from "../config/smtp.js";
+import { hasSmtpConfig, smtpConfig } from "./smtp.js";
 import { buildVerificationCodeEmail } from "./email-template.js";
 
 let transport: Transporter | null = null;
