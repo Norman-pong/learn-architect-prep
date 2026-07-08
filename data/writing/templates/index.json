@@ -1,0 +1,37 @@
+{
+  "templates": [
+    {
+      "id": "standard",
+      "title": "标准论文模板",
+      "description": "适用于大多数系统架构设计师论文题，采用摘要 + 项目背景 + 技术方案 + 效果反思 + 结论 五段结构。",
+      "file": "template-standard.md",
+      "sections": ["摘要", "项目背景", "技术方案", "效果反思", "结论"],
+      "word_count": {
+        "min": 2300,
+        "max": 3000
+      }
+    },
+    {
+      "id": "microservices",
+      "title": "微服务架构主题模板",
+      "description": "针对微服务拆分、服务治理、通信与分布式事务等高频子主题的专用模板。",
+      "file": "template-microservices.md",
+      "sections": ["摘要", "项目背景", "微服务架构设计", "实施与治理", "效果反思", "结论"],
+      "word_count": {
+        "min": 2300,
+        "max": 3000
+      }
+    },
+    {
+      "id": "architecture",
+      "title": "架构评估主题模板",
+      "description": "围绕 ATAM/SAAM/CBAM 评估方法、质量属性效用树、敏感点与权衡点的专用模板。",
+      "file": "template-architecture.md",
+      "sections": ["摘要", "项目背景", "架构评估方法", "评估过程与结果", "效果反思", "结论"],
+      "word_count": {
+        "min": 2300,
+        "max": 3000
+      }
+    }
+  ]
+}
