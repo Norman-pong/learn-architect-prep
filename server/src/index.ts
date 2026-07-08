@@ -11,6 +11,9 @@ import { templateRoutes } from "./routes/templates";
 import { writingRoutes } from "./routes/writings";
 import { quizBankRoutes } from "./routes/quiz-bank";
 import { reviewRoutes } from "./routes/review";
+import { statsRoutes } from "./routes/stats";
+import { dashboardRoutes } from "./routes/dashboard";
+import { weaknessRoutes } from "./routes/weakness";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
@@ -33,7 +36,10 @@ const app = new Elysia()
   .use(knowledgeRoutes)
   .use(quizBankRoutes)
   .use(reviewRoutes)
+  .use(statsRoutes)
+  .use(dashboardRoutes)
   .use(quizRoutes)
+  .use(weaknessRoutes)
   .listen(PORT);
 
 console.log(`🦊 Server running at ${app.server?.hostname}:${app.server?.port}`);
