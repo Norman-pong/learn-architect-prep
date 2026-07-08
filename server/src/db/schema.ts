@@ -78,6 +78,9 @@ const TABLES = [
     knowledge_point_id TEXT NOT NULL,
     content TEXT,
     type TEXT,
+    start_offset INTEGER,
+    end_offset INTEGER,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );`,
   `CREATE TABLE IF NOT EXISTS study_sessions (
@@ -141,6 +144,18 @@ export function initDatabase(db: Database): void {
     const hasReminderEnabled = colInfo.some((c) => c.name === "reminder_enabled");
     if (!hasReminderEnabled) {
       db.exec("ALTER TABLE users ADD COLUMN reminder_enabled INTEGER DEFAULT 0;");
+    }
+
+    const noteColInfo = db.query<{ name: string }, []>("PRAGMA table_info(notes);").all();
+    const noteColumns = new Set(noteColInfo.map((c) => c.name));
+    if (!noteColumns.has("start_offset")) {
+      db.exec("ALTER TABLE notes ADD COLUMN start_offset INTEGER;");
+    }
+    if (!noteColumns.has("end_offset")) {
+      db.exec("ALTER TABLE notes ADD COLUMN end_offset INTEGER;");
+    }
+    if (!noteColumns.has("created_at")) {
+      db.exec("ALTER TABLE notes ADD COLUMN created_at TEXT;");
     }
   })();
 }

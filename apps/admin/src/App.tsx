@@ -11,7 +11,6 @@ import KnowledgePage from "./pages/KnowledgePage";
 import ReviewPage from "./pages/ReviewPage";
 import QuizPage from "./pages/QuizPage";
 import StatsPage from "./pages/StatsPage";
-import ErrorBookPage from "./pages/ErrorBookPage";
 import CompExamPage from "./pages/CompExamPage";
 import CaseExamPage from "./pages/CaseExamPage";
 import WeaknessPage from "./pages/WeaknessPage";
@@ -36,6 +35,8 @@ export default function App() {
           <Route path="writing/tips" element={<WritingTipsPage />} />
           <Route path="writing" element={<WritingWorkbench />} />
           <Route path="learn" element={<KnowledgePage />} />
+          <Route path="learn/:chapterId" element={<KnowledgePage />} />
+          <Route path="learn/:chapterId/:kpId" element={<KnowledgePage />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="review" element={<ReviewPage />} />
           <Route path="quiz" element={<QuizPage />} />

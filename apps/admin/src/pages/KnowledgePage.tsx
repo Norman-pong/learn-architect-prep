@@ -1,11 +1,41 @@
-import { useEffect, useMemo, useState } from "react";
-import type { Key } from "react";
-import { useNavigate, useParams } from "react-router";
-import { Layout, Spin, Tag, Tree, Typography } from "antd";
+import {
+  DeleteOutlined,
+  FileTextOutlined,
+  HighlightOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties, Key, ReactNode } from "react";
+import {
+  App as AntdApp,
+  Button,
+  Card,
+  Empty,
+  Input,
+  Layout,
+  List,
+  Space,
+  Spin,
+  Tag,
+  Tree,
+  Typography,
+  theme,
+} from "antd";
 import type { DataNode } from "antd/es/tree";
+import { useNavigate, useParams } from "react-router";
+
+import {
+  ANNOTATION_META,
+  createAnnotation,
+  listAnnotations,
+  removeAnnotation,
+  type Annotation,
+  type AnnotationType,
+} from "../lib/annotations-api";
 
 const { Sider, Content } = Layout;
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
+const { TextArea } = Input;
 
 interface ChapterMeta {
   id: string;
@@ -35,12 +65,44 @@ interface SectionNode {
   children: DataNode[];
 }
 
+interface SelectionState {
+  text: string;
+  startOffset: number;
+  endOffset: number;
+  x: number;
+  y: number;
+}
+
+interface DraftAnnotation extends SelectionState {
+  type: Exclude<AnnotationType, "highlight">;
+  content: string;
+}
+
+interface ContentSegment {
+  start: number;
+  end: number;
+  text: string;
+  annotations: Annotation[];
+}
+
 const WEIGHT_COLOR: Record<number, string> = {
-  5: "red",
-  4: "orange",
-  3: "gold",
+  5: "error",
+  4: "warning",
+  3: "processing",
   2: "default",
-  1: "gray",
+  1: "default",
+};
+
+const ANNOTATION_PRIORITY: Record<AnnotationType, number> = {
+  question: 3,
+  note: 2,
+  highlight: 1,
+};
+
+const ANNOTATION_ICON: Record<AnnotationType, ReactNode> = {
+  highlight: <HighlightOutlined />,
+  note: <FileTextOutlined />,
+  question: <QuestionCircleOutlined />,
 };
 
 function WeightTag({ weight }: { weight?: number }) {
@@ -52,19 +114,83 @@ function WeightTag({ weight }: { weight?: number }) {
   );
 }
 
+function isRangedAnnotation(annotation: Annotation, contentLength: number): boolean {
+  return (
+    annotation.startOffset !== null &&
+    annotation.endOffset !== null &&
+    annotation.startOffset >= 0 &&
+    annotation.endOffset > annotation.startOffset &&
+    annotation.endOffset <= contentLength
+  );
+}
+
+function getAnnotationRangeText(content: string, annotation: Annotation): string {
+  if (!isRangedAnnotation(annotation, content.length)) return annotation.content;
+  return content.slice(annotation.startOffset ?? 0, annotation.endOffset ?? 0);
+}
+
+function sortAnnotations(a: Annotation, b: Annotation): number {
+  const aStart = a.startOffset ?? Number.MAX_SAFE_INTEGER;
+  const bStart = b.startOffset ?? Number.MAX_SAFE_INTEGER;
+  if (aStart !== bStart) return aStart - bStart;
+  return a.createdAt.localeCompare(b.createdAt);
+}
+
+function getSegmentType(annotations: Annotation[]): AnnotationType {
+  return annotations.toSorted(
+    (a, b) => ANNOTATION_PRIORITY[b.type] - ANNOTATION_PRIORITY[a.type],
+  )[0].type;
+}
+
+function buildContentSegments(content: string, annotations: Annotation[]): ContentSegment[] {
+  if (!content) return [];
+  const ranged = annotations.filter((annotation) => isRangedAnnotation(annotation, content.length));
+  if (ranged.length === 0) {
+    return [{ start: 0, end: content.length, text: content, annotations: [] }];
+  }
+
+  const boundaries = [0, content.length];
+  for (const annotation of ranged) {
+    boundaries.push(annotation.startOffset ?? 0, annotation.endOffset ?? content.length);
+  }
+  const sortedBoundaries = Array.from(new Set(boundaries)).toSorted((a, b) => a - b);
+
+  return sortedBoundaries.slice(0, -1).map((start, index) => {
+    const end = sortedBoundaries[index + 1];
+    return {
+      start,
+      end,
+      text: content.slice(start, end),
+      annotations: ranged.filter(
+        (annotation) =>
+          (annotation.startOffset ?? 0) <= start && (annotation.endOffset ?? 0) >= end,
+      ),
+    };
+  });
+}
+
 export default function KnowledgePage() {
   const navigate = useNavigate();
   const { chapterId, kpId } = useParams<{
     chapterId?: string;
     kpId?: string;
   }>();
+  const { message } = AntdApp.useApp();
+  const { token } = theme.useToken();
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
   const [chapters, setChapters] = useState<ChapterMeta[]>([]);
   const [chapterMap, setChapterMap] = useState<Record<string, ChapterIndex>>({});
   const [content, setContent] = useState<string>("");
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [loadingChapters, setLoadingChapters] = useState(true);
   const [loadingContent, setLoadingContent] = useState(false);
+  const [loadingAnnotations, setLoadingAnnotations] = useState(false);
+  const [savingAnnotation, setSavingAnnotation] = useState(false);
+  const [deletingAnnotationId, setDeletingAnnotationId] = useState<string | null>(null);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
+  const [selectionMenu, setSelectionMenu] = useState<SelectionState | null>(null);
+  const [draftAnnotation, setDraftAnnotation] = useState<DraftAnnotation | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -114,9 +240,11 @@ export default function KnowledgePage() {
     return () => {
       cancelled = true;
     };
-  }, [chapterId]);
+  }, [chapterId, chapterMap]);
 
   useEffect(() => {
+    setSelectionMenu(null);
+    setDraftAnnotation(null);
     if (!chapterId || !kpId) {
       setContent("");
       return;
@@ -141,6 +269,31 @@ export default function KnowledgePage() {
       cancelled = true;
     };
   }, [chapterId, kpId]);
+
+  useEffect(() => {
+    if (!kpId) {
+      setAnnotations([]);
+      return;
+    }
+    let cancelled = false;
+    setLoadingAnnotations(true);
+    listAnnotations(kpId)
+      .then((items) => {
+        if (!cancelled) setAnnotations(items.toSorted(sortAnnotations));
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setAnnotations([]);
+          message.error(err instanceof Error ? err.message : "加载标注失败");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingAnnotations(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [kpId, message]);
 
   const treeData: DataNode[] = useMemo(() => {
     const sections: Record<string, SectionNode> = {};
@@ -185,6 +338,36 @@ export default function KnowledgePage() {
     return [];
   }, [chapterId, kpId]);
 
+  const currentKnowledgePoint = useMemo(() => {
+    if (!chapterId || !kpId) return null;
+    return chapterMap[chapterId]?.knowledgePoints.find((kp) => kp.id === kpId) ?? null;
+  }, [chapterId, chapterMap, kpId]);
+
+  const contentSegments = useMemo(
+    () => buildContentSegments(content, annotations),
+    [annotations, content],
+  );
+
+  const sidebarAnnotations = useMemo(() => annotations.toSorted(sortAnnotations), [annotations]);
+
+  const annotationTextStyles = useMemo<Record<AnnotationType, CSSProperties>>(
+    () => ({
+      highlight: {
+        backgroundColor: token.colorWarningBg,
+        borderBottom: `1px solid ${token.colorWarningBorder}`,
+      },
+      note: {
+        backgroundColor: token.colorInfoBg,
+        borderBottom: `1px solid ${token.colorInfoBorder}`,
+      },
+      question: {
+        backgroundColor: token.colorErrorBg,
+        borderBottom: `1px solid ${token.colorErrorBorder}`,
+      },
+    }),
+    [token],
+  );
+
   useEffect(() => {
     const sectionKeys = treeData.map((node) => node.key as Key);
     setExpandedKeys(chapterId ? [...sectionKeys, chapterId] : sectionKeys);
@@ -196,11 +379,214 @@ export default function KnowledgePage() {
     if (key.startsWith("section-")) return;
     if (key.includes("/")) {
       const [cid, kid] = key.split("/");
-      navigate(`/knowledge/${cid}/${kid}`);
+      navigate(`/learn/${cid}/${kid}`);
     } else {
-      navigate(`/knowledge/${key}`);
+      navigate(`/learn/${key}`);
     }
   };
+
+  const clearSelection = useCallback(() => {
+    window.getSelection()?.removeAllRanges();
+    setSelectionMenu(null);
+  }, []);
+
+  const handleTextSelection = useCallback(() => {
+    const container = contentRef.current;
+    if (!container || !content || !kpId) return;
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+      setSelectionMenu(null);
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+    if (!container.contains(range.commonAncestorContainer)) return;
+    const selectedText = selection.toString();
+    if (!selectedText.trim()) {
+      setSelectionMenu(null);
+      return;
+    }
+
+    const beforeSelection = document.createRange();
+    beforeSelection.selectNodeContents(container);
+    beforeSelection.setEnd(range.startContainer, range.startOffset);
+    const startOffset = beforeSelection.toString().length;
+    const endOffset = startOffset + selectedText.length;
+    if (endOffset <= startOffset || endOffset > content.length) return;
+
+    const rect = range.getBoundingClientRect();
+    setDraftAnnotation(null);
+    setSelectionMenu({
+      text: selectedText,
+      startOffset,
+      endOffset,
+      x: Math.min(
+        Math.max(token.padding, rect.left + rect.width / 2 - 116),
+        window.innerWidth - 248,
+      ),
+      y: Math.max(token.padding, rect.top - 56),
+    });
+  }, [content, kpId, token.padding]);
+
+  const saveAnnotation = useCallback(
+    async (type: AnnotationType, annotationContent: string, selection: SelectionState) => {
+      if (!kpId) return;
+      const trimmed = annotationContent.trim();
+      if (!trimmed) {
+        message.warning(type === "highlight" ? "请选择要高亮的文本" : "请先填写标注内容");
+        return;
+      }
+
+      setSavingAnnotation(true);
+      try {
+        const annotation = await createAnnotation({
+          knowledgePointId: kpId,
+          type,
+          content: trimmed,
+          startOffset: selection.startOffset,
+          endOffset: selection.endOffset,
+        });
+        setAnnotations((prev) => [...prev, annotation].toSorted(sortAnnotations));
+        message.success(`${ANNOTATION_META[type].label}已保存`);
+        setDraftAnnotation(null);
+        clearSelection();
+      } catch (err) {
+        message.error(err instanceof Error ? err.message : "保存标注失败");
+      } finally {
+        setSavingAnnotation(false);
+      }
+    },
+    [clearSelection, kpId, message],
+  );
+
+  const handleCreateFromSelection = (type: AnnotationType) => {
+    if (!selectionMenu) return;
+    if (type === "highlight") {
+      void saveAnnotation(type, selectionMenu.text, selectionMenu);
+      return;
+    }
+    setDraftAnnotation({ ...selectionMenu, type, content: "" });
+    setSelectionMenu(null);
+  };
+
+  const handleDeleteAnnotation = async (annotationId: string) => {
+    setDeletingAnnotationId(annotationId);
+    try {
+      await removeAnnotation(annotationId);
+      setAnnotations((prev) => prev.filter((item) => item.id !== annotationId));
+      message.success("标注已删除");
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : "删除标注失败");
+    } finally {
+      setDeletingAnnotationId(null);
+    }
+  };
+
+  const renderAnnotatedContent = () => (
+    <div
+      ref={contentRef}
+      role="article"
+      tabIndex={0}
+      aria-label="知识点正文，选中文本后可添加标注"
+      onKeyUp={handleTextSelection}
+      onMouseUp={handleTextSelection}
+      style={{
+        whiteSpace: "pre-wrap",
+        fontFamily: token.fontFamilyCode,
+        fontSize: token.fontSize,
+        lineHeight: token.lineHeightLG,
+        outline: "none",
+      }}
+    >
+      {contentSegments.map((segment) => {
+        if (segment.annotations.length === 0) {
+          return <span key={`${segment.start}-${segment.end}`}>{segment.text}</span>;
+        }
+        const segmentType = getSegmentType(segment.annotations);
+        return (
+          <mark
+            key={`${segment.start}-${segment.end}`}
+            style={{
+              ...annotationTextStyles[segmentType],
+              color: "inherit",
+              borderRadius: token.borderRadiusXS,
+              paddingInline: token.paddingXXS,
+            }}
+            title={segment.annotations.map((item) => ANNOTATION_META[item.type].label).join(" / ")}
+          >
+            {segment.text}
+          </mark>
+        );
+      })}
+    </div>
+  );
+
+  const renderAnnotationPanel = () => (
+    <Card
+      size="small"
+      title="本知识点标注"
+      extra={<Tag color="default">{annotations.length}</Tag>}
+      loading={loadingAnnotations}
+      style={{
+        flex: "0 1 340px",
+        maxWidth: 360,
+        position: "sticky",
+        top: 0,
+      }}
+    >
+      {sidebarAnnotations.length === 0 ? (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无标注" />
+      ) : (
+        <List
+          size="small"
+          dataSource={sidebarAnnotations}
+          renderItem={(annotation) => {
+            const meta = ANNOTATION_META[annotation.type];
+            const selectedText = getAnnotationRangeText(content, annotation);
+            return (
+              <List.Item
+                actions={[
+                  <Button
+                    key="delete"
+                    aria-label="删除标注"
+                    icon={<DeleteOutlined />}
+                    loading={deletingAnnotationId === annotation.id}
+                    size="small"
+                    type="text"
+                    danger
+                    onClick={() => void handleDeleteAnnotation(annotation.id)}
+                  />,
+                ]}
+              >
+                <Space direction="vertical" size={token.marginXXS} style={{ width: "100%" }}>
+                  <Space size={token.marginXS} wrap>
+                    <Tag color={meta.color} icon={ANNOTATION_ICON[annotation.type]}>
+                      {meta.label}
+                    </Tag>
+                    {annotation.startOffset !== null && annotation.endOffset !== null && (
+                      <Text type="secondary">
+                        {annotation.startOffset}–{annotation.endOffset}
+                      </Text>
+                    )}
+                  </Space>
+                  {annotation.type === "highlight" ? (
+                    <Text>{selectedText}</Text>
+                  ) : (
+                    <Card size="small" style={{ background: token.colorBgLayout }}>
+                      <Paragraph style={{ marginBottom: token.marginXS }}>
+                        {annotation.content}
+                      </Paragraph>
+                      <Text type="secondary">原文：{selectedText}</Text>
+                    </Card>
+                  )}
+                </Space>
+              </List.Item>
+            );
+          }}
+        />
+      )}
+    </Card>
+  );
 
   return (
     <Layout style={{ height: "calc(100vh - 64px)" }}>
@@ -210,7 +596,7 @@ export default function KnowledgePage() {
         style={{
           borderRight: "1px solid var(--sd-sider-border)",
           overflow: "auto",
-          padding: 16,
+          padding: token.padding,
         }}
       >
         <Title level={5} style={{ marginTop: 0 }}>
@@ -229,19 +615,129 @@ export default function KnowledgePage() {
           />
         )}
       </Sider>
-      <Content style={{ padding: 24, overflow: "auto" }}>
+      <Content style={{ padding: token.paddingLG, overflow: "auto" }}>
         {loadingContent ? (
           <Spin />
         ) : content ? (
-          <div
-            style={{
-              whiteSpace: "pre-wrap",
-              fontFamily: "monospace",
-              lineHeight: 1.7,
-            }}
-          >
-            {content}
-          </div>
+          <>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: token.paddingLG,
+                flexWrap: "wrap",
+              }}
+            >
+              <Card
+                title={currentKnowledgePoint?.title ?? "知识点详情"}
+                extra={
+                  currentKnowledgePoint ? (
+                    <WeightTag weight={currentKnowledgePoint.examWeight} />
+                  ) : null
+                }
+                style={{ flex: "1 1 560px", minWidth: 0 }}
+              >
+                <Paragraph type="secondary">
+                  选中文本后，可添加高亮、笔记或疑问；标注会同步到复习卡片。
+                </Paragraph>
+                {renderAnnotatedContent()}
+              </Card>
+              {renderAnnotationPanel()}
+            </div>
+
+            {selectionMenu && (
+              <Card
+                size="small"
+                style={{
+                  position: "fixed",
+                  left: selectionMenu.x,
+                  top: selectionMenu.y,
+                  zIndex: token.zIndexPopupBase,
+                  boxShadow: token.boxShadowSecondary,
+                }}
+              >
+                <Space size={token.marginXS} role="toolbar" aria-label="标注菜单">
+                  <Button
+                    icon={<HighlightOutlined />}
+                    loading={savingAnnotation}
+                    size="small"
+                    onClick={() => handleCreateFromSelection("highlight")}
+                  >
+                    高亮
+                  </Button>
+                  <Button
+                    icon={<FileTextOutlined />}
+                    size="small"
+                    onClick={() => handleCreateFromSelection("note")}
+                  >
+                    笔记
+                  </Button>
+                  <Button
+                    icon={<QuestionCircleOutlined />}
+                    size="small"
+                    onClick={() => handleCreateFromSelection("question")}
+                  >
+                    疑问
+                  </Button>
+                </Space>
+              </Card>
+            )}
+
+            {draftAnnotation && (
+              <Card
+                title={`添加${ANNOTATION_META[draftAnnotation.type].label}`}
+                size="small"
+                style={{
+                  position: "fixed",
+                  left: Math.min(draftAnnotation.x, window.innerWidth - 360),
+                  top: draftAnnotation.y + token.controlHeightLG,
+                  width: 320,
+                  zIndex: token.zIndexPopupBase,
+                  boxShadow: token.boxShadowSecondary,
+                }}
+              >
+                <Space direction="vertical" size={token.marginSM} style={{ width: "100%" }}>
+                  <Text type="secondary">原文：{draftAnnotation.text}</Text>
+                  <TextArea
+                    autoFocus
+                    value={draftAnnotation.content}
+                    rows={4}
+                    placeholder={
+                      draftAnnotation.type === "note" ? "写下你的理解或补充" : "记录这里的疑问"
+                    }
+                    onChange={(event) =>
+                      setDraftAnnotation((prev) =>
+                        prev ? { ...prev, content: event.target.value } : prev,
+                      )
+                    }
+                  />
+                  <Space style={{ justifyContent: "flex-end", width: "100%" }}>
+                    <Button
+                      onClick={() => {
+                        setDraftAnnotation(null);
+                        clearSelection();
+                      }}
+                    >
+                      取消
+                    </Button>
+                    <Button
+                      type="primary"
+                      loading={savingAnnotation}
+                      onClick={() =>
+                        void saveAnnotation(
+                          draftAnnotation.type,
+                          draftAnnotation.content,
+                          draftAnnotation,
+                        )
+                      }
+                    >
+                      保存
+                    </Button>
+                  </Space>
+                </Space>
+              </Card>
+            )}
+          </>
         ) : (
           <Text type="secondary">请从左侧选择一个知识点查看详情。</Text>
         )}
