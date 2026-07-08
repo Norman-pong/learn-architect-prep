@@ -17,6 +17,8 @@ import CaseExamPage from "./pages/CaseExamPage";
 import WeaknessPage from "./pages/WeaknessPage";
 import ExamModePage from "./pages/ExamModePage";
 import EssayExamPage from "./pages/EssayExamPage";
+import SearchPage from "./pages/SearchPage";
+import { AICostPage } from "./pages/AICostPage";
 
 export default function App() {
   return (
@@ -30,6 +32,7 @@ export default function App() {
           <Route path="writing/samples" element={<SamplesPage />} />
           <Route path="writing" element={<WritingWorkbench />} />
           <Route path="learn" element={<KnowledgePage />} />
+          <Route path="search" element={<SearchPage />} />
           <Route path="review" element={<ReviewPage />} />
           <Route path="quiz" element={<QuizPage />} />
           <Route path="stats" element={<StatsPage />} />
@@ -39,6 +42,7 @@ export default function App() {
           <Route path="exam/case" element={<CaseExamPage />} />
           <Route path="exam/essay" element={<EssayExamPage />} />
           <Route path="weakness" element={<WeaknessPage />} />
+          <Route path="settings/ai-cost" element={<AICostPage />} />
         </Route>
       </Routes>
     </AppThemeProvider>

@@ -12,6 +12,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MoonOutlined,
+  SearchOutlined,
   SettingOutlined,
   SnippetsOutlined,
   SunOutlined,
@@ -29,6 +30,7 @@ const { Title } = Typography;
 const menuItems = [
   { key: "/", icon: <HomeOutlined />, label: "首页" },
   { key: "/learn", icon: <BookOutlined />, label: "学习" },
+  { key: "/search", icon: <SearchOutlined />, label: "搜索" },
   { key: "/quiz", icon: <EditOutlined />, label: "习题" },
   { key: "/error-book", icon: <CloseCircleOutlined />, label: "错题本" },
   { key: "/stats", icon: <BarChartOutlined />, label: "统计" },
@@ -51,7 +53,10 @@ const menuItems = [
     key: "/settings",
     icon: <SettingOutlined />,
     label: "设置",
-    children: [{ key: "/settings/ai", label: "AI 配置" }],
+    children: [
+      { key: "/settings/ai", label: "AI 配置" },
+      { key: "/settings/ai-cost", label: "AI 成本" },
+    ],
   },
 ];
 
