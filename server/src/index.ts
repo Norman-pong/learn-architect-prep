@@ -18,11 +18,14 @@ import { aiScoringRoutes } from "./routes/ai-scoring";
 import { weaknessRoutes } from "./routes/weakness";
 import { errorBookRoutes } from "./routes/error-book";
 import { essayExamRoutes } from "./routes/essay-exam";
+import { recommendRoutes } from "./routes/recommend";
 import { smartSelectRoutes } from "./routes/smart-select";
 import { comprehensiveExamRoutes } from "./routes/comprehensive-exam";
 import { caseExamRoutes } from "./routes/case-exam";
 import { errorReportsRoutes } from "./routes/error-reports";
+import { aiCostRoutes } from "./routes/ai-cost";
 import { scoringStandardsRoutes } from "./routes/scoring-standards";
+import { searchRoutes } from "./routes/search";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
@@ -58,6 +61,8 @@ const app = new Elysia()
   .use(errorBookRoutes)
   .use(errorReportsRoutes)
   .use(scoringStandardsRoutes)
+  .use(recommendRoutes)
+  .use(searchRoutes)
   .listen(PORT);
 
 console.log(`🦊 Server running at ${app.server?.hostname}:${app.server?.port}`);

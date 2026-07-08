@@ -12,6 +12,7 @@ export interface WeakPoint {
   totalQuestions: number;
   correctCount: number;
   isWeak: boolean;
+  examWeight: number;
 }
 
 interface ChapterMeta {
@@ -107,6 +108,7 @@ export async function getWeakPoints(userId: string): Promise<WeakPoint[]> {
       totalQuestions: s.total,
       correctCount: s.correct,
       isWeak: rate < 60,
+      examWeight: meta?.examWeight ?? 0,
     });
   }
 
