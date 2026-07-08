@@ -31,7 +31,11 @@
 
 | 日期 | 阶段名称 | 状态 | 对应 PRD | 说明 |
 |------|---------|------|---------|------|
-| — | TBD | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 待 sdd-phase 补全 |
+| [2026-07-08](phase/2026-07-08-foundation.md) | [Phase 1: 基础设施与用户](phase/2026-07-08-foundation.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 用户模块+部署基础 |
+| [2026-07-08](phase/2026-07-08-learning-quiz.md) | [Phase 2: 学习与习题核心](phase/2026-07-08-learning-quiz.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 知识点+SM-2+选择题+错题本 |
+| [2026-07-08](phase/2026-07-08-quizbank-ai.md) | [Phase 3: 题库与AI集成](phase/2026-07-08-quizbank-ai.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 题库拉取+AI选题+AI评分 |
+| [2026-07-08](phase/2026-07-08-writing-exam.md) | [Phase 4: 写作指导与模拟考](phase/2026-07-08-writing-exam.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 论文模板+工作台+模拟考 |
+| [2026-07-08](phase/2026-07-08-personalization.md) | [Phase 5: 个性化与P1增强](phase/2026-07-08-personalization.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 搜索+提醒+推荐+成本展示 |
 
 ## 架构文档（Architecture）
 
@@ -50,7 +54,7 @@
 
 - Spec 总数：1
 - PRD 总数：1
-- Phase 总数：0（待补全）
+- Phase 总数：5
 - 架构文档：2
 - 参考资料：1
 
