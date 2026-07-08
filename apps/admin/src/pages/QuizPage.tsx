@@ -1,22 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router";
+import { useSearchParams } from "react-router";
 import {
   Button,
   Card,
   Form,
+  Input,
+  Modal,
   Radio,
   Result,
   Select,
   Space,
-  Spin,
   Tag,
   Typography,
+  message,
 } from "antd";
-import {
-  fetchWithAuth,
-  apiRequest,
-  getAccessToken,
-} from "../api/client";
+import { fetchWithAuth, apiRequest } from "../api/client";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -52,6 +50,13 @@ const MODE_LABELS: Record<string, string> = {
 
 const OPTION_LABELS = ["A", "B", "C", "D"];
 
+const REPORT_TYPES = [
+  { value: "content-error", label: "题干有误" },
+  { value: "answer-error", label: "答案错误" },
+  { value: "explanation-error", label: "解析不当" },
+  { value: "other", label: "其他" },
+];
+
 const DIFFICULTY_TAG: Record<string, string> = {
   easy: "简单",
   medium: "中等",
@@ -65,9 +70,13 @@ const DIFFICULTY_COLOR: Record<string, string> = {
 };
 
 export default function QuizPage() {
-  const navigate = useNavigate();
-  const [mode, setMode] = useState<"chapter" | "random" | "error">("random");
-  const [chapter, setChapter] = useState<string>("");
+  const [searchParams] = useSearchParams();
+  const smartMode = searchParams.get("smart") === "true";
+  const initialChapter = searchParams.get("chapter") || "";
+  const initialMode = (searchParams.get("mode") as "chapter" | "random" | "error") || "random";
+
+  const [mode, setMode] = useState<"chapter" | "random" | "error">(initialMode);
+  const [chapter, setChapter] = useState<string>(initialChapter);
   const [count, setCount] = useState<number>(20);
   const [started, setStarted] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -78,6 +87,9 @@ export default function QuizPage() {
   const [loading, setLoading] = useState(false);
   const [chapters, setChapters] = useState<ChapterMeta[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportForm] = Form.useForm();
+  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   useEffect(() => {
     fetchWithAuth("/api/knowledge/chapters")
@@ -87,6 +99,30 @@ export default function QuizPage() {
       })
       .then((data) => setChapters(data.chapters))
       .catch(() => setChapters([]));
+
+    if (smartMode) {
+      setLoading(true);
+      setError(null);
+      apiRequest<{ questions: Question[] }>("/api/smart-select", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ weakPointId: initialChapter }),
+      })
+        .then((res) => {
+          const qs = res.questions;
+          if (qs.length === 0) {
+            setError("当前薄弱点没有可用题目。");
+            return;
+          }
+          setQuestions(qs);
+          setIndex(0);
+          setAnswer(null);
+          setResult(null);
+          setStarted(true);
+        })
+        .catch((err) => setError(err instanceof Error ? err.message : "智能选题失败"))
+        .finally(() => setLoading(false));
+    }
   }, []);
 
   const start = async () => {
@@ -131,6 +167,37 @@ export default function QuizPage() {
       setError(err instanceof Error ? err.message : "提交失败");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const openReport = () => {
+    setReportOpen(true);
+  };
+
+  const closeReport = () => {
+    setReportOpen(false);
+    reportForm.resetFields();
+  };
+
+  const submitReport = async (values: { type: string; description: string }) => {
+    if (!current) return;
+    setReportSubmitting(true);
+    try {
+      await apiRequest("/api/error-reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questionId: current.id,
+          type: values.type,
+          description: values.description.trim(),
+        }),
+      });
+      message.success("错误报告已提交，感谢反馈");
+      closeReport();
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : "提交失败，请稍后重试");
+    } finally {
+      setReportSubmitting(false);
     }
   };
 
@@ -205,6 +272,11 @@ export default function QuizPage() {
               style={{ width: "100%" }}
             />
           </Form.Item>
+          {smartMode && (
+            <Paragraph>
+              <Text type="secondary">智能选题模式：基于薄弱点推荐题目</Text>
+            </Paragraph>
+          )}
           {error && (
             <Paragraph>
               <Text type="danger">{error}</Text>
@@ -269,12 +341,7 @@ export default function QuizPage() {
         </Radio.Group>
 
         {!result && (
-          <Button
-            type="primary"
-            onClick={submit}
-            loading={submitting}
-            disabled={!answer}
-          >
+          <Button type="primary" onClick={submit} loading={submitting} disabled={!answer}>
             提交答案
           </Button>
         )}
@@ -303,9 +370,49 @@ export default function QuizPage() {
                 <Text type="secondary">章节定位：{current.chapter}</Text>
               </Paragraph>
             </Card>
-            <Button type="primary" onClick={next}>
-              {index + 1 >= questions.length ? "完成练习" : "下一题"}
-            </Button>
+            <Space>
+              <Button type="primary" onClick={next}>
+                {index + 1 >= questions.length ? "完成练习" : "下一题"}
+              </Button>
+              <Button onClick={openReport}>报告错误</Button>
+            </Space>
+
+            <Modal
+              title="报告题目错误"
+              open={reportOpen}
+              onCancel={closeReport}
+              confirmLoading={reportSubmitting}
+              onOk={() => reportForm.submit()}
+              okText="提交"
+              cancelText="取消"
+            >
+              <Form
+                form={reportForm}
+                layout="vertical"
+                onFinish={submitReport}
+                initialValues={{ type: REPORT_TYPES[0].value, description: "" }}
+              >
+                <Form.Item
+                  name="type"
+                  label="错误类型"
+                  rules={[{ required: true, message: "请选择错误类型" }]}
+                >
+                  <Select options={REPORT_TYPES} />
+                </Form.Item>
+                <Form.Item
+                  name="description"
+                  label="错误描述"
+                  rules={[{ required: true, message: "请填写错误描述" }]}
+                >
+                  <Input.TextArea
+                    rows={4}
+                    placeholder="请描述题目存在的问题，如具体错误内容、应如何修正等"
+                    showCount
+                    maxLength={1000}
+                  />
+                </Form.Item>
+              </Form>
+            </Modal>
           </>
         )}
       </Space>
