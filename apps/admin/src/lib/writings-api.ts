@@ -4,8 +4,9 @@ import type { Writing, WritingSummary, WritingUpsertBody } from "@archprep/share
 const BASE = "/api/writings";
 
 /** List the current user's thesis drafts (lightweight summary). */
-export function listWritings(): Promise<WritingSummary[]> {
-  return apiRequest<WritingSummary[]>(BASE);
+export async function listWritings(): Promise<WritingSummary[]> {
+  const data = await apiRequest<WritingSummary[] | { status: string; message: string }>(BASE);
+  return Array.isArray(data) ? data : [];
 }
 
 /** Fetch the full content of one thesis. Returns null if not found. */
