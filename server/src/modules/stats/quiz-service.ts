@@ -1,6 +1,6 @@
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { getDb } from "../db";
+import { getDb } from "../../db";
 
 export interface CaseQuestion {
   id: string;
