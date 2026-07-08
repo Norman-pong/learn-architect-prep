@@ -2,6 +2,16 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { getDb } from "../db";
 
+export interface CaseQuestion {
+  id: string;
+  question: string;
+  referenceAnswer: string;
+  chapter: string;
+  difficulty: "easy" | "medium" | "hard";
+  source: string;
+  year: number;
+}
+
 export interface QuizQuestion {
   id: string;
   question: string;
@@ -32,6 +42,9 @@ let cachedQuestions: QuizQuestion[] | null = null;
 let cacheTime = 0;
 const CACHE_TTL_MS = 5_000;
 
+let cachedCaseQuestions: CaseQuestion[] | null = null;
+let caseCacheTime = 0;
+
 function ensureOptionsShape(raw: unknown): Record<string, string> {
   const out: Record<string, string> = {};
   if (raw && typeof raw === "object" && !Array.isArray(raw)) {
@@ -49,7 +62,9 @@ function normalizeQuestion(item: unknown): QuizQuestion | null {
   const raw = item as Record<string, unknown>;
   const id = String(raw.id ?? "");
   const question = String(raw.question ?? "");
-  const answer = String(raw.answer ?? "").trim().toUpperCase();
+  const answer = String(raw.answer ?? "")
+    .trim()
+    .toUpperCase();
   const explanation = String(raw.explanation ?? "");
   const chapter = String(raw.chapter ?? "");
   const difficulty = String(raw.difficulty ?? "medium");
@@ -159,9 +174,7 @@ export async function getQuestions(
   return selected.map(toPublicQuestion);
 }
 
-export async function getQuestionById(
-  questionId: string,
-): Promise<QuizQuestion | null> {
+export async function getQuestionById(questionId: string): Promise<QuizQuestion | null> {
   const all = await loadQuestions();
   return all.find((q) => q.id === questionId) ?? null;
 }
@@ -174,12 +187,9 @@ export async function recordAnswer(
   const question = await getQuestionById(questionId);
   if (!question) return null;
 
-  const isCorrect =
-    selectedAnswer.trim().toUpperCase() === question.answer.trim().toUpperCase();
+  const isCorrect = selectedAnswer.trim().toUpperCase() === question.answer.trim().toUpperCase();
   const db = getDb();
-  const id = createHash("sha256")
-    .update(`${userId}:${questionId}:${Date.now()}`)
-    .digest("hex");
+  const id = createHash("sha256").update(`${userId}:${questionId}:${Date.now()}`).digest("hex");
   db.run(
     `INSERT INTO quiz_records (id, user_id, question_id, selected_answer, is_correct, created_at)
      VALUES (?, ?, ?, ?, ?, ?);`,
@@ -221,6 +231,61 @@ export async function getUserErrorQuestions(userId: string): Promise<PublicQuest
   const all = await loadQuestions();
   const errorIds = await getUserErrorQuestionIds(userId);
   return all.filter((q) => errorIds.has(q.id)).map(toPublicQuestion);
+}
+
+function normalizeCaseQuestion(item: unknown): CaseQuestion | null {
+  if (!item || typeof item !== "object") return null;
+  const raw = item as Record<string, unknown>;
+  const id = String(raw.id ?? "");
+  const question = String(raw.question ?? "");
+  const referenceAnswer = String(raw.referenceAnswer ?? "");
+  const chapter = String(raw.chapter ?? "");
+  const difficulty = String(raw.difficulty ?? "medium");
+  const source = String(raw.source ?? "自建");
+  const year = Number(raw.year ?? 2024);
+
+  if (!id || !question || !referenceAnswer || !chapter) return null;
+  if (!["easy", "medium", "hard"].includes(difficulty)) return null;
+
+  return {
+    id,
+    question,
+    referenceAnswer,
+    chapter,
+    difficulty: difficulty as CaseQuestion["difficulty"],
+    source,
+    year,
+  };
+}
+
+const CASES_FILE = path.join(QUIZ_DIR, "cases.json");
+
+export async function loadCaseQuestions(): Promise<CaseQuestion[]> {
+  if (cachedCaseQuestions && Date.now() - caseCacheTime < CACHE_TTL_MS) {
+    return cachedCaseQuestions;
+  }
+  const file = Bun.file(CASES_FILE);
+  if (!(await file.exists())) {
+    cachedCaseQuestions = [];
+    caseCacheTime = Date.now();
+    return cachedCaseQuestions;
+  }
+  try {
+    const raw = (await file.json()) as unknown;
+    if (raw && typeof raw === "object") {
+      const list = (raw as Record<string, unknown>).cases;
+      const arr = Array.isArray(list) ? list : [];
+      cachedCaseQuestions = arr
+        .map(normalizeCaseQuestion)
+        .filter((q): q is CaseQuestion => q !== null);
+    } else {
+      cachedCaseQuestions = [];
+    }
+  } catch {
+    cachedCaseQuestions = [];
+  }
+  caseCacheTime = Date.now();
+  return cachedCaseQuestions;
 }
 
 function shuffle<T>(arr: T[]): T[] {

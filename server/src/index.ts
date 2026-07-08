@@ -22,6 +22,7 @@ import { smartSelectRoutes } from "./routes/smart-select";
 import { comprehensiveExamRoutes } from "./routes/comprehensive-exam";
 import { caseExamRoutes } from "./routes/case-exam";
 import { errorReportsRoutes } from "./routes/error-reports";
+import { scoringStandardsRoutes } from "./routes/scoring-standards";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
@@ -56,6 +57,7 @@ const app = new Elysia()
   .use(smartSelectRoutes)
   .use(errorBookRoutes)
   .use(errorReportsRoutes)
+  .use(scoringStandardsRoutes)
   .listen(PORT);
 
 console.log(`🦊 Server running at ${app.server?.hostname}:${app.server?.port}`);
