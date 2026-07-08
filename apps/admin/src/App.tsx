@@ -7,7 +7,9 @@ import { AIConfigPage } from "./pages/AIConfigPage";
 import { TemplatesPage } from "./pages/TemplatesPage";
 import { SamplesPage } from "./pages/SamplesPage";
 import { WritingWorkbench } from "./pages/WritingWorkbench";
-import { KnowledgePage } from "./pages/KnowledgePage";
+import KnowledgePage from "./pages/KnowledgePage";
+import ReviewPage from "./pages/ReviewPage";
+import QuizPage from "./pages/QuizPage";
 export default function App() {
   return (
     <AppThemeProvider>
@@ -20,6 +22,9 @@ export default function App() {
           <Route path="writing/samples" element={<SamplesPage />} />
           <Route path="writing" element={<WritingWorkbench />} />
           <Route path="learn" element={<KnowledgePage />} />
+          <Route path="review" element={<ReviewPage />} />
+          <Route path="quiz" element={<QuizPage />} />
+        </Route>
       </Routes>
     </AppThemeProvider>
   );

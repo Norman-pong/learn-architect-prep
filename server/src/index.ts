@@ -8,6 +8,8 @@ import { aiConfigRoutes } from "./routes/ai-config";
 import { sampleRoutes } from "./routes/samples";
 import { templateRoutes } from "./routes/templates";
 import { writingRoutes } from "./routes/writings";
+import { quizBankRoutes } from "./routes/quiz-bank";
+import { quizRoutes } from "./routes/quiz";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
@@ -28,6 +30,7 @@ const app = new Elysia()
   .use(templateRoutes)
   .use(writingRoutes)
   .use(knowledgeRoutes)
+  .use(quizBankRoutes)
   .listen(PORT);
 
 console.log(`🦊 Server running at ${app.server?.hostname}:${app.server?.port}`);
