@@ -77,10 +77,10 @@ function bankStats(questions: ChoiceQuestion[]) {
     total: questions.length,
     byChapter: Array.from(byChapter.entries())
       .map(([chapter, count]) => ({ chapter, count }))
-      .toSorted((a: { count: number }, b: { count: number }) => b.count - a.count),
+      .sort((a: { count: number }, b: { count: number }) => b.count - a.count),
     bySource: Array.from(bySource.entries())
       .map(([source, count]) => ({ source, count }))
-      .toSorted((a: { count: number }, b: { count: number }) => b.count - a.count),
+      .sort((a: { count: number }, b: { count: number }) => b.count - a.count),
   };
 }
 
@@ -142,7 +142,7 @@ export const quizBankRoutes = new Elysia({ prefix: "/api/quiz-bank" })
       return {
         sources: Array.from(map.entries())
           .map(([source, count]) => ({ source, count }))
-          .toSorted((a: { count: number }, b: { count: number }) => b.count - a.count),
+          .sort((a: { count: number }, b: { count: number }) => b.count - a.count),
       };
     },
     {
