@@ -1,6 +1,6 @@
 # 基础设施与用户模块阶段
 
-> 状态：未开始
+> 状态：已完成
 > 对应 PRD: [ArchPrep PRD](../prd/2026-07-08-archprep.md)
 
 ## 1. 阶段目标
@@ -35,14 +35,14 @@
 
 | 任务 ID | 任务名称 | FR 编号 | 优先级 | 依赖 | 状态 |
 |---------|---------|--------|--------|------|------|
-| T001 | vite-plus 项目初始化（React + Elysia + SQLite） | FR-SY-02 | P0 | - | 未开始 |
-| T002 | SQLite 数据库 schema 初始化（全部表） | FR-SY-02 | P0 | T001 | 未开始 |
-| T003 | 邮件验证码登录（SMTP + JWT + refresh token） | FR-US-01 | P0 | T002 | 未开始 |
-| T004 | 退出登录 | FR-US-03 | P0 | T003 | 未开始 |
-| T005 | AI 配置（多模型 + API Key 加密存储） | FR-US-02 | P0 | T002 | 未开始 |
-| T006 | 主题与响应式（深色/浅色 + 移动自适应） | FR-SY-01 | P0 | T001 | 未开始 |
-| T007 | cloudflared 隧道 + CORS + HTTPS 配置 | - | P0 | T001 | 未开始 |
-| T008 | SMTP 邮件服务配置 | - | P0 | T001 | 未开始 |
+| T001 | vite-plus 项目初始化（React + Elysia + SQLite） | FR-SY-02 | P0 | - | 已完成 |
+| T002 | SQLite 数据库 schema 初始化（全部表） | FR-SY-02 | P0 | T001 | 已完成 |
+| T003 | 邮件验证码登录（SMTP + JWT + refresh token） | FR-US-01 | P0 | T002 | 已完成 |
+| T004 | 退出登录 | FR-US-03 | P0 | T003 | 已完成 |
+| T005 | AI 配置（多模型 + API Key 加密存储） | FR-US-02 | P0 | T002 | 已完成 |
+| T006 | 主题与响应式（深色/浅色 + 移动自适应） | FR-SY-01 | P0 | T001 | 已完成 |
+| T007 | cloudflared 隧道 + CORS + HTTPS 配置 | - | P0 | T001 | 已完成 |
+| T008 | SMTP 邮件服务配置 | - | P0 | T001 | 已完成 |
 
 ### 2.2 任务详情
 

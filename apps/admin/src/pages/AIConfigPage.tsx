@@ -29,15 +29,12 @@ interface AIConfigResponse {
   updatedAt: string;
 }
 
-async function fetchWithAuth<T>(
-  url: string,
-  options: RequestInit = {}
-): Promise<T> {
+async function fetchWithAuth<T>(url: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem("accessToken");
   const res = await fetch(url, {
     ...options,
     headers: {
-      ...(options.headers || {}),
+      ...options.headers,
       Authorization: token ? `Bearer ${token}` : "",
       "Content-Type": "application/json",
     },
@@ -98,7 +95,7 @@ export function AIConfigPage() {
     try {
       const result = await fetchWithAuth<{ success: boolean; message: string }>(
         "/api/ai-config/test",
-        { method: "POST" }
+        { method: "POST" },
       );
       if (result.success) {
         message.success(result.message);
@@ -140,9 +137,7 @@ export function AIConfigPage() {
           label="API Key"
           rules={[{ required: !hasKey, message: "请输入 API Key" }]}
         >
-          <Input.Password
-            placeholder={hasKey ? "已配置（输入以覆盖）" : "输入 API Key"}
-          />
+          <Input.Password placeholder={hasKey ? "已配置（输入以覆盖）" : "输入 API Key"} />
         </Form.Item>
 
         <Form.Item name="model" label="模型">
