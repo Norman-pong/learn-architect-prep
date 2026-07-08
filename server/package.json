@@ -8,12 +8,14 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@elysiajs/cors": "latest",
     "@archprep/shared": "workspace:*",
-    "elysia": "latest"
+    "@elysiajs/cors": "latest",
+    "elysia": "latest",
+    "nodemailer": "^9.0.3"
   },
   "devDependencies": {
-    "typescript": "^5.7.0",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/nodemailer": "^8.0.1",
+    "typescript": "^5.7.0"
   }
 }
