@@ -1,6 +1,7 @@
 import { useLocation, useNavigate, Outlet } from "react-router";
 import { Avatar, Button, Layout, Menu, Space, Typography } from "antd";
 import {
+  LineChartOutlined,
   BarChartOutlined,
   BookOutlined,
   BulbOutlined,
@@ -14,6 +15,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MoonOutlined,
+  QuestionCircleOutlined,
   SearchOutlined,
   SettingOutlined,
   SnippetsOutlined,
@@ -32,6 +34,7 @@ const { Title } = Typography;
 const menuItems = [
   { key: "/", icon: <HomeOutlined />, label: "首页" },
   { key: "/learn", icon: <BookOutlined />, label: "学习" },
+  { key: "/qa", icon: <QuestionCircleOutlined />, label: "AI 答疑" },
   { key: "/search", icon: <SearchOutlined />, label: "搜索" },
   { key: "/quiz", icon: <EditOutlined />, label: "习题" },
   { key: "/error-book", icon: <CloseCircleOutlined />, label: "错题本" },
@@ -41,6 +44,10 @@ const menuItems = [
     key: "/exam",
     icon: <DesktopOutlined />,
     label: "模拟考",
+    children: [
+      { key: "/exam", label: "选择模式" },
+      { key: "/exam/history", icon: <LineChartOutlined />, label: "成绩趋势" },
+    ],
   },
   {
     key: "/writing",

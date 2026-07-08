@@ -632,7 +632,17 @@ export default function KnowledgePage() {
                 title={currentKnowledgePoint?.title ?? "知识点详情"}
                 extra={
                   currentKnowledgePoint ? (
-                    <WeightTag weight={currentKnowledgePoint.examWeight} />
+                    <Space>
+                      <Button
+                        size="small"
+                        onClick={() =>
+                          navigate(`/qa/${chapterId}/${currentKnowledgePoint.id}`)
+                        }
+                      >
+                        AI 答疑
+                      </Button>
+                      <WeightTag weight={currentKnowledgePoint.examWeight} />
+                    </Space>
                   ) : null
                 }
                 style={{ flex: "1 1 560px", minWidth: 0 }}

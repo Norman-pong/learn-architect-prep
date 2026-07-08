@@ -21,6 +21,8 @@ import { AICostPage } from "./pages/AICostPage";
 import { WritingTipsPage } from "./pages/WritingTipsPage";
 import DataTransferPage from "./pages/DataTransferPage";
 import ProgressPage from "./pages/ProgressPage";
+import ExamHistoryPage from "./pages/ExamHistoryPage";
+import QAPage from "./pages/QAPage";
 
 export default function App() {
   return (
@@ -36,7 +38,9 @@ export default function App() {
           <Route path="writing" element={<WritingWorkbench />} />
           <Route path="learn" element={<KnowledgePage />} />
           <Route path="learn/:chapterId" element={<KnowledgePage />} />
-          <Route path="learn/:chapterId/:kpId" element={<KnowledgePage />} />
+          <Route path="learn/:chapterId/:kpId/qa" element={<QAPage />} />
+          <Route path="qa" element={<QAPage />} />
+          <Route path="qa/:chapterId/:kpId" element={<QAPage />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="review" element={<ReviewPage />} />
           <Route path="quiz" element={<QuizPage />} />
@@ -45,6 +49,7 @@ export default function App() {
           <Route path="exam" element={<ExamModePage />} />
           <Route path="exam/comp" element={<CompExamPage />} />
           <Route path="exam/case" element={<CaseExamPage />} />
+          <Route path="exam/history" element={<ExamHistoryPage />} />
           <Route path="exam/essay" element={<EssayExamPage />} />
           <Route path="weakness" element={<WeaknessPage />} />
           <Route path="settings/ai-cost" element={<AICostPage />} />

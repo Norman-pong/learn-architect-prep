@@ -31,6 +31,8 @@ import { progressRoutes } from "./routes/progress";
 import { reminderRoutes } from "./routes/reminder";
 import { scoringStandardsRoutes } from "./routes/scoring-standards";
 import { annotationsRoutes } from "./routes/annotations";
+import { examHistoryRoutes } from "./routes/exam-history";
+import { qaRoutes } from "./routes/qa";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
@@ -74,6 +76,8 @@ const app = new Elysia()
   .use(writingTipsRoutes)
   .use(progressRoutes)
   .use(reminderRoutes)
+  .use(examHistoryRoutes)
+  .use(qaRoutes)
   .listen(PORT);
 
 console.log(`🦊 Server running at ${app.server?.hostname}:${app.server?.port}`);
