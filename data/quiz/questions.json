@@ -1,0 +1,1026 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-08T06:53:30.658779+00:00",
+  "questions": [
+    {
+      "id": "seed-001",
+      "question": "Flynn分类法中，一个指令流同时处理多个数据流的体系结构称为（  ）。",
+      "options": {
+        "A": "SISD",
+        "B": "SIMD",
+        "C": "MISD",
+        "D": "MIMD"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：2.1。",
+      "chapter": "2.1",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "bfc77505d6b6304c57d2efc78cc0302b6579eae418750e3a59f78f1cc651067d",
+      "year": null
+    },
+    {
+      "id": "seed-002",
+      "question": "下列关于虚拟存储器的叙述中，错误的是（  ）。",
+      "options": {
+        "A": "分页解决了碎片问题",
+        "B": "页表用于逻辑地址到物理地址的转换",
+        "C": "TLB命中时不需要访问内存页表",
+        "D": "缺页率只与页面大小有关"
+      },
+      "answer": "D",
+      "explanation": "正确答案：D。对应教材章节：2.2。",
+      "chapter": "2.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "8541cb0ec9684c32fd07c18bca76f01cc035be85ffaadd09f1dec31c3bd7868b",
+      "year": null
+    },
+    {
+      "id": "seed-003",
+      "question": "下列哪个是进程死锁的必要条件？（  ）",
+      "options": {
+        "A": "互斥条件",
+        "B": "时钟同步",
+        "C": "心跳机制",
+        "D": "抢占式调度"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：2.2。",
+      "chapter": "2.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "68c7672de28a4b5e7723d14a4f1a1c4f1d789ae57a95c448f891c974d24b92ef",
+      "year": null
+    },
+    {
+      "id": "seed-004",
+      "question": "某系统中有3个并发进程，都需要同类资源R共5个。假设每个进程至少申请3个资源R才能正常执行，则系统必然发生死锁的最少资源数是（  ）。",
+      "options": {
+        "A": "3",
+        "B": "5",
+        "C": "7",
+        "D": "9"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：2.2。",
+      "chapter": "2.2",
+      "difficulty": "hard",
+      "source": "调研报告60题种子",
+      "hash": "7b1522b416d009b2898454e470d12e65a101ee02579d0e05aa2b8cb37a9290de",
+      "year": null
+    },
+    {
+      "id": "seed-005",
+      "question": "某磁盘有100个柱面，当前磁头在50号柱面，请求序列为[75, 30, 90, 15, 60]，采用最短寻道时间优先（SSTF）算法，磁头移动总距离为（  ）。",
+      "options": {
+        "A": "135",
+        "B": "150",
+        "C": "175",
+        "D": "200"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：2.2。",
+      "chapter": "2.2",
+      "difficulty": "hard",
+      "source": "调研报告60题种子",
+      "hash": "ab9d9681f0213063217eb94927502b42480b8626922a0ad580524b5cf9b7794b",
+      "year": null
+    },
+    {
+      "id": "seed-006",
+      "question": "TCP/IP协议栈中，下列哪个协议属于网络层？（  ）",
+      "options": {
+        "A": "HTTP",
+        "B": "TCP",
+        "C": "IP",
+        "D": "FTP"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：2.3。",
+      "chapter": "2.3",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "667cf6df77335a979e17066fcb0047f331951d16e0c0b01d2ba4c31e5d8652b6",
+      "year": null
+    },
+    {
+      "id": "seed-007",
+      "question": "IPv6地址长度为（  ）。",
+      "options": {
+        "A": "32位",
+        "B": "64位",
+        "C": "128位",
+        "D": "256位"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：2.3。",
+      "chapter": "2.3",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "08be162a031f671d3a5a64e4dc3973e30979679c1a3968f99ea8a0ba517ffb52",
+      "year": null
+    },
+    {
+      "id": "seed-008",
+      "question": "HTTPS默认使用的端口号和底层安全协议分别是（  ）。",
+      "options": {
+        "A": "80, SSL",
+        "B": "443, SSL/TLS",
+        "C": "8080, IPSec",
+        "D": "23, SSH"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：2.3。",
+      "chapter": "2.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "02f9c01bef689c5b4588d92d96c863e950fc7d288b7f56c24767351062a48fbb",
+      "year": null
+    },
+    {
+      "id": "seed-009",
+      "question": "防火墙中，能够检查网络层数据包头部并根据规则集中记录会话状态的类型是（  ）。",
+      "options": {
+        "A": "包过滤防火墙",
+        "B": "状态检测防火墙",
+        "C": "应用代理防火墙",
+        "D": "下一代防火墙"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：2.3。",
+      "chapter": "2.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "3c0479b0e550d0b6c952c28632cb60ba8f58d29d5f9e5273f61ae7d529724f7a",
+      "year": null
+    },
+    {
+      "id": "seed-010",
+      "question": "CIDR地址块192.168.10.0/27的子网掩码为（  ）。",
+      "options": {
+        "A": "255.255.255.0",
+        "B": "255.255.255.224",
+        "C": "255.255.255.240",
+        "D": "255.255.255.192"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：2.3。",
+      "chapter": "2.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "273a1bcf4f140be22a8276a58337d1fe44b36423a0d5a73ada8e246d5837a162",
+      "year": null
+    },
+    {
+      "id": "seed-011",
+      "question": "下列属于对称加密算法的是（  ）。",
+      "options": {
+        "A": "RSA",
+        "B": "DSA",
+        "C": "AES",
+        "D": "ECC"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：4.2。",
+      "chapter": "4.2",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "7eebcfba121669544ff5b641b444bd251ce5d6013c48c29b5277917dc3cfc845",
+      "year": null
+    },
+    {
+      "id": "seed-012",
+      "question": "SM2算法属于（  ）。",
+      "options": {
+        "A": "国际对称加密算法",
+        "B": "国密非对称加密算法",
+        "C": "国密哈希算法",
+        "D": "国际公钥基础设施"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：4.2。",
+      "chapter": "4.2",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "3e70deacdde80b502c4671b57ce9c01c033efe59a7978190a9847ed99d839876",
+      "year": null
+    },
+    {
+      "id": "seed-013",
+      "question": "PKI体系的核心组件是（  ）。",
+      "options": {
+        "A": "CA",
+        "B": "LDAP",
+        "C": "DNS",
+        "D": "DHCP"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：4.3。",
+      "chapter": "4.3",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "904ebbcd20d325a8bd262b6f9129107e0ba061ed8a4abea9325a5af8fd60c2ab",
+      "year": null
+    },
+    {
+      "id": "seed-014",
+      "question": "等保2.0中，安全标记保护级的等级是（  ）。",
+      "options": {
+        "A": "第一级",
+        "B": "第二级",
+        "C": "第三级",
+        "D": "第四级"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：4.1。",
+      "chapter": "4.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "c7bebb1f037b3f15ebd9d2f8a0fdff2c6ea740b2e2001813d0c18f1d78af9cec",
+      "year": null
+    },
+    {
+      "id": "seed-015",
+      "question": "数字签名能够提供的最主要安全能力是（  ）。",
+      "options": {
+        "A": "数据加密",
+        "B": "不可否认性",
+        "C": "可用性",
+        "D": "匿名性"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：4.2。",
+      "chapter": "4.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "3b7bed44447d35e7f5f0cb01175d4b631951777840c17ad7a65e18944de81df2",
+      "year": null
+    },
+    {
+      "id": "seed-016",
+      "question": "下列软件生命周期模型中，强调风险分析和规避的是（  ）。",
+      "options": {
+        "A": "瀑布模型",
+        "B": "原型模型",
+        "C": "螺旋模型",
+        "D": "增量模型"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：5.1。",
+      "chapter": "5.1",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "a8f011af898cfd35c441e9f280672478d70ea31dc503a4c2f8c46ae901000063",
+      "year": null
+    },
+    {
+      "id": "seed-017",
+      "question": "CMMI级别中，\"定量管理级\"对应第几级？（  ）",
+      "options": {
+        "A": "2",
+        "B": "3",
+        "C": "4",
+        "D": "5"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：5.5。",
+      "chapter": "5.5",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "40be9e07d677238c639127f94914d978142ef69d045dc17f8af6179eefb117f8",
+      "year": null
+    },
+    {
+      "id": "seed-018",
+      "question": "白盒测试中，最强的覆盖标准是（  ）。",
+      "options": {
+        "A": "语句覆盖",
+        "B": "判定覆盖",
+        "C": "条件覆盖",
+        "D": "路径覆盖"
+      },
+      "answer": "D",
+      "explanation": "正确答案：D。对应教材章节：5.4。",
+      "chapter": "5.4",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "926f28a21133d6dfc85e68d83c9655b7b7dfd37795c476301e0d5afce3eeb0a0",
+      "year": null
+    },
+    {
+      "id": "seed-019",
+      "question": "设计模式中，属于创建型模式的是（  ）。",
+      "options": {
+        "A": "适配器",
+        "B": "策略",
+        "C": "工厂方法",
+        "D": "观察者"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：5.3。",
+      "chapter": "5.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "ad1592bb29f7353d8c7139285f3ce083710e121aa73628f8e9025ab5bb196df0",
+      "year": null
+    },
+    {
+      "id": "seed-020",
+      "question": "某程序的流图有6个判断节点，其McCabe圈复杂度为（  ）。",
+      "options": {
+        "A": "5",
+        "B": "6",
+        "C": "7",
+        "D": "8"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：5.4。",
+      "chapter": "5.4",
+      "difficulty": "hard",
+      "source": "调研报告60题种子",
+      "hash": "01325147d32b4a5881d6c2eb5d8c77103dfbf29a4db32ba5b5144aa4e27a5b66",
+      "year": null
+    },
+    {
+      "id": "seed-021",
+      "question": "关系模式R(A,B,C,D,E)中，函数依赖集F={A→B, B→C, C→D, D→E}，则R最高满足（  ）。",
+      "options": {
+        "A": "1NF",
+        "B": "2NF",
+        "C": "3NF",
+        "D": "BCNF"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：6.1。",
+      "chapter": "6.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "15964f0fb49ebff5b447cb718c9f1cc2486bf2ea0456de2f91eecfb7234a0945",
+      "year": null
+    },
+    {
+      "id": "seed-022",
+      "question": "事务T从A账户转100元到B账户，先更新A（A-100），然后更新B（B+100），但在更新B之前系统崩溃。这违反了（  ）。",
+      "options": {
+        "A": "原子性",
+        "B": "一致性",
+        "C": "隔离性",
+        "D": "持久性"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：6.1。",
+      "chapter": "6.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "0bf7a7f6fd2a0301cd67f46b4f3426f5e820b5393fb7419e1ff99e8ca1f3bbee",
+      "year": null
+    },
+    {
+      "id": "seed-023",
+      "question": "分布式系统中，CAP理论指出三者不可兼得，当网络分区发生时，选择可用性而放弃一致性的系统属于（  ）。",
+      "options": {
+        "A": "CP系统",
+        "B": "AP系统",
+        "C": "CA系统",
+        "D": "ABC系统"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：6.3。",
+      "chapter": "6.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "35734f6e59d7a922e9ce14a8f3f68289a73411c40ff1483c0e08fc99e7b20284",
+      "year": null
+    },
+    {
+      "id": "seed-024",
+      "question": "Redis属于（  ）类型的NoSQL数据库。",
+      "options": {
+        "A": "键值型",
+        "B": "文档型",
+        "C": "列族型",
+        "D": "图型"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：6.2。",
+      "chapter": "6.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "9b685f1d146ec7552a322a621d0b9a9fe8a9f46f91a694b5868e6dc8301b8c5b",
+      "year": null
+    },
+    {
+      "id": "seed-025",
+      "question": "2PC（两阶段提交）协议中，协调者在第一阶段向所有参与者发送（  ）消息。",
+      "options": {
+        "A": "commit",
+        "B": "abort",
+        "C": "prepare",
+        "D": "precommit"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：6.2。",
+      "chapter": "6.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "c3d8e0959dc1394f7869d6b4d7363858b80f083ff0e4dda298a93a8d5331ef60",
+      "year": null
+    },
+    {
+      "id": "seed-026",
+      "question": "4+1视图模型中的\"1\"指的是（  ）。",
+      "options": {
+        "A": "部署视图",
+        "B": "场景",
+        "C": "逻辑视图",
+        "D": "开发视图"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：7.1。",
+      "chapter": "7.1",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "88bd7751fcdc473e6b8bd9a32b86374b044e38e6e5e974557a076c0e5567f24d",
+      "year": null
+    },
+    {
+      "id": "seed-027",
+      "question": "管道-过滤器架构风格的最大不足是（  ）。",
+      "options": {
+        "A": "模块耦合度高",
+        "B": "不支持交互式应用",
+        "C": "性能低下",
+        "D": "难以测试"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：7.1。",
+      "chapter": "7.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "9ffb854f494287bba826225f57cdf9add36d0caf0791e96ba26dcf62a601fb03",
+      "year": null
+    },
+    {
+      "id": "seed-028",
+      "question": "一个系统要求核心功能稳定、插件可以热加载和独立升级，最适合的架构风格是（  ）。",
+      "options": {
+        "A": "分层",
+        "B": "微核",
+        "C": "管道-过滤器",
+        "D": "事件驱动"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：7.1。",
+      "chapter": "7.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "50d64a8f31aa4977b70bbc99c555fb892f8b8c2ff38e0d57d8b57fe4d27a15ff",
+      "year": null
+    },
+    {
+      "id": "seed-029",
+      "question": "质量属性场景由六个要素组成，其中\"超过1000个并发用户\"属于（  ）。",
+      "options": {
+        "A": "刺激源",
+        "B": "刺激",
+        "C": "环境",
+        "D": "响应度量"
+      },
+      "answer": "D",
+      "explanation": "正确答案：D。对应教材章节：8.1。",
+      "chapter": "8.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "8811facb2ddaba209a813cf25d9b0a95df117f9d71540c75e424834b9320aed8",
+      "year": null
+    },
+    {
+      "id": "seed-030",
+      "question": "ATAM评估方法中，权衡点是指（  ）。",
+      "options": {
+        "A": "对多个质量属性都有影响的决策参数",
+        "B": "被判定为风险的设计决策",
+        "C": "对单一质量属性特别敏感的某方面",
+        "D": "没有明显风险的设计"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：8.3。",
+      "chapter": "8.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "58bf75f61e82ff38806685d00d239a29118b34e1d8f4c4d9b9a505a1d0690207",
+      "year": null
+    },
+    {
+      "id": "seed-031",
+      "question": "系统发生故障后能够自动恢复到正常状态的能力属于（  ）。",
+      "options": {
+        "A": "可修改性",
+        "B": "可用性",
+        "C": "性能",
+        "D": "可测试性"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：8.1。",
+      "chapter": "8.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "d0ffeee2a17e3c4af0e0f340fd4e6717345bc83c5a835565941ec4f04d5d247b",
+      "year": null
+    },
+    {
+      "id": "seed-032",
+      "question": "SAAM评估方法的输入主要是（  ）。",
+      "options": {
+        "A": "质量属性效用树",
+        "B": "场景集合",
+        "C": "成本效益模型",
+        "D": "功能点分析"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：8.3。",
+      "chapter": "8.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "c338127d9d9c6ad2977b7f5f0eb6f4a324911e32af829a4ce2463a9ce5412381",
+      "year": null
+    },
+    {
+      "id": "seed-033",
+      "question": "效用树中，叶子节点代表（  ）。",
+      "options": {
+        "A": "质量属性",
+        "B": "属性分类",
+        "C": "具体场景",
+        "D": "架构决策"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：8.2。",
+      "chapter": "8.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "7961cc61e6c3c98815c63bf74cfdf32853e63fbaf26fd647898702406cf63897",
+      "year": null
+    },
+    {
+      "id": "seed-034",
+      "question": "一个系统由3个可靠性为0.9的模块串联组成，系统的整体可靠性为（  ）。",
+      "options": {
+        "A": "0.999",
+        "B": "0.990",
+        "C": "0.900",
+        "D": "0.729"
+      },
+      "answer": "D",
+      "explanation": "正确答案：D。对应教材章节：9.1。",
+      "chapter": "9.1",
+      "difficulty": "hard",
+      "source": "调研报告60题种子",
+      "hash": "35e785bb184be3643595e5ab16a469474a37393f9dc6f4ce4bb891a40f0ea3f6",
+      "year": null
+    },
+    {
+      "id": "seed-035",
+      "question": "MTBF为1000小时，MTTR为10小时，系统可用性为（  ）。",
+      "options": {
+        "A": "0.900",
+        "B": "0.990",
+        "C": "0.999",
+        "D": "0.950"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：9.1。",
+      "chapter": "9.1",
+      "difficulty": "hard",
+      "source": "调研报告60题种子",
+      "hash": "615ac65304d0865e34a222a4264da1bb43172a39bdd69de2b761dcbe0944d20b",
+      "year": null
+    },
+    {
+      "id": "seed-036",
+      "question": "下列选项中，属于架构重构中\"绞杀者模式\"特征的是（  ）。",
+      "options": {
+        "A": "一次性重写全部代码",
+        "B": "逐步用新组件替换旧组件，最终淘汰旧系统",
+        "C": "使用微核架构重新设计",
+        "D": "将单体架构直接拆分为微服务"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：10.2。",
+      "chapter": "10.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "d8cf1344f484d5c5cb26d3e63c3595e495d51ad29b09a7befacfd371e2d25956",
+      "year": null
+    },
+    {
+      "id": "seed-037",
+      "question": "Kubernetes中，负责管理一组Pod副本的对象是（  ）。",
+      "options": {
+        "A": "Service",
+        "B": "Deployment",
+        "C": "Ingress",
+        "D": "ConfigMap"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：11.1。",
+      "chapter": "11.1",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "06bd2e34804870a83b66b588ed9a00c00ed5090067e83c4f55aceeb6a4e25cfb",
+      "year": null
+    },
+    {
+      "id": "seed-038",
+      "question": "Istio中，数据平面通过（  ）实现流量的拦截和转发。",
+      "options": {
+        "A": "Envoy代理（Sidecar）",
+        "B": "API网关",
+        "C": "负载均衡器",
+        "D": "Nginx"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：11.1。",
+      "chapter": "11.1",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "7ec0b4de09d680421afddcb2477033ad628e77b528c77443e5c95391e6b30f5a",
+      "year": null
+    },
+    {
+      "id": "seed-039",
+      "question": "边缘计算的三层架构通常包括（  ）。",
+      "options": {
+        "A": "云层、边缘层、设备层",
+        "B": "表示层、业务层、数据层",
+        "C": "内核层、系统层、应用层",
+        "D": ""
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：11.2。",
+      "chapter": "11.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "6a297fb03a7d4f538b389d006241229492a81793c7a0f70c44f49e26fc054f4d",
+      "year": null
+    },
+    {
+      "id": "seed-040",
+      "question": "FaaS（函数即服务）的最大特点是（  ）。",
+      "options": {
+        "A": "函数必须运行在容器中",
+        "B": "按实际执行次数计费，无需预置资源",
+        "C": "仅支持Python语言",
+        "D": ""
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：11.1。",
+      "chapter": "11.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "f928bb2b628dc6801ec402f4f71928396f67ba8002622651445c5e3ff2a07b2c",
+      "year": null
+    },
+    {
+      "id": "seed-041",
+      "question": "ERP系统的核心模块不包括（  ）。",
+      "options": {
+        "A": "生产计划",
+        "B": "财务管理",
+        "C": "客户关系管理",
+        "D": "邮件系统"
+      },
+      "answer": "D",
+      "explanation": "正确答案：D。对应教材章节：3.2。",
+      "chapter": "3.2",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "7dcdb63962ac998ba1221eebe7ee19a58878bf7997bf2a8a429c86880019c6a7",
+      "year": null
+    },
+    {
+      "id": "seed-042",
+      "question": "敏捷开发中，Scrum框架的三个角色包括Scrum Master、Product Owner和（  ）。",
+      "options": {
+        "A": "项目经理",
+        "B": "开发团队",
+        "C": "架构师",
+        "D": "测试经理"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：5.1。",
+      "chapter": "5.1",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "d6c4da3651bf5a1088f95cf07c79052582bd608f90e7060e1cd1b2441d38943d",
+      "year": null
+    },
+    {
+      "id": "seed-043",
+      "question": "DevOps的核心实践是（  ）。",
+      "options": {
+        "A": "增量交付",
+        "B": "持续集成与持续交付（CI/CD）",
+        "C": "需求文档",
+        "D": "手工测试"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：5.1。",
+      "chapter": "5.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "991c159f3b54dbd7d82ef25e3897015d8cbea78f8811a9eff2eb4a5a13d1bf1b",
+      "year": null
+    },
+    {
+      "id": "seed-044",
+      "question": "某项目需在3个月内交付，需求不明确且频繁变更，最合适的生命周期模型是（  ）。",
+      "options": {
+        "A": "瀑布模型",
+        "B": "螺旋模型",
+        "C": "敏捷开发",
+        "D": "V模型"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：5.1。",
+      "chapter": "5.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "890779be18b6b3c16ac1d7d6e7cb8b5d5379fd204e540ea244617f2553b8ed42",
+      "year": null
+    },
+    {
+      "id": "seed-045",
+      "question": "类图中，表示\"整体-部分\"关系的且整体和部分具有相同生命周期的关系是（  ）。",
+      "options": {
+        "A": "关联",
+        "B": "聚合",
+        "C": "组合",
+        "D": "泛化"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：7.1。",
+      "chapter": "7.1",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "ef94f5da8a4c3106f3c5021ca7af2a4a64df67cbfe13c13898543926d86a9c06",
+      "year": null
+    },
+    {
+      "id": "seed-046",
+      "question": "SOLID原则中，\"对扩展开放，对修改关闭\"是指（  ）。",
+      "options": {
+        "A": "单一职责原则",
+        "B": "开闭原则",
+        "C": "里氏替换原则",
+        "D": "依赖倒置原则"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：5.3。",
+      "chapter": "5.3",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "3b4cac3951e26b4099d685d11771958e71b53bf83bc2ca7180e98edbe8ea1fb5",
+      "year": null
+    },
+    {
+      "id": "seed-047",
+      "question": "下列设计模式中，用于在不改变对象的情况下为其动态添加新功能的是（  ）。",
+      "options": {
+        "A": "桥接",
+        "B": "装饰",
+        "C": "适配器",
+        "D": "代理"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：5.3。",
+      "chapter": "5.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "bd06946ff4bc1e602c8da46e3f0fdfc07c02bcee020ff4c11555e66f04ef9f79",
+      "year": null
+    },
+    {
+      "id": "seed-048",
+      "question": "单例模式属于（  ）类型的设计模式。",
+      "options": {
+        "A": "创建型",
+        "B": "结构型",
+        "C": "行为型",
+        "D": "集成型"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：5.3。",
+      "chapter": "5.3",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "42d6d926773a64daf5a65c27e41693839bc5ff5527f233a53bf46cb2789350ba",
+      "year": null
+    },
+    {
+      "id": "seed-049",
+      "question": "观察者模式的别名是（  ）。",
+      "options": {
+        "A": "发布-订阅模式",
+        "B": "模板方法模式",
+        "C": "状态模式",
+        "D": "职责链模式"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：5.3。",
+      "chapter": "5.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "e1ed4634e9fcef10e2bf8499c9c9843ca84652cc714ed8bd7c802cc8ba414ceb",
+      "year": null
+    },
+    {
+      "id": "seed-050",
+      "question": "UML时序图中用于表示对象生命周期的形状是（  ）。",
+      "options": {
+        "A": "矩形",
+        "B": "虚线上的激活条",
+        "C": "椭圆",
+        "D": "菱形"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：5.3。",
+      "chapter": "5.3",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "1fb6cad3468f578674ec0f696146c546e13937196764e9b20b7ecba7d613d039",
+      "year": null
+    },
+    {
+      "id": "seed-051",
+      "question": "TOGAF架构开发方法（ADM）的\"H\"阶段是（  ）。",
+      "options": {
+        "A": "架构变更管理",
+        "B": "迁移规划",
+        "C": "机会及解决方案",
+        "D": "需求管理"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：12。",
+      "chapter": "12",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "a2641e208593cf737694b8e09799b1b00e3666a446d27c210b984da576935514",
+      "year": null
+    },
+    {
+      "id": "seed-052",
+      "question": "MVC架构中，负责接收用户输入并更新模型的是（  ）。",
+      "options": {
+        "A": "Model",
+        "B": "View",
+        "C": "Controller",
+        "D": "Router"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：13。",
+      "chapter": "13",
+      "difficulty": "easy",
+      "source": "调研报告60题种子",
+      "hash": "9afe720400546e4d85e80b015c24dea0b1da9608b4793bc6013f6d16765dbadf",
+      "year": null
+    },
+    {
+      "id": "seed-053",
+      "question": "SOA中，企业服务总线（ESB）承担的核心功能不包括（  ）。",
+      "options": {
+        "A": "消息路由",
+        "B": "协议转换",
+        "C": "函数计算",
+        "D": "服务编排"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：15。",
+      "chapter": "15",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "aab251dce0bf3c2fec2b3a023bf4047450decbdc5cc634ffc9a2918bd1f149fc",
+      "year": null
+    },
+    {
+      "id": "seed-054",
+      "question": "微服务架构中，服务间同步通信最常用的协议是（  ）。",
+      "options": {
+        "A": "HTTP/REST",
+        "B": "MQTT",
+        "C": "WebSocket",
+        "D": "gRPC"
+      },
+      "answer": "D",
+      "explanation": "正确答案：D。对应教材章节：15。",
+      "chapter": "15",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "0b10a148dc98fd144d3a5dcc3b9858301456e67098856491b684d4f5a67a35b9",
+      "year": null
+    },
+    {
+      "id": "seed-055",
+      "question": "分布式系统中常用的服务发现模式是（  ）。",
+      "options": {
+        "A": "客户端发现+注册中心",
+        "B": "代理模式",
+        "C": "工厂模式",
+        "D": "单例模式"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：15。",
+      "chapter": "15",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "ab18e162e5ff0886aca8751c429e251f5dd45376caf45d21e4599fbb1be1de11",
+      "year": null
+    },
+    {
+      "id": "seed-056",
+      "question": "嵌入式系统中，RTOS的主要特点是（  ）。",
+      "options": {
+        "A": "强制性任务调度和可预测响应时间",
+        "B": "支持多用户同时登录",
+        "C": "提供图形用户界面",
+        "D": "支持大容量外部存储"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：16。",
+      "chapter": "16",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "ff068a85e05124227b0d7098556c89f197051476f9815e0a4455bf68872258e3",
+      "year": null
+    },
+    {
+      "id": "seed-057",
+      "question": "零信任安全架构的核心原则是（  ）。",
+      "options": {
+        "A": "信任但验证",
+        "B": "默认信任内网用户",
+        "C": "永不信任，始终验证",
+        "D": "网络边界防护"
+      },
+      "answer": "C",
+      "explanation": "正确答案：C。对应教材章节：18。",
+      "chapter": "18",
+      "difficulty": "medium",
+      "source": "调研报告60题种子",
+      "hash": "4c808426f9be436721073c89b4367e4adfc36f68a49d5d6e0c58f76fe79082bd",
+      "year": null
+    },
+    {
+      "id": "seed-058",
+      "question": "Lambda架构的数据处理分为（  ）两条路径。",
+      "options": {
+        "A": "实时流与离线批",
+        "B": "消息队列与数据库",
+        "C": "事件驱动与轮询",
+        "D": "同步与异步"
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：19。",
+      "chapter": "19",
+      "difficulty": "hard",
+      "source": "调研报告60题种子",
+      "hash": "bbfae62ca307d3a3bf208707be3780f38c9a647f0d7595407df202d54497eecb",
+      "year": null
+    },
+    {
+      "id": "seed-059",
+      "question": "Kappa架构与Lambda的最大区别是（  ）。",
+      "options": {
+        "A": "Kappa只有实时处理一条路径",
+        "B": "Kappa使用SQL查询",
+        "C": "Kappa不支持流处理",
+        "D": ""
+      },
+      "answer": "A",
+      "explanation": "正确答案：A。对应教材章节：19。",
+      "chapter": "19",
+      "difficulty": "hard",
+      "source": "调研报告60题种子",
+      "hash": "d4a22392a89354152db5b14a7f96958000a97fe9b4b6d94a27c904a0f7c344f2",
+      "year": null
+    },
+    {
+      "id": "seed-060",
+      "question": "湖仓一体（Lakehouse）架构中，最核心的存储格式是（  ）。",
+      "options": {
+        "A": "CSV",
+        "B": "Parquet/ORC + 事务层",
+        "C": "JSON",
+        "D": "XML"
+      },
+      "answer": "B",
+      "explanation": "正确答案：B。对应教材章节：19。",
+      "chapter": "19",
+      "difficulty": "hard",
+      "source": "调研报告60题种子",
+      "hash": "8d85bb46cf1a1b3f07ff123e22f109eeae6b81e983073d2e64060bbac7520894",
+      "year": null
+    }
+  ]
+}

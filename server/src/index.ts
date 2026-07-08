@@ -9,7 +9,6 @@ import { sampleRoutes } from "./routes/samples";
 import { templateRoutes } from "./routes/templates";
 import { writingRoutes } from "./routes/writings";
 import { quizBankRoutes } from "./routes/quiz-bank";
-import { quizRoutes } from "./routes/quiz";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
