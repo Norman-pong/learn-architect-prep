@@ -14,8 +14,10 @@ import { reviewRoutes } from "./routes/review";
 import { statsRoutes } from "./routes/stats";
 import { dashboardRoutes } from "./routes/dashboard";
 import { examRoutes } from "./routes/exam";
-import { errorBookRoutes } from "./routes/error-book";
+import { comprehensiveExamRoutes } from "./routes/comprehensive-exam";
+import { aiScoringRoutes } from "./routes/ai-scoring";
 import { weaknessRoutes } from "./routes/weakness";
+import { errorBookRoutes } from "./routes/error-book";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
@@ -42,7 +44,9 @@ const app = new Elysia()
   .use(dashboardRoutes)
   .use(quizRoutes)
   .use(weaknessRoutes)
+  .use(aiScoringRoutes)
   .use(examRoutes)
+  .use(comprehensiveExamRoutes)
   .use(errorBookRoutes)
   .listen(PORT);
 

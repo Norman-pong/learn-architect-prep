@@ -91,7 +91,7 @@ async function drawQuestions(
 
   const shuffled = pool
     .map((q) => ({ q, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
+    .toSorted((a, b) => a.sort - b.sort)
     .map(({ q }) => q.id);
 
   const config = EXAM_CONFIGS[examType];
