@@ -4,30 +4,21 @@ import {
   Button,
   Card,
   Divider,
+  Input,
   List,
   Progress,
   Result,
   Space,
   Statistic,
+  Tabs,
   Tag,
   Typography,
   message,
   theme,
 } from "antd";
-import { FileTextOutlined } from "@ant-design/icons";
-import { apiRequest } from "../api/client";
-import {
-  THESIS_SECTIONS,
-  THESIS_SECTION_TARGETS,
-  THESIS_TOTAL_TARGET,
-  type ThesisSectionKey,
-  type ThesisSections,
-} from "@archprep/shared";
-import { countTotalWords, countWords } from "../lib/word-count";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
-import { Input } from "antd";
 
 interface EssayQuestion {
   id: string;
@@ -133,6 +124,8 @@ export default function EssayExamPage() {
   selectedQuestionIdRef.current = selectedQuestionId;
   const examIdRef = useRef(examId);
   examIdRef.current = examId;
+  const dirtyRef = useRef(dirty);
+  dirtyRef.current = dirty;
 
   const totalWords = useMemo(() => countTotalWords(sections), [sections]);
 
@@ -230,21 +223,30 @@ export default function EssayExamPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dirty, sections, selectedQuestionId, examId]);
 
-  const doSubmit = async (manual: boolean) => {
-    if (!examIdRef.current || !selectedQuestionIdRef.current) return;
-    if (!dirty && !manual) return;
+  const doSubmit = async (
+    manual: boolean,
+    sectionOverride?: ThesisSections,
+    questionOverride?: string,
+  ): Promise<void> => {
+    const targetExamId = examIdRef.current;
+    const targetQuestionId = questionOverride ?? selectedQuestionIdRef.current;
+    const targetSections = sectionOverride ?? sectionsRef.current;
+    if (!targetExamId || !targetQuestionId) return;
+    if (!dirtyRef.current && !manual) return;
     setSaving(true);
     try {
       await apiRequest("/api/exam/essay/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          examId: examIdRef.current,
-          selectedQuestionId: selectedQuestionIdRef.current,
-          sections: sectionsRef.current,
+          examId: targetExamId,
+          selectedQuestionId: targetQuestionId,
+          sections: targetSections,
         }),
       });
-      setDirty(false);
+      if (!questionOverride) {
+        setDirty(false);
+      }
       if (manual) {
         message.success("已保存");
       }
@@ -261,8 +263,8 @@ export default function EssayExamPage() {
     if (!examId || report) return;
     setLoading(true);
     try {
-      // Sync latest content
-      await doSubmit(false);
+      // Force sync latest content before finishing
+      await doSubmit(true, sectionsRef.current, selectedQuestionIdRef.current);
       const r = await apiRequest<ExamReport>("/api/exam/essay/finish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -281,10 +283,11 @@ export default function EssayExamPage() {
     }
   };
 
-  const handleSelectQuestion = (id: string) => {
+  const handleSelectQuestion = async (id: string) => {
     if (selectedQuestionId === id) return;
     if (selectedQuestionId && dirty) {
-      void doSubmit(false);
+      // Flush pending autosave with the *current* question before switching
+      await doSubmit(false, sectionsRef.current, selectedQuestionIdRef.current);
     }
     setSelectedQuestionId(id);
     setSections(EMPTY_SECTIONS);

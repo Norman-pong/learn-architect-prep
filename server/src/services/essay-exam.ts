@@ -1,5 +1,5 @@
 import { getDb } from "../db";
-import { startExam, getExamById, finishExam, pauseExam, type ExamRecord } from "./exam";
+import { startExam, getExamById, finishExam, type ExamRecord } from "./exam";
 import { scoreEssay } from "./ai-scoring";
 import { upsertWriting } from "./writings";
 import type { ThesisSections } from "@archprep/shared";
@@ -106,15 +106,7 @@ function normalizeEssay(raw: unknown): EssayQuestion | null {
 
   if (!id || !title) return null;
 
-  return {
-    id,
-    title,
-    requirements,
-    referenceOutline,
-    source,
-    year,
-    hash,
-  };
+  return { id, title, requirements, referenceOutline, source, year, hash };
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -139,10 +131,7 @@ export async function generateEssayExam(userId: string): Promise<ExamRecord> {
   const selected = shuffle(essays).slice(0, 4);
   const questionIds = selected.map((e) => e.id);
 
-  const snapshot = {
-    ...record.answersSnapshot,
-    questionIds,
-  };
+  const snapshot = { ...record.answersSnapshot, questionIds };
 
   const db = getDb();
   db.prepare("UPDATE exam_records SET answers_snapshot = ? WHERE id = ? AND user_id = ?;").run(
@@ -151,10 +140,7 @@ export async function generateEssayExam(userId: string): Promise<ExamRecord> {
     userId,
   );
 
-  return {
-    ...record,
-    answersSnapshot: snapshot,
-  };
+  return { ...record, answersSnapshot: snapshot };
 }
 
 /**
@@ -170,19 +156,12 @@ export async function generateExamPaper(
   const essays = await loadEssays();
   const essayMap = new Map(essays.map((e) => [e.id, e]));
 
-  const snapshot = exam.answersSnapshot as {
-    questionIds?: string[];
-  };
+  const snapshot = exam.answersSnapshot as { questionIds?: string[] };
   const questions = (snapshot.questionIds ?? [])
     .map((id) => essayMap.get(id))
     .filter((e): e is EssayQuestion => e !== undefined);
 
-  return {
-    examId,
-    questions,
-    duration: exam.duration,
-    remainingTime: exam.remainingTime,
-  };
+  return { examId, questions, duration: exam.duration, remainingTime: exam.remainingTime };
 }
 
 interface EssaySnapshot {
@@ -190,6 +169,16 @@ interface EssaySnapshot {
   selectedQuestionId?: string;
   sections?: ThesisSections;
   writingId?: string;
+}
+
+function normalizeSections(input: Record<string, string>): ThesisSections {
+  return {
+    summary: input.summary ?? "",
+    background: input.background ?? "",
+    solution: input.solution ?? "",
+    reflection: input.reflection ?? "",
+    conclusion: input.conclusion ?? "",
+  };
 }
 
 /**
@@ -217,23 +206,10 @@ export async function submitEssay(
     return { success: false };
   }
 
-  const writing = upsertWriting(userId, {
-    title: selectedEssay.title,
-    sections: {
-      summary: sections.summary ?? "",
-      background: sections.background ?? "",
-      solution: sections.solution ?? "",
-      reflection: sections.reflection ?? "",
-      conclusion: sections.conclusion ?? "",
-    },
-  });
+  const normalized = normalizeSections(sections);
+  const writing = upsertWriting(userId, { title: selectedEssay.title, sections: normalized });
 
-  const snapshot = {
-    ...exam.answersSnapshot,
-    selectedQuestionId,
-    sections,
-    writingId: writing.id,
-  };
+  const snapshot = { ...exam.answersSnapshot, selectedQuestionId, sections: normalized, writingId: writing.id };
 
   const db = getDb();
   db.prepare("UPDATE exam_records SET answers_snapshot = ? WHERE id = ? AND user_id = ?;").run(
@@ -274,20 +250,7 @@ export async function gradeEssayExam(
     return null;
   }
 
-  const normalizedSections: ThesisSections = {
-    summary: sections.summary ?? "",
-    background: sections.background ?? "",
-    solution: sections.solution ?? "",
-    reflection: sections.reflection ?? "",
-    conclusion: sections.conclusion ?? "",
-  };
-
-  // Ensure the latest content is saved to writings before grading
-  upsertWriting(userId, {
-    id: writingId,
-    title: selectedEssay.title,
-    sections: normalizedSections,
-  });
+  upsertWriting(userId, { id: writingId, title: selectedEssay.title, sections });
 
   let score: number | null = null;
   let dimensions: EssayExamReport["dimensions"] = [];
@@ -298,9 +261,8 @@ export async function gradeEssayExam(
 
   try {
     const { stream, resultPromise } = await scoreEssay(userId, writingId);
-    // Consume the stream to drive the scoring completion
     for await (const _ of stream) {
-      // no-op; we only need the final result
+      // consume stream to drive scoring
     }
     const result = await resultPromise;
     score = result.totalScore;
@@ -312,7 +274,6 @@ export async function gradeEssayExam(
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     if (message === "AI_CONFIG_MISSING" || message === "AI_KEY_MISSING") {
-      // No AI config: finish without score, writing is saved
       score = null;
     } else {
       throw err;
@@ -328,9 +289,7 @@ export async function gradeEssayExam(
   if (!finishedRecord) return null;
 
   const startedAt = new Date(exam.startedAt).getTime();
-  const finishedAt = finishedRecord.finishedAt
-    ? new Date(finishedRecord.finishedAt).getTime()
-    : Date.now();
+  const finishedAt = finishedRecord.finishedAt ? new Date(finishedRecord.finishedAt).getTime() : Date.now();
   const durationSec = Math.max(0, Math.floor((finishedAt - startedAt) / 1000));
 
   const detail = {
