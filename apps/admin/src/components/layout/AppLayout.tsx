@@ -3,7 +3,9 @@ import { Avatar, Button, Layout, Menu, Space, Typography } from "antd";
 import {
   BarChartOutlined,
   BookOutlined,
+  BulbOutlined,
   CloseCircleOutlined,
+  CloudUploadOutlined,
   DesktopOutlined,
   EditOutlined,
   FileTextOutlined,
@@ -45,8 +47,10 @@ const menuItems = [
     icon: <FileTextOutlined />,
     label: "论文",
     children: [
+      { key: "/writing", icon: <SnippetsOutlined />, label: "写作工作台" },
       { key: "/writing/templates", icon: <SnippetsOutlined />, label: "模板库" },
       { key: "/writing/samples", icon: <BookOutlined />, label: "范文库" },
+      { key: "/writing/tips", icon: <BulbOutlined />, label: "写作技巧" },
     ],
   },
   {
@@ -57,6 +61,11 @@ const menuItems = [
       { key: "/settings/ai", label: "AI 配置" },
       { key: "/settings/ai-cost", label: "AI 成本" },
     ],
+  },
+  {
+    key: "/data-transfer",
+    icon: <CloudUploadOutlined />,
+    label: "备份恢复",
   },
 ];
 

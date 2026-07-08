@@ -19,6 +19,8 @@ import ExamModePage from "./pages/ExamModePage";
 import EssayExamPage from "./pages/EssayExamPage";
 import SearchPage from "./pages/SearchPage";
 import { AICostPage } from "./pages/AICostPage";
+import { WritingTipsPage } from "./pages/WritingTipsPage";
+import DataTransferPage from "./pages/DataTransferPage";
 
 export default function App() {
   return (
@@ -30,6 +32,7 @@ export default function App() {
           <Route path="settings/ai" element={<AIConfigPage />} />
           <Route path="writing/templates" element={<TemplatesPage />} />
           <Route path="writing/samples" element={<SamplesPage />} />
+          <Route path="writing/tips" element={<WritingTipsPage />} />
           <Route path="writing" element={<WritingWorkbench />} />
           <Route path="learn" element={<KnowledgePage />} />
           <Route path="search" element={<SearchPage />} />
@@ -43,6 +46,7 @@ export default function App() {
           <Route path="exam/essay" element={<EssayExamPage />} />
           <Route path="weakness" element={<WeaknessPage />} />
           <Route path="settings/ai-cost" element={<AICostPage />} />
+          <Route path="data-transfer" element={<DataTransferPage />} />
         </Route>
       </Routes>
     </AppThemeProvider>
