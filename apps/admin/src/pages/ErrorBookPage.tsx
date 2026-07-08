@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Empty,
+  Flex,
   List,
   Radio,
   Result,
@@ -14,7 +15,7 @@ import {
   Typography,
 } from "antd";
 import { CheckCircleOutlined, RedoOutlined, BookOutlined } from "@ant-design/icons";
-import { apiRequest, fetchWithAuth } from "../api/client";
+import { apiRequest, fetchWithAuth, getAccessToken } from "../api/client";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -64,6 +65,7 @@ export default function ErrorBookPage() {
   const [chapters, setChapters] = useState<ChapterMeta[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [masteringId, setMasteringId] = useState<string | null>(null);
+  const [notLoggedIn, setNotLoggedIn] = useState(false);
 
   // Detail view state for re-practice
   const [detailItem, setDetailItem] = useState<ErrorBookItem | null>(null);
@@ -76,6 +78,11 @@ export default function ErrorBookPage() {
   } | null>(null);
 
   useEffect(() => {
+    if (!getAccessToken()) {
+      setNotLoggedIn(true);
+      return;
+    }
+    setNotLoggedIn(false);
     fetchWithAuth("/api/knowledge/chapters")
       .then(async (res) => {
         if (!res.ok) throw new Error("加载章节失败");
@@ -86,6 +93,12 @@ export default function ErrorBookPage() {
   }, []);
 
   const load = async () => {
+    if (!getAccessToken()) {
+      setNotLoggedIn(true);
+      setItems([]);
+      return;
+    }
+    setNotLoggedIn(false);
     setLoading(true);
     setError(null);
     try {
@@ -105,6 +118,18 @@ export default function ErrorBookPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapter]);
+
+  if (notLoggedIn) {
+    return (
+      <div style={{ maxWidth: 960, margin: "24px auto", padding: "0 16px" }}>
+        <Empty description="请先登录后查看错题本" image={Empty.PRESENTED_IMAGE_SIMPLE}>
+          <Button type="primary" onClick={() => navigate("/login")}>
+            去登录
+          </Button>
+        </Empty>
+      </div>
+    );
+  }
 
   const handleMaster = async (questionId: string) => {
     setMasteringId(questionId);
@@ -168,7 +193,7 @@ export default function ErrorBookPage() {
   if (detailItem) {
     return (
       <Card style={{ maxWidth: 720, margin: "24px auto" }}>
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Flex vertical gap="middle" style={{ width: "100%" }}>
           <Button onClick={() => setDetailItem(null)}>返回错题列表</Button>
           <Space wrap>
             <Tag color="blue">错题重练</Tag>
@@ -188,7 +213,7 @@ export default function ErrorBookPage() {
             disabled={!!result}
             style={{ width: "100%" }}
           >
-            <Space direction="vertical" style={{ width: "100%" }}>
+            <Flex vertical gap="small" style={{ width: "100%" }}>
               {OPTION_LABELS.map(
                 (key) =>
                   detailItem.options[key] && (
@@ -198,7 +223,7 @@ export default function ErrorBookPage() {
                     </Radio.Button>
                   ),
               )}
-            </Space>
+            </Flex>
           </Radio.Group>
 
           {!result && (
@@ -236,14 +261,14 @@ export default function ErrorBookPage() {
               <Button onClick={() => setDetailItem(null)}>返回错题列表</Button>
             </>
           )}
-        </Space>
+        </Flex>
       </Card>
     );
   }
 
   return (
     <div style={{ maxWidth: 960, margin: "24px auto", padding: "0 16px" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+      <Flex vertical gap="large" style={{ width: "100%" }}>
         <Space wrap style={{ width: "100%", justifyContent: "space-between" }}>
           <Title level={4} style={{ margin: 0 }}>
             <BookOutlined /> 错题本
@@ -266,7 +291,7 @@ export default function ErrorBookPage() {
         )}
 
         {loading ? (
-          <Spin tip="加载中…" style={{ display: "block", margin: "40px auto" }} />
+          <Spin content="加载中…" style={{ display: "block", margin: "40px auto" }} />
         ) : items.length === 0 ? (
           <Empty description="暂无错题，继续保持！" />
         ) : (
@@ -276,6 +301,7 @@ export default function ErrorBookPage() {
             renderItem={(item) => (
               <List.Item>
                 <Card
+                  size="small"
                   size="small"
                   title={
                     <Space wrap>
@@ -310,7 +336,7 @@ export default function ErrorBookPage() {
                   }
                 >
                   <Paragraph strong>{item.question}</Paragraph>
-                  <Space direction="vertical" style={{ width: "100%" }}>
+                  <Flex vertical gap="small" style={{ width: "100%" }}>
                     {OPTION_LABELS.map(
                       (key) =>
                         item.options[key] && (
@@ -339,7 +365,7 @@ export default function ErrorBookPage() {
                           </Text>
                         ),
                     )}
-                  </Space>
+                  </Flex>
                   <Paragraph type="secondary" style={{ marginTop: 12, fontSize: 13 }}>
                     {item.explanation}
                   </Paragraph>
@@ -348,7 +374,7 @@ export default function ErrorBookPage() {
             )}
           />
         )}
-      </Space>
+      </Flex>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import {
   Button,
   Card,
+  Flex,
   List,
   Pagination,
   Radio,
@@ -74,9 +75,7 @@ interface ActiveExam {
   startedAt: string;
 }
 
-const PASS_LINE = 45;
 const TOTAL_QUESTIONS = 75;
-const DURATION_MINUTES = 150;
 
 function formatSeconds(total: number): string {
   const h = Math.floor(total / 3600);
@@ -240,7 +239,7 @@ export default function CompExamPage() {
   if (report) {
     return (
       <Card style={{ maxWidth: 960, margin: "24px auto" }}>
-        <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <Flex vertical gap="large" style={{ width: "100%" }}>
           <Result
             status={report.passed ? "success" : "warning"}
             title={`综合知识模拟考成绩：${report.score} / ${report.total}`}
@@ -275,7 +274,7 @@ export default function CompExamPage() {
             renderItem={(wq) => (
               <List.Item>
                 <Card style={{ width: "100%" }}>
-                  <Space direction="vertical" style={{ width: "100%" }}>
+                  <Flex vertical gap="small" style={{ width: "100%" }}>
                     <Text strong>
                       {wq.question}
                       <Tag style={{ marginLeft: 8 }}>{wq.chapter}</Tag>
@@ -287,7 +286,7 @@ export default function CompExamPage() {
                       <Text strong>解析：</Text>
                       {wq.explanation}
                     </Paragraph>
-                  </Space>
+                  </Flex>
                 </Card>
               </List.Item>
             )}
@@ -295,7 +294,7 @@ export default function CompExamPage() {
           <Button type="primary" onClick={() => navigate("/exam")}>
             返回模拟考首页
           </Button>
-        </Space>
+        </Flex>
       </Card>
     );
   }
@@ -311,7 +310,7 @@ export default function CompExamPage() {
 
   return (
     <Card style={{ maxWidth: 1200, margin: "24px auto" }}>
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <Flex vertical gap="large" style={{ width: "100%" }}>
         <Space style={{ justifyContent: "space-between", width: "100%", flexWrap: "wrap" }}>
           <Title level={4} style={{ margin: 0 }}>
             综合知识模拟考
@@ -323,10 +322,12 @@ export default function CompExamPage() {
             <Statistic
               title="剩余时间"
               value={formatSeconds(remaining)}
-              valueStyle={{
-                color: remaining < 300 ? token.colorError : token.colorText,
-                fontFamily: "monospace",
-                fontSize: 24,
+              styles={{
+                content: {
+                  color: remaining < 300 ? token.colorError : token.colorText,
+                  fontFamily: "monospace",
+                  fontSize: 24,
+                },
               }}
             />
           </Space>
@@ -372,7 +373,7 @@ export default function CompExamPage() {
 
           {/* Question card */}
           <Card style={{ flex: 1, minWidth: 320 }}>
-            <Space direction="vertical" style={{ width: "100%" }}>
+            <Flex vertical gap="small" style={{ width: "100%" }}>
               <Text type="secondary">
                 第 {currentIndex + 1} 题 / 共 {TOTAL_QUESTIONS} 题
                 <Tag style={{ marginLeft: 8 }}>{currentQuestion.chapter}</Tag>
@@ -385,15 +386,15 @@ export default function CompExamPage() {
                 onChange={(e) => submitAnswer(currentQuestion.id, e.target.value)}
                 style={{ width: "100%" }}
               >
-                <Space direction="vertical" style={{ width: "100%" }}>
+                <Flex vertical gap="small" style={{ width: "100%" }}>
                   {Object.entries(currentQuestion.options).map(([key, value]) => (
                     <Radio key={key} value={key}>
                       {key}. {value}
                     </Radio>
                   ))}
-                </Space>
+                </Flex>
               </Radio.Group>
-            </Space>
+            </Flex>
           </Card>
         </Space>
 
@@ -412,7 +413,7 @@ export default function CompExamPage() {
         <Button type="primary" danger size="large" onClick={finishExam} loading={loading}>
           提交试卷
         </Button>
-      </Space>
+      </Flex>
     </Card>
   );
 }

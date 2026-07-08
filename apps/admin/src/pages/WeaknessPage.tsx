@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Card, List, Progress, Space, Tag, Typography, Empty, Button, Spin } from "antd";
+import { Card, List, Progress, Space, Tag, Typography, Empty, Button, Spin, Flex } from "antd";
 import { RobotOutlined } from "@ant-design/icons";
-import { apiRequest } from "../api/client";
+import { apiRequest, getAccessToken } from "../api/client";
 
 const { Title, Text } = Typography;
 
@@ -22,6 +22,11 @@ export default function WeaknessPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const token = getAccessToken();
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     apiRequest<WeakPoint[]>("/api/weakness")
       .then((data) => setPoints(data))
@@ -67,18 +72,18 @@ export default function WeaknessPage() {
                   </Button>
                 }
               >
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <Space style={{ justifyContent: "space-between", width: "100%" }}>
+                <Flex vertical style={{ width: "100%" }}>
+                  <Flex style={{ justifyContent: "space-between", width: "100%" }}>
                     <Text>正确率</Text>
                     <Text type="danger" strong>
                       {item.correctRate}%
                     </Text>
-                  </Space>
+                  </Flex>
                   <Progress percent={item.correctRate} status="exception" showInfo={false} />
                   <Text type="secondary">
                     共{item.totalQuestions}题，答对{item.correctCount}题
                   </Text>
-                </Space>
+                </Flex>
               </Card>
             </List.Item>
           )}

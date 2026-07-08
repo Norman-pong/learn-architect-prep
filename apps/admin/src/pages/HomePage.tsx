@@ -107,11 +107,11 @@ export function HomePage() {
 
       <Row gutter={[token.padding, token.padding]}>
         <Col xs={24} sm={12} lg={6}>
-          <Card loading={loading} bordered>
+          <Card loading={loading} variant="outlined">
             <Statistic
               title="今日复习"
               value={dashboard.todayReviewCount}
-              valueStyle={{ fontSize: token.fontSizeHeading2 }}
+              styles={{ content: { fontSize: token.fontSizeHeading2 } }}
             />
             <Button
               type="primary"
@@ -125,36 +125,38 @@ export function HomePage() {
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card loading={loading} bordered>
+          <Card loading={loading} variant="outlined">
             <Statistic
               title="连续学习天数"
               value={dashboard.streakDays}
               suffix="天"
-              valueStyle={{ fontSize: token.fontSizeHeading2 }}
+              styles={{ content: { fontSize: token.fontSizeHeading2 } }}
             />
           </Card>
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card loading={loading} bordered>
+          <Card loading={loading} variant="outlined">
             <Statistic
               title="薄弱点预警"
               value={dashboard.weakPointCount}
-              valueStyle={{
-                color: token.colorError,
-                fontSize: token.fontSizeHeading2,
+              styles={{
+                content: {
+                  color: token.colorError,
+                  fontSize: token.fontSizeHeading2,
+                },
               }}
             />
           </Card>
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card loading={loading} bordered>
+          <Card loading={loading} variant="outlined">
             <Statistic
               title="上次模考成绩"
               value={dashboard.lastMockScore ?? "--"}
               suffix={dashboard.lastMockScore != null ? "分" : ""}
-              valueStyle={{ fontSize: token.fontSizeHeading2 }}
+              styles={{ content: { fontSize: token.fontSizeHeading2 } }}
             />
           </Card>
         </Col>
@@ -162,13 +164,13 @@ export function HomePage() {
 
       <Row gutter={[token.padding, token.padding]} style={{ marginTop: token.marginLG }}>
         <Col xs={24} lg={12}>
-          <Card title="成绩趋势" bordered>
+          <Card title="成绩趋势" variant="outlined">
             <Text type="secondary">成绩趋势图占位区（待接入）</Text>
           </Card>
         </Col>
 
         <Col xs={24} lg={12}>
-          <Card title="复习推荐" bordered loading={recLoading}>
+          <Card title="复习推荐" variant="outlined" loading={recLoading}>
             {recommendations.length === 0 ? (
               <Text type="secondary">暂无薄弱知识点，继续保持！</Text>
             ) : (

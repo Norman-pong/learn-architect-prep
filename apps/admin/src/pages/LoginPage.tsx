@@ -10,7 +10,6 @@ const COUNTDOWN_SECONDS = 60;
 export function LoginPage() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [email, setEmail] = useState("");
   const [countdown, setCountdown] = useState(0);
   const [loadingSend, setLoadingSend] = useState(false);
   const [loadingLogin, setLoadingLogin] = useState(false);

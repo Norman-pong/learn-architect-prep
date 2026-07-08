@@ -131,7 +131,6 @@ const HEAT_LEVEL_BG_LIGHT = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e3
 // Dark mode palette (brighter, lower-eye-strain)
 const HEAT_LEVEL_BG_DARK = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"];
 
-
 function masteryColor(rate: number): "success" | "warning" | "error" | "default" {
   if (rate >= 75) return "success";
   if (rate >= 40) return "warning";
@@ -157,7 +156,9 @@ function examWeightColor(weight: number): "red" | "orange" | "gold" | "default" 
 function buildHeatmapGrid(days: HeatmapDay[], year: number): Array<HeatmapDay | null>[] {
   const firstDate = new Date(year, 0, 1);
   const startWeekday = firstDate.getDay(); // 0..6
-  const cells: Array<HeatmapDay | null> = new Array(startWeekday).fill(null);
+  const cells: Array<HeatmapDay | null> = Array.from({ length: startWeekday }).fill(
+    null,
+  ) as Array<HeatmapDay | null>;
 
   for (const d of days) cells.push(d);
 
@@ -351,7 +352,9 @@ function MonthlyCalendar({ data, selectedDate, onSelect }: MonthlyCalendarProps)
   }
   const firstDay = new Date(data.days[0].date + "T00:00:00");
   const firstWeekday = firstDay.getDay();
-  const cells: Array<CalendarDay | null> = new Array(firstWeekday).fill(null);
+  const cells: Array<CalendarDay | null> = Array.from({ length: firstWeekday }).fill(
+    null,
+  ) as Array<CalendarDay | null>;
   cells.push(...data.days);
 
   const palette = isDark ? HEAT_LEVEL_BG_DARK : HEAT_LEVEL_BG_LIGHT;
@@ -652,9 +655,7 @@ export default function ProgressPage() {
                 onSelect={(d) => setSelectedDate(d)}
               />
               <Space style={{ justifyContent: "flex-end", width: "100%" }}>
-                {legendItems(
-                  isDark ? HEAT_LEVEL_BG_DARK : HEAT_LEVEL_BG_LIGHT,
-                )}
+                {legendItems(isDark ? HEAT_LEVEL_BG_DARK : HEAT_LEVEL_BG_LIGHT)}
               </Space>
             </Space>
           ) : (

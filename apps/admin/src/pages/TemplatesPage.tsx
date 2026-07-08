@@ -91,7 +91,7 @@ export function TemplatesPage() {
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
         {templates.map((t) => (
           <Col xs={24} md={12} lg={8} key={t.id}>
-            <Card title={t.title} bordered>
+            <Card title={t.title} variant="outlined">
               <Paragraph>{t.description}</Paragraph>
               <Paragraph type="secondary">
                 {t.sections.length} 节 · 建议字数 {t.word_count.min}–{t.word_count.max} 字

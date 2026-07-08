@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Button, Card, message, Space, Typography, Upload, Alert, Spin } from "antd";
+import { Button, Card, message, Typography, Upload, Alert, Flex } from "antd";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 import { fetchWithAuth } from "../api/client";
 
@@ -16,6 +16,31 @@ interface ImportPreview {
   aiUsage: number;
 }
 
+async function handleExport() {
+  try {
+    const res = await fetchWithAuth("/api/data/export");
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({ message: "导出失败" }));
+      message.error(data.message || "导出失败");
+      return;
+    }
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const filename =
+      res.headers.get("content-disposition")?.match(/filename="(.+)"/)?.[1] ?? "backup.json";
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    message.success("导出成功");
+  } catch {
+    message.error("导出失败");
+  }
+}
+
 export default function DataTransferPage() {
   const [importing, setImporting] = useState(false);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
@@ -25,31 +50,6 @@ export default function DataTransferPage() {
   );
   const fileRef = useRef<File | null>(null);
 
-  const handleExport = async () => {
-    try {
-      const res = await fetchWithAuth("/api/data/export");
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ message: "导出失败" }));
-        message.error(data.message || "导出失败");
-        return;
-      }
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      const filename =
-        res.headers.get("content-disposition")?.match(/filename="(.+)"/)?.[1] ?? "backup.json";
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-      message.success("导出成功");
-    } catch {
-      message.error("导出失败");
-    }
-  };
-
   const handleFileChange = (file: File) => {
     fileRef.current = file;
     setPreviewError(null);
@@ -57,7 +57,7 @@ export default function DataTransferPage() {
     setImportResult(null);
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.addEventListener("load", (e) => {
       try {
         const data = JSON.parse(e.target?.result as string);
         if (!data || typeof data !== "object" || !data.userId) {
@@ -77,7 +77,7 @@ export default function DataTransferPage() {
       } catch {
         setPreviewError("无法解析 JSON 文件");
       }
-    };
+    });
     reader.readAsText(file);
     return false; // prevent default upload
   };
@@ -126,18 +126,18 @@ export default function DataTransferPage() {
       <Title level={3}>数据备份与恢复</Title>
 
       <Card title="导出备份" style={{ marginBottom: 24 }}>
-        <Space direction="vertical">
+        <Flex vertical gap="small">
           <Text>
             将您的学习数据导出为 JSON 文件，包含复习卡片、练习记录、模拟考记录、论文、笔记等。
           </Text>
           <Button type="primary" icon={<DownloadOutlined />} onClick={handleExport}>
             导出备份
           </Button>
-        </Space>
+        </Flex>
       </Card>
 
       <Card title="导入恢复" style={{ marginBottom: 24 }}>
-        <Space direction="vertical" style={{ width: "100%" }}>
+        <Flex vertical gap="small" style={{ width: "100%" }}>
           <Text>
             选择之前导出的 JSON 备份文件进行恢复。导入时会根据 ID 自动合并或更新现有数据。
           </Text>
@@ -204,7 +204,7 @@ export default function DataTransferPage() {
               />
             </div>
           )}
-        </Space>
+        </Flex>
       </Card>
     </div>
   );

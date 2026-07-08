@@ -4,11 +4,11 @@ import {
   Button,
   Card,
   Divider,
+  Flex,
   Input,
   List,
   Progress,
   Result,
-  Space,
   Statistic,
   Tabs,
   Tag,
@@ -315,7 +315,7 @@ export default function EssayExamPage() {
   if (report) {
     return (
       <Card style={{ maxWidth: 960, margin: "24px auto" }}>
-        <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <Flex vertical gap="large" style={{ width: "100%" }}>
           <Result
             status={report.passed ? "success" : "warning"}
             title={`论文模拟考成绩：${report.score} / ${report.total}`}
@@ -334,7 +334,7 @@ export default function EssayExamPage() {
             renderItem={(d) => (
               <List.Item>
                 <Card style={{ width: "100%" }} size="small">
-                  <Space direction="vertical" style={{ width: "100%" }}>
+                  <Flex vertical gap="small" style={{ width: "100%" }}>
                     <Space>
                       <Text strong>{d.name}</Text>
                       <Tag color={d.score >= d.maxScore * 0.6 ? "success" : "warning"}>
@@ -347,7 +347,7 @@ export default function EssayExamPage() {
                       size="small"
                     />
                     <Text type="secondary">{d.comment}</Text>
-                  </Space>
+                  </Flex>
                 </Card>
               </List.Item>
             )}
@@ -361,7 +361,7 @@ export default function EssayExamPage() {
                 renderItem={(d) => (
                   <List.Item>
                     <Card style={{ width: "100%" }} size="small">
-                      <Space direction="vertical">
+                      <Flex vertical gap="small">
                         <Space>
                           <Text strong>{d.reason}</Text>
                           <Tag
@@ -377,7 +377,7 @@ export default function EssayExamPage() {
                           </Tag>
                         </Space>
                         <Text type="secondary">{d.suggestion}</Text>
-                      </Space>
+                      </Flex>
                     </Card>
                   </List.Item>
                 )}
@@ -391,7 +391,7 @@ export default function EssayExamPage() {
             renderItem={(sf) => (
               <List.Item>
                 <Card style={{ width: "100%" }} size="small">
-                  <Space direction="vertical" style={{ width: "100%" }}>
+                  <Flex vertical gap="small" style={{ width: "100%" }}>
                     <Text strong>{sf.section}</Text>
                     <Text>{sf.comment}</Text>
                     {sf.suggestions.length > 0 && (
@@ -403,7 +403,7 @@ export default function EssayExamPage() {
                         ))}
                       </ul>
                     )}
-                  </Space>
+                  </Flex>
                 </Card>
               </List.Item>
             )}
@@ -427,7 +427,7 @@ export default function EssayExamPage() {
           <Button type="primary" onClick={() => navigate("/exam")}>
             返回模拟考首页
           </Button>
-        </Space>
+        </Flex>
       </Card>
     );
   }
@@ -436,7 +436,7 @@ export default function EssayExamPage() {
   if (!selectedQuestionId) {
     return (
       <Card style={{ maxWidth: 960, margin: "24px auto" }} loading={loading}>
-        <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <Flex vertical gap="large" style={{ width: "100%" }}>
           <Title level={4}>
             <FileTextOutlined /> 论文模拟考（4 选 1）
           </Title>
@@ -451,7 +451,7 @@ export default function EssayExamPage() {
                   onClick={() => handleSelectQuestion(q.id)}
                   style={{ width: "100%", cursor: "pointer" }}
                 >
-                  <Space direction="vertical" style={{ width: "100%" }}>
+                  <Flex vertical gap="small" style={{ width: "100%" }}>
                     <Text strong>{q.title}</Text>
                     {q.requirements.length > 0 && (
                       <ul>
@@ -466,12 +466,12 @@ export default function EssayExamPage() {
                       <Tag>{q.source}</Tag>
                       {q.year && <Tag>{q.year} 年</Tag>}
                     </Space>
-                  </Space>
+                  </Flex>
                 </Card>
               </List.Item>
             )}
           />
-        </Space>
+        </Flex>
       </Card>
     );
   }
@@ -529,9 +529,11 @@ export default function EssayExamPage() {
           <Statistic
             title="剩余时间"
             value={formatSeconds(remaining)}
-            valueStyle={{
-              color: remaining < 600 ? token.colorError : token.colorText,
-              fontFamily: "monospace",
+            styles={{
+              content: {
+                color: remaining < 600 ? token.colorError : token.colorText,
+                fontFamily: "monospace",
+              },
             }}
           />
           <Button onClick={() => doSubmit(true)} loading={saving}>

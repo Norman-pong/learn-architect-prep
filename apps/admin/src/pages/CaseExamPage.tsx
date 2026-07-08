@@ -5,6 +5,7 @@ import {
   Card,
   Checkbox,
   Collapse,
+  Flex,
   Input,
   List,
   Modal,
@@ -75,10 +76,7 @@ interface ActiveExam {
   startedAt: string;
 }
 
-const PASS_LINE = 45;
-const TOTAL_QUESTIONS = 5;
 const CHOOSE_COUNT = 4;
-const DURATION_MINUTES = 90;
 
 function formatSeconds(total: number): string {
   const h = Math.floor(total / 3600);
@@ -131,7 +129,7 @@ export default function CaseExamPage() {
           const { active: fresh } = await apiRequest<{ active: ActiveExam | null }>(
             "/api/exam/status",
           );
-          setRemaining(fresh?.remainingTime ?? DURATION_MINUTES * 60);
+          setRemaining(fresh?.remainingTime ?? 90 * 60);
           loadPaper(res.id);
         }
       } catch (err) {
@@ -304,7 +302,7 @@ export default function CaseExamPage() {
   if (report) {
     return (
       <Card style={{ maxWidth: 960, margin: "24px auto" }}>
-        <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <Flex vertical gap="large" style={{ width: "100%" }}>
           <Result
             status={report.passed ? "success" : "warning"}
             title={`案例分析模拟考成绩：${report.score} / ${report.maxTotalScore}`}
@@ -321,7 +319,7 @@ export default function CaseExamPage() {
             renderItem={(d) => (
               <List.Item>
                 <Card style={{ width: "100%" }}>
-                  <Space direction="vertical" style={{ width: "100%" }}>
+                  <Flex vertical gap="small" style={{ width: "100%" }}>
                     <Space>
                       <Text strong>{d.name}</Text>
                       <Tag color="blue">权重 {d.weight}%</Tag>
@@ -335,7 +333,7 @@ export default function CaseExamPage() {
                       status={d.score >= d.maxScore * 0.6 ? "success" : "exception"}
                     />
                     <Text>{d.comment}</Text>
-                  </Space>
+                  </Flex>
                 </Card>
               </List.Item>
             )}
@@ -362,7 +360,7 @@ export default function CaseExamPage() {
           <Button type="primary" onClick={() => navigate("/exam")}>
             返回模拟考首页
           </Button>
-        </Space>
+        </Flex>
       </Card>
     );
   }
@@ -370,17 +368,17 @@ export default function CaseExamPage() {
   if (!paper || !started) {
     return (
       <Card style={{ maxWidth: 720, margin: "24px auto" }}>
-        <Space direction="vertical" style={{ width: "100%" }} align="center">
+        <Flex vertical style={{ width: "100%" }} align="center" gap="small">
           <Title level={4}>案例分析模拟考</Title>
           <Text>正在加载试卷...</Text>
-        </Space>
+        </Flex>
       </Card>
     );
   }
 
   return (
     <Card style={{ maxWidth: 960, margin: "24px auto" }}>
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <Flex vertical gap="large" style={{ width: "100%" }}>
         <Space style={{ justifyContent: "space-between", width: "100%" }}>
           <Title level={4} style={{ margin: 0 }}>
             案例分析模拟考
@@ -390,7 +388,13 @@ export default function CaseExamPage() {
               <Statistic
                 value={formatSeconds(remaining)}
                 title="剩余时间"
-                valueStyle={{ fontSize: 16, fontWeight: 600, color: token.colorText }}
+                styles={{
+                  content: {
+                    fontSize: 16,
+                    fontWeight: 600,
+                    color: token.colorText,
+                  },
+                }}
                 formatter={() => formatSeconds(remaining)}
               />
             </Tag>
@@ -454,7 +458,7 @@ export default function CaseExamPage() {
                     </Space>
                   }
                 >
-                  <Space direction="vertical" style={{ width: "100%" }}>
+                  <Flex vertical gap="small" style={{ width: "100%" }}>
                     <Paragraph>{q.question}</Paragraph>
                     {isSelected && (
                       <>
@@ -487,7 +491,7 @@ export default function CaseExamPage() {
                         />
                       </>
                     )}
-                  </Space>
+                  </Flex>
                 </Card>
               </List.Item>
             );
@@ -505,7 +509,7 @@ export default function CaseExamPage() {
             提交
           </Button>
         </Space>
-      </Space>
+      </Flex>
     </Card>
   );
 }

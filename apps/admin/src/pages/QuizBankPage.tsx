@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { CloudDownloadOutlined } from "@ant-design/icons";
 
-import { fetchWithAuth, apiRequest } from "../../api/client";
+import { apiRequest } from "../../api/client";
 
 const { Option } = Select;
 
@@ -45,8 +45,6 @@ interface ImportResult {
   failed: number;
   errors?: { reason: string }[];
 }
-
-const fetchWithQuery = apiRequest;
 
 const DIFFICULTY_LABELS: Record<string, string> = {
   easy: "易",

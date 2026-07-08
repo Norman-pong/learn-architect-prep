@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Card, Select, Space, Spin, Table, Tag, Typography } from "antd";
-import { apiRequest } from "../api/client";
+import { Card, Flex, Select, Space, Spin, Table, Tag, Typography } from "antd";
+import { apiRequest, getAccessToken } from "../api/client";
 
 const { Title, Text } = Typography;
 
@@ -38,6 +38,12 @@ const DAYS_OPTIONS = [
   { label: "近 90 天", value: "90" },
 ];
 
+const accuracyColor = (accuracy: number) => {
+  if (accuracy >= 80) return "success";
+  if (accuracy >= 60) return "warning";
+  return "error";
+};
+
 export default function StatsPage() {
   const [days, setDays] = useState<string>("");
   const [chapterStats, setChapterStats] = useState<ChapterStats[] | null>(null);
@@ -49,8 +55,19 @@ export default function StatsPage() {
 
   const query = useMemo(() => (days ? `?days=${days}` : ""), [days]);
 
+  const isAuthenticated = Boolean(getAccessToken());
+
   useEffect(() => {
     let cancelled = false;
+
+    if (!isAuthenticated) {
+      setChapterStats([]);
+      setKnowledgePointStats([]);
+      setTrends([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     Promise.all([
       apiRequest<ChapterStats[]>(`/stats/chapter${query}`),
@@ -69,13 +86,7 @@ export default function StatsPage() {
     return () => {
       cancelled = true;
     };
-  }, [query, days]);
-
-  const accuracyColor = (accuracy: number) => {
-    if (accuracy >= 80) return "success";
-    if (accuracy >= 60) return "warning";
-    return "error";
-  };
+  }, [query, days, isAuthenticated]);
 
   const chapterColumns = [
     {
@@ -150,45 +161,51 @@ export default function StatsPage() {
   const latestTrend = trends && trends.length > 0 ? trends[trends.length - 1] : null;
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+    <Flex vertical gap="middle" style={{ width: "100%" }}>
       <Title level={4}>练习统计</Title>
       <Space>
         <Text>时间维度：</Text>
         <Select value={days} onChange={setDays} options={DAYS_OPTIONS} style={{ width: 120 }} />
       </Space>
-      <Spin spinning={loading}>
-        <Card title="趋势概览" size="small">
-          {latestTrend ? (
-            <Space>
-              <Text>
-                最近一日 {latestTrend.date}：{latestTrend.total} 题，正确率{" "}
-                {latestTrend.accuracy.toFixed(1)}%
-              </Text>
-              {latestTrend.total === 0 && <Tag color="default">暂无数据</Tag>}
-            </Space>
-          ) : (
-            <Text type="secondary">暂无趋势数据</Text>
-          )}
+      {!isAuthenticated ? (
+        <Card>
+          <Text type="secondary">请先登录后查看练习统计。</Text>
         </Card>
-        <Card title="章节正确率" size="small" style={{ marginTop: 16 }}>
-          <Table
-            rowKey="chapterId"
-            dataSource={chapterStats ?? []}
-            columns={chapterColumns}
-            pagination={{ pageSize: 10 }}
-            size="small"
-          />
-        </Card>
-        <Card title="知识点薄弱度" size="small" style={{ marginTop: 16 }}>
-          <Table
-            rowKey="knowledgePointId"
-            dataSource={knowledgePointStats ?? []}
-            columns={knowledgePointColumns}
-            pagination={{ pageSize: 10 }}
-            size="small"
-          />
-        </Card>
-      </Spin>
-    </Space>
+      ) : (
+        <Spin spinning={loading}>
+          <Card title="趋势概览" size="small">
+            {latestTrend ? (
+              <Space>
+                <Text>
+                  最近一日 {latestTrend.date}：{latestTrend.total} 题，正确率{" "}
+                  {latestTrend.accuracy.toFixed(1)}%
+                </Text>
+                {latestTrend.total === 0 && <Tag color="default">暂无数据</Tag>}
+              </Space>
+            ) : (
+              <Text type="secondary">暂无趋势数据</Text>
+            )}
+          </Card>
+          <Card title="章节正确率" size="small" style={{ marginTop: 16 }}>
+            <Table
+              rowKey="chapterId"
+              dataSource={chapterStats ?? []}
+              columns={chapterColumns}
+              pagination={{ pageSize: 10 }}
+              size="small"
+            />
+          </Card>
+          <Card title="知识点薄弱度" size="small" style={{ marginTop: 16 }}>
+            <Table
+              rowKey="knowledgePointId"
+              dataSource={knowledgePointStats ?? []}
+              columns={knowledgePointColumns}
+              pagination={{ pageSize: 10 }}
+              size="small"
+            />
+          </Card>
+        </Spin>
+      )}
+    </Flex>
   );
 }

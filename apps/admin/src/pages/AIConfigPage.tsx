@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Form, Input, message, Select, Space, Spin } from "antd";
+import { Button, Card, Form, Input, message, Select, Space } from "antd";
 import type { Provider } from "@archprep/shared";
 
 const { Option } = Select;

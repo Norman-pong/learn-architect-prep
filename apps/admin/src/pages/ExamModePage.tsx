@@ -5,6 +5,7 @@ import {
   Card,
   Descriptions,
   Form,
+  Flex,
   Radio,
   Space,
   Statistic,
@@ -279,7 +280,7 @@ export default function ExamModePage() {
     const typeLabel = EXAM_TYPE_LABEL[exam.examType];
     return (
       <Card style={{ maxWidth: 960, margin: "24px auto" }}>
-        <Space direction="vertical" style={{ width: "100%" }} size="large">
+        <Flex vertical style={{ width: "100%" }} gap="large">
           <Space style={{ justifyContent: "space-between", width: "100%" }}>
             <Title level={4} style={{ margin: 0 }}>
               {typeLabel}模拟考
@@ -287,10 +288,12 @@ export default function ExamModePage() {
             <Statistic
               title="剩余时间"
               value={formatSeconds(remaining)}
-              valueStyle={{
-                color: remaining < 300 ? token.colorError : token.colorText,
-                fontFamily: "monospace",
-                fontSize: 24,
+              styles={{
+                content: {
+                  color: remaining < 300 ? token.colorError : token.colorText,
+                  fontFamily: "monospace",
+                  fontSize: 24,
+                },
               }}
             />
           </Space>
@@ -321,7 +324,7 @@ export default function ExamModePage() {
               答题界面将在后续迭代中实现。当前页面展示模式选择、计时与暂停/继续功能。
             </Text>
           </Paragraph>
-        </Space>
+        </Flex>
       </Card>
     );
   };
