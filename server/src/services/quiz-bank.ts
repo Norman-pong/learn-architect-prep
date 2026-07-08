@@ -22,12 +22,19 @@ export interface QuestionsFile {
   questions: ChoiceQuestion[];
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isDifficulty(value: unknown): value is "easy" | "medium" | "hard" {
+  return value === "easy" || value === "medium" || value === "hard";
+}
+
 export function assertQuestionsFile(value: unknown): asserts value is QuestionsFile {
-  if (typeof value !== "object" || value === null) {
+  if (!isRecord(value)) {
     throw new Error("题库文件不是合法的 JSON 对象");
   }
-  const obj = value as Record<string, unknown>;
-  if (!Array.isArray(obj.questions)) {
+  if (!Array.isArray(value.questions)) {
     throw new Error("题库文件缺少 questions 数组");
   }
 }
@@ -48,9 +55,9 @@ export async function readQuestionBank(): Promise<QuestionsFile> {
     return { version: 1, updatedAt: new Date().toISOString(), questions: [] };
   }
   try {
-    const data = JSON.parse(await file.text()) as unknown;
+    const data: unknown = JSON.parse(await file.text());
     assertQuestionsFile(data);
-    return data as QuestionsFile;
+    return data;
   } catch (err) {
     throw new Error(
       `读取 questions.json 失败: ${err instanceof Error ? err.message : String(err)}`,
@@ -63,10 +70,10 @@ export async function readQuestionBank(): Promise<QuestionsFile> {
  * 校验单道选择题是否符合 PRD §6.3 Schema。
  */
 export function validateChoiceQuestion(item: unknown): ChoiceQuestion {
-  if (typeof item !== "object" || item === null) {
+  if (!isRecord(item)) {
     throw new Error("题目不是对象");
   }
-  const q = item as Record<string, unknown>;
+  const q = item;
 
   if (typeof q.question !== "string" || q.question.trim().length === 0) {
     throw new Error("缺少题目题干 question");
@@ -90,7 +97,7 @@ export function validateChoiceQuestion(item: unknown): ChoiceQuestion {
     question: q.question.trim(),
     options: optionKeys.reduce(
       (acc, key) => {
-        acc[key] = String(options[key]).trim();
+        acc[key] = (options[key] as string).trim();
         return acc;
       },
       {} as Record<string, string>,
@@ -106,9 +113,7 @@ export function validateChoiceQuestion(item: unknown): ChoiceQuestion {
 }
 
 function normalizeDifficulty(value: unknown): "easy" | "medium" | "hard" {
-  if (typeof value === "string" && ["easy", "medium", "hard"].includes(value)) {
-    return value as "easy" | "medium" | "hard";
-  }
+  if (isDifficulty(value)) return value;
   return "medium";
 }
 
@@ -204,16 +209,12 @@ export async function fetchRemoteQuiz(url: string): Promise<ImportResult> {
   if (!res.ok) {
     throw new Error(`拉取 ${url} 失败: HTTP ${res.status}`);
   }
-  const data = (await res.json()) as unknown;
+  const raw: unknown = await res.json();
   let items: unknown[] = [];
-  if (Array.isArray(data)) {
-    items = data;
-  } else if (
-    typeof data === "object" &&
-    data !== null &&
-    Array.isArray((data as Record<string, unknown>).questions)
-  ) {
-    items = (data as Record<string, unknown>).questions as unknown[];
+  if (Array.isArray(raw)) {
+    items = raw;
+  } else if (isRecord(raw) && Array.isArray(raw.questions)) {
+    items = raw.questions;
   } else {
     throw new Error("远程题库格式不正确：顶层必须是数组或 { questions: [] }");
   }
@@ -249,7 +250,7 @@ if (import.meta.main) {
       if (!(await file.exists())) {
         throw new Error(`文件不存在: ${target}`);
       }
-      const items = JSON.parse(await file.text()) as unknown;
+      const items: unknown = JSON.parse(await file.text());
       if (!Array.isArray(items)) {
         throw new Error("导入文件顶层必须是题目数组");
       }

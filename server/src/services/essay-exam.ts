@@ -60,6 +60,88 @@ interface EssayDataFile {
 const PASS_LINE = 45;
 const TOTAL_SCORE = 75;
 
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(isString);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isEssayDataFile(value: unknown): value is EssayDataFile {
+  return (
+    isRecord(value) &&
+    typeof value.version === "number" &&
+    typeof value.updatedAt === "string" &&
+    Array.isArray(value.essays)
+  );
+}
+
+function isEssaySnapshot(value: unknown): value is EssaySnapshot {
+  return isRecord(value);
+}
+
+function isEssayDimension(
+  value: unknown,
+): value is EssayExamReport["dimensions"][number] {
+  return (
+    isRecord(value) &&
+    typeof value.name === "string" &&
+    typeof value.weight === "number" &&
+    typeof value.score === "number" &&
+    typeof value.maxScore === "number" &&
+    typeof value.comment === "string"
+  );
+}
+
+function isEssaySectionFeedback(
+  value: unknown,
+): value is EssayExamReport["sectionFeedbacks"][number] {
+  return (
+    isRecord(value) &&
+    typeof value.section === "string" &&
+    typeof value.comment === "string" &&
+    isStringArray(value.suggestions)
+  );
+}
+
+function isEssayDeduction(
+  value: unknown,
+): value is EssayExamReport["deductions"][number] {
+  return (
+    isRecord(value) &&
+    typeof value.reason === "string" &&
+    typeof value.suggestion === "string" &&
+    (value.severity === "minor" || value.severity === "major" || value.severity === "critical")
+  );
+}
+
+function isEssayExamReport(value: unknown): value is EssayExamReport {
+  return (
+    isRecord(value) &&
+    typeof value.examId === "string" &&
+    typeof value.score === "number" &&
+    typeof value.total === "number" &&
+    typeof value.passLine === "number" &&
+    typeof value.passed === "boolean" &&
+    typeof value.duration === "number" &&
+    typeof value.writingId === "string" &&
+    typeof value.selectedQuestionId === "string" &&
+    Array.isArray(value.dimensions) &&
+    value.dimensions.every(isEssayDimension) &&
+    Array.isArray(value.sectionFeedbacks) &&
+    value.sectionFeedbacks.every(isEssaySectionFeedback) &&
+    Array.isArray(value.deductions) &&
+    value.deductions.every(isEssayDeduction) &&
+    typeof value.overallComment === "string" &&
+    isStringArray(value.improvementSuggestions)
+  );
+}
+
 let cachedEssays: EssayQuestion[] | null = null;
 let cacheTime = 0;
 const CACHE_TTL_MS = 5_000;
@@ -79,8 +161,8 @@ async function loadEssays(): Promise<EssayQuestion[]> {
   }
 
   try {
-    const raw = (await file.json()) as EssayDataFile;
-    if (Array.isArray(raw?.essays)) {
+    const raw: unknown = await file.json();
+    if (isEssayDataFile(raw)) {
       cachedEssays = raw.essays.map(normalizeEssay).filter((e): e is EssayQuestion => e !== null);
     } else {
       cachedEssays = [];
@@ -94,15 +176,16 @@ async function loadEssays(): Promise<EssayQuestion[]> {
 }
 
 function normalizeEssay(raw: unknown): EssayQuestion | null {
-  if (!raw || typeof raw !== "object") return null;
-  const item = raw as Record<string, unknown>;
-  const id = String(item.id ?? "");
-  const title = String(item.title ?? "");
-  const requirements = Array.isArray(item.requirements) ? item.requirements.map(String) : [];
-  const referenceOutline = item.referenceOutline ? String(item.referenceOutline) : undefined;
-  const source = String(item.source ?? "");
-  const year = Number(item.year ?? 0) || null;
-  const hash = String(item.hash ?? "");
+  if (!isRecord(raw)) return null;
+  const id = typeof raw.id === "string" ? raw.id : "";
+  const title = typeof raw.title === "string" ? raw.title : "";
+  const requirements = Array.isArray(raw.requirements)
+    ? raw.requirements.map((r) => (typeof r === "string" ? r : ""))
+    : [];
+  const referenceOutline = typeof raw.referenceOutline === "string" ? raw.referenceOutline : undefined;
+  const source = typeof raw.source === "string" ? raw.source : "";
+  const year = Number(raw.year ?? 0) || null;
+  const hash = typeof raw.hash === "string" ? raw.hash : "";
 
   if (!id || !title) return null;
 
@@ -156,8 +239,10 @@ export async function generateExamPaper(
   const essays = await loadEssays();
   const essayMap = new Map(essays.map((e) => [e.id, e]));
 
-  const snapshot = exam.answersSnapshot as { questionIds?: string[] };
-  const questions = (snapshot.questionIds ?? [])
+  const questionIds = isStringArray(exam.answersSnapshot.questionIds)
+    ? exam.answersSnapshot.questionIds
+    : [];
+  const questions = questionIds
     .map((id) => essayMap.get(id))
     .filter((e): e is EssayQuestion => e !== undefined);
 
@@ -166,9 +251,9 @@ export async function generateExamPaper(
 
 interface EssaySnapshot {
   questionIds?: string[];
-  selectedQuestionId?: string;
-  sections?: ThesisSections;
-  writingId?: string;
+  selectedQuestionId: string;
+  sections: Record<string, string>;
+  writingId: string;
 }
 
 function normalizeSections(input: Record<string, string>): ThesisSections {
@@ -196,7 +281,9 @@ export async function submitEssay(
   }
 
   const essays = await loadEssays();
-  const questionIds = (exam.answersSnapshot as EssaySnapshot).questionIds ?? [];
+  const questionIds = isStringArray(exam.answersSnapshot.questionIds)
+    ? exam.answersSnapshot.questionIds
+    : [];
   if (!questionIds.includes(selectedQuestionId)) {
     return { success: false };
   }
@@ -209,7 +296,12 @@ export async function submitEssay(
   const normalized = normalizeSections(sections);
   const writing = upsertWriting(userId, { title: selectedEssay.title, sections: normalized });
 
-  const snapshot = { ...exam.answersSnapshot, selectedQuestionId, sections: normalized, writingId: writing.id };
+  const snapshot = {
+    ...exam.answersSnapshot,
+    selectedQuestionId,
+    sections: normalized,
+    writingId: writing.id,
+  };
 
   const db = getDb();
   db.prepare("UPDATE exam_records SET answers_snapshot = ? WHERE id = ? AND user_id = ?;").run(
@@ -235,7 +327,10 @@ export async function gradeEssayExam(
     return null;
   }
 
-  const snapshot = exam.answersSnapshot as EssaySnapshot;
+  const snapshot = isEssaySnapshot(exam.answersSnapshot) ? exam.answersSnapshot : null;
+  if (!snapshot) {
+    return null;
+  }
   const selectedQuestionId = snapshot.selectedQuestionId;
   const sections = snapshot.sections;
   const writingId = snapshot.writingId;
@@ -244,13 +339,18 @@ export async function gradeEssayExam(
     return null;
   }
 
+  const typedSections = sections as Record<string, string>;
   const essays = await loadEssays();
   const selectedEssay = essays.find((e) => e.id === selectedQuestionId);
   if (!selectedEssay) {
     return null;
   }
 
-  upsertWriting(userId, { id: writingId, title: selectedEssay.title, sections });
+  upsertWriting(userId, {
+    id: writingId,
+    title: selectedEssay.title,
+    sections: typedSections as ThesisSections,
+  });
 
   let score: number | null = null;
   let dimensions: EssayExamReport["dimensions"] = [];
@@ -283,13 +383,15 @@ export async function gradeEssayExam(
   const finishedRecord = await finishExam(
     userId,
     examId,
-    snapshot as Record<string, unknown>,
+    { ...snapshot },
     score ?? undefined,
   );
   if (!finishedRecord) return null;
 
   const startedAt = new Date(exam.startedAt).getTime();
-  const finishedAt = finishedRecord.finishedAt ? new Date(finishedRecord.finishedAt).getTime() : Date.now();
+  const finishedAt = finishedRecord.finishedAt
+    ? new Date(finishedRecord.finishedAt).getTime()
+    : Date.now();
   const durationSec = Math.max(0, Math.floor((finishedAt - startedAt) / 1000));
 
   const detail = {
@@ -338,7 +440,7 @@ export async function getExamReport(
   const exam = await getExamById(userId, examId);
   if (!exam || exam.examType !== "essay") return null;
 
-  const detail = exam.detailJson as EssayExamReport | null;
+  const detail = exam.detailJson && isEssayExamReport(exam.detailJson) ? exam.detailJson : null;
   if (!detail) return null;
 
   return detail;
