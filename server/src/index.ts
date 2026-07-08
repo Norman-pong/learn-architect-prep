@@ -4,6 +4,7 @@ import { getDb } from "./db";
 import { healthRoutes } from "./routes/health";
 import { authRoutes } from "./routes/auth";
 import { aiConfigRoutes } from "./routes/ai-config";
+import { sampleRoutes } from "./routes/samples";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
@@ -20,6 +21,7 @@ const app = new Elysia()
   .use(healthRoutes)
   .use(authRoutes)
   .use(aiConfigRoutes)
+  .use(sampleRoutes)
   .listen(PORT);
 
 console.log(`🦊 Server running at ${app.server?.hostname}:${app.server?.port}`);

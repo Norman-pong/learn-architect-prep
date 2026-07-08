@@ -1,0 +1,102 @@
+[
+  {
+    "id": "microservices",
+    "title": "论微服务架构在企业数字化转型中的应用",
+    "topic": "微服务架构",
+    "difficulty": "4",
+    "word_count": 2704,
+    "year": "2023",
+    "tags": ["DDD", "K8s", "服务治理", "DevOps"],
+    "file": "microservices.md"
+  },
+  {
+    "id": "architecture-evaluation",
+    "title": "论架构评估方法在大型系统选型中的应用",
+    "topic": "架构评估方法",
+    "difficulty": "4",
+    "word_count": 2590,
+    "year": "2022",
+    "tags": ["ATAM", "SAAM", "CBAM", "质量属性"],
+    "file": "architecture-evaluation.md"
+  },
+  {
+    "id": "reliability-design",
+    "title": "论系统可靠性设计在互联网医疗平台中的应用",
+    "topic": "系统可靠性设计",
+    "difficulty": "5",
+    "word_count": 2585,
+    "year": "2021",
+    "tags": ["高可用", "双活", "容错", "RTO/RPO"],
+    "file": "reliability-design.md"
+  },
+  {
+    "id": "distributed-systems",
+    "title": "论分布式系统设计在电商大促场景中的应用",
+    "topic": "分布式系统设计",
+    "difficulty": "5",
+    "word_count": 2343,
+    "year": "2020",
+    "tags": ["分库分表", "TCC", "缓存", "削峰"],
+    "file": "distributed-systems.md"
+  },
+  {
+    "id": "security-architecture",
+    "title": "论信息安全架构在金融开放平台中的应用",
+    "topic": "信息安全架构",
+    "difficulty": "4",
+    "word_count": 2264,
+    "year": "2019",
+    "tags": ["零信任", "OAuth 2.0", "国密", "等保"],
+    "file": "security-architecture.md"
+  },
+  {
+    "id": "cloud-native",
+    "title": "论云原生架构在SaaS企业服务平台中的应用",
+    "topic": "云原生架构",
+    "difficulty": "4",
+    "word_count": 2554,
+    "year": "2023",
+    "tags": ["Kubernetes", "Istio", "GitOps", "可观测性"],
+    "file": "cloud-native.md"
+  },
+  {
+    "id": "big-data",
+    "title": "论大数据架构在智慧城市建设中的应用",
+    "topic": "大数据架构",
+    "difficulty": "5",
+    "word_count": 2455,
+    "year": "2020",
+    "tags": ["Lambda", "Kappa", "数据湖", "实时计算"],
+    "file": "big-data.md"
+  },
+  {
+    "id": "architecture-style",
+    "title": "论架构风格选型在政务办公系统中的应用",
+    "topic": "架构风格选型",
+    "difficulty": "3",
+    "word_count": 2217,
+    "year": "2018",
+    "tags": ["混合架构", "事件驱动", "SOA", "分层"],
+    "file": "architecture-style.md"
+  },
+  {
+    "id": "enterprise-integration",
+    "title": "论企业集成架构在制造业数字化转型中的应用",
+    "topic": "企业集成架构",
+    "difficulty": "4",
+    "word_count": 2242,
+    "year": "2017",
+    "tags": ["ESB", "iPaaS", "API网关", "MDM"],
+    "file": "enterprise-integration.md"
+  },
+  {
+    "id": "design-patterns",
+    "title": "论设计模式应用在高并发电商系统重构中的应用",
+    "topic": "设计模式应用",
+    "difficulty": "3",
+    "word_count": 2287,
+    "year": "2018",
+    "tags": ["策略模式", "工厂方法", "观察者", "责任链"],
+    "file": "design-patterns.md"
+  }
+]

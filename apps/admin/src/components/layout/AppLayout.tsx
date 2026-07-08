@@ -1,6 +1,19 @@
 import { useLocation, useNavigate, Outlet } from "react-router";
 import { Avatar, Button, Layout, Menu, Space, Typography } from "antd";
-import { LogoutOutlined } from "@ant-design/icons";
+import {
+  BookOutlined,
+  DesktopOutlined,
+  EditOutlined,
+  FileTextOutlined,
+  HomeOutlined,
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  MoonOutlined,
+  SettingOutlined,
+  SnippetsOutlined,
+  SunOutlined,
+} from "@ant-design/icons";
 import { useState } from "react";
 
 import { clearTokens } from "../../api/client";
@@ -14,7 +27,15 @@ const menuItems = [
   { key: "/", icon: <HomeOutlined />, label: "首页" },
   { key: "/learn", icon: <BookOutlined />, label: "学习" },
   { key: "/quiz", icon: <EditOutlined />, label: "习题" },
-  { key: "/writing", icon: <FileTextOutlined />, label: "论文" },
+  {
+    key: "/writing",
+    icon: <FileTextOutlined />,
+    label: "论文",
+    children: [
+      { key: "/writing/templates", icon: <SnippetsOutlined />, label: "模板库" },
+      { key: "/writing/samples", icon: <BookOutlined />, label: "范文库" },
+    ],
+  },
   {
     key: "/settings",
     icon: <SettingOutlined />,

@@ -4,7 +4,9 @@ import { AppLayout } from "./components/layout/AppLayout";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { AIConfigPage } from "./pages/AIConfigPage";
-
+import { TemplatesPage } from "./pages/TemplatesPage";
+import { SamplesPage } from "./pages/SamplesPage";
+import { WritingWorkbench } from "./pages/WritingWorkbench";
 export default function App() {
   return (
     <AppThemeProvider>
@@ -13,6 +15,9 @@ export default function App() {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
           <Route path="settings/ai" element={<AIConfigPage />} />
+          <Route path="writing/templates" element={<TemplatesPage />} />
+          <Route path="writing/samples" element={<SamplesPage />} />
+          <Route path="writing" element={<WritingWorkbench />} />
         </Route>
       </Routes>
     </AppThemeProvider>
