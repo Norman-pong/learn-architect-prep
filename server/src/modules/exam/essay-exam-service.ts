@@ -339,7 +339,7 @@ export async function gradeEssayExam(
     return null;
   }
 
-  const typedSections = sections as Record<string, string>;
+  const typedSections = sections;
   const essays = await loadEssays();
   const selectedEssay = essays.find((e) => e.id === selectedQuestionId);
   if (!selectedEssay) {
@@ -349,6 +349,7 @@ export async function gradeEssayExam(
   upsertWriting(userId, {
     id: writingId,
     title: selectedEssay.title,
+    // eslint-disable-next-line typescript/no-unsafe-type-assertion
     sections: typedSections as ThesisSections,
   });
 

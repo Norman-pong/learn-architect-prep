@@ -3,8 +3,8 @@ import {
   fetchRemoteQuiz,
   readQuestionBank,
   type ChoiceQuestion,
-} from "../services/quiz-bank";
-import { getUserIdFromToken } from "../services/auth";
+} from "./quiz-bank-service";
+import { getUserIdFromToken } from "../auth/auth-service";
 
 const QuestionSchema = t.Object({
   id: t.Optional(t.String()),

@@ -1,5 +1,5 @@
 import path from "node:path";
-import { getDb } from "../db";
+import { getDb } from "../../db";
 
 const KNOWLEDGE_DIR = path.resolve(import.meta.dir, "../../../data/knowledge");
 

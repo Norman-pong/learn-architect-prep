@@ -1,11 +1,11 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
+import { getUserIdFromToken } from "../auth/auth-service";
 import {
   getQuestions,
   recordAnswer,
   getUserErrorQuestions,
   getQuestionById,
-} from "../services/quiz";
+} from "./quiz-service";
 
 const QuestionsQuery = t.Object({
   mode: t.Union([t.Literal("chapter"), t.Literal("random"), t.Literal("error")]),

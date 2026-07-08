@@ -1,6 +1,6 @@
 import path from "node:path";
 import { getDb } from "../../db";
-import { loadQuestions } from "./quiz-service";
+import { loadQuestions } from "../quiz/quiz-service";
 
 const KNOWLEDGE_DIR = path.resolve(import.meta.dir, "../../../data/knowledge");
 

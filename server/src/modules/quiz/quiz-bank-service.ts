@@ -81,6 +81,7 @@ export function validateChoiceQuestion(item: unknown): ChoiceQuestion {
   if (typeof q.options !== "object" || q.options === null || Array.isArray(q.options)) {
     throw new Error("options 必须是对象");
   }
+  // eslint-disable-next-line typescript/no-unsafe-type-assertion
   const options = q.options as Record<string, unknown>;
   const optionKeys = ["A", "B", "C", "D"];
   for (const key of optionKeys) {
@@ -97,7 +98,8 @@ export function validateChoiceQuestion(item: unknown): ChoiceQuestion {
     question: q.question.trim(),
     options: optionKeys.reduce(
       (acc, key) => {
-        acc[key] = (options[key] as string).trim();
+        // eslint-disable-next-line typescript/no-base-to-string
+        acc[key] = String(options[key] ?? "").trim();
         return acc;
       },
       {} as Record<string, string>,

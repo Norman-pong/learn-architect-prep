@@ -1,6 +1,6 @@
 import path from "node:path";
 import { getDb } from "../../db";
-import { loadQuestions } from "./quiz-service";
+import { loadQuestions } from "../quiz/quiz-service";
 
 export interface ChapterStats {
   chapterId: string;

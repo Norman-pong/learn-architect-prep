@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { getErrorBook, markMastered } from "../services/error-book";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getErrorBook, markMastered } from "./error-book-service";
 
 const ErrorBookItem = t.Object({
   id: t.String(),
