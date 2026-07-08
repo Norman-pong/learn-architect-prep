@@ -10,6 +10,10 @@ import { WritingWorkbench } from "./pages/WritingWorkbench";
 import KnowledgePage from "./pages/KnowledgePage";
 import ReviewPage from "./pages/ReviewPage";
 import QuizPage from "./pages/QuizPage";
+import StatsPage from "./pages/StatsPage";
+import ErrorBookPage from "./pages/ErrorBookPage";
+import WeaknessPage from "./pages/WeaknessPage";
+
 export default function App() {
   return (
     <AppThemeProvider>
@@ -24,6 +28,9 @@ export default function App() {
           <Route path="learn" element={<KnowledgePage />} />
           <Route path="review" element={<ReviewPage />} />
           <Route path="quiz" element={<QuizPage />} />
+          <Route path="stats" element={<StatsPage />} />
+          <Route path="error-book" element={<ErrorBookPage />} />
+          <Route path="weakness" element={<WeaknessPage />} />
         </Route>
       </Routes>
     </AppThemeProvider>

@@ -1,7 +1,9 @@
 import { useLocation, useNavigate, Outlet } from "react-router";
 import { Avatar, Button, Layout, Menu, Space, Typography } from "antd";
 import {
+  BarChartOutlined,
   BookOutlined,
+  CloseCircleOutlined,
   DesktopOutlined,
   EditOutlined,
   FileTextOutlined,
@@ -13,6 +15,7 @@ import {
   SettingOutlined,
   SnippetsOutlined,
   SunOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 
@@ -27,6 +30,9 @@ const menuItems = [
   { key: "/", icon: <HomeOutlined />, label: "首页" },
   { key: "/learn", icon: <BookOutlined />, label: "学习" },
   { key: "/quiz", icon: <EditOutlined />, label: "习题" },
+  { key: "/error-book", icon: <CloseCircleOutlined />, label: "错题本" },
+  { key: "/stats", icon: <BarChartOutlined />, label: "统计" },
+  { key: "/weakness", icon: <WarningOutlined />, label: "薄弱点" },
   {
     key: "/writing",
     icon: <FileTextOutlined />,
