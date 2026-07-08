@@ -19,6 +19,10 @@ interface ChapterIndex {
   knowledgePoints: { id: string; title: string; file: string }[];
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 /**
  * Escape a string for safe inclusion in a RegExp.
  */
@@ -72,7 +76,17 @@ async function loadChapterIndex(dir: string): Promise<ChapterIndex | null> {
   const file = Bun.file(indexPath);
   if (!(await file.exists())) return null;
   try {
-    return JSON.parse(await file.text()) as ChapterIndex;
+    const parsed: unknown = JSON.parse(await file.text());
+    if (!isRecord(parsed)) return null;
+    if (typeof parsed.id !== "string" || typeof parsed.title !== "string") return null;
+    const rawKps = parsed.knowledgePoints;
+    if (!Array.isArray(rawKps)) return null;
+    const knowledgePoints = rawKps.filter(isRecord).map((kp) => ({
+      id: typeof kp.id === "string" ? kp.id : "",
+      title: typeof kp.title === "string" ? kp.title : "",
+      file: typeof kp.file === "string" ? kp.file : "",
+    }));
+    return { id: parsed.id, title: parsed.title, knowledgePoints };
   } catch {
     return null;
   }
@@ -88,14 +102,17 @@ export async function searchKnowledge(query: string): Promise<SearchResult[]> {
   if (!pattern) return [];
 
   const chapterDirs = await readFile(path.join(KNOWLEDGE_DIR, "index.json"), "utf-8")
-    .then((text) => JSON.parse(text) as { chapters: { id: string; title: string }[] })
-    .then((data) =>
-      data.chapters.map((ch) => ({
-        id: ch.id,
-        name: ch.title,
-        dir: `chapter-${ch.id.replace(/^ch/, "").padStart(2, "0")}`,
-      })),
-    )
+    .then((text) => {
+      const parsed: unknown = JSON.parse(text);
+      if (!isRecord(parsed)) return [];
+      const rawChapters = parsed.chapters;
+      if (!Array.isArray(rawChapters)) return [];
+      return rawChapters.filter(isRecord).map((ch) => ({
+        id: typeof ch.id === "string" ? ch.id : "",
+        name: typeof ch.title === "string" ? ch.title : "",
+        dir: `chapter-${(typeof ch.id === "string" ? ch.id : "").replace(/^ch/, "").padStart(2, "0")}`,
+      }));
+    })
     .catch(() => []);
 
   const results: SearchResult[] = [];
@@ -109,7 +126,7 @@ export async function searchKnowledge(query: string): Promise<SearchResult[]> {
       const file = Bun.file(filePath);
       if (!(await file.exists())) continue;
       const content = await file.text();
-      const plainText = content.replace(/[#*\[\]\(\)`\-]/g, " ");
+      const plainText = content.replace(/[#*[\]()`-]/g, " ");
       const titleLower = kp.title.toLowerCase();
 
       const titleMatches = terms.reduce((sum, term) => {
@@ -139,5 +156,5 @@ export async function searchKnowledge(query: string): Promise<SearchResult[]> {
     }
   }
 
-  return results.sort((a, b) => (b.relevance ?? 0) - (a.relevance ?? 0));
+  return results.toSorted((a, b) => (b.relevance ?? 0) - (a.relevance ?? 0));
 }

@@ -59,7 +59,12 @@ export default function DataTransferPage() {
     const reader = new FileReader();
     reader.addEventListener("load", (e) => {
       try {
-        const data = JSON.parse(e.target?.result as string);
+        const result = e.target?.result;
+        if (typeof result !== "string") {
+          setPreviewError("无法读取文件内容");
+          return;
+        }
+        const data = JSON.parse(result);
         if (!data || typeof data !== "object" || !data.userId) {
           setPreviewError("无效的备份文件格式");
           return;

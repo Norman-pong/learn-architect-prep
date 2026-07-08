@@ -1,7 +1,6 @@
 import path from "node:path";
-import { Database } from "bun:sqlite";
-import { getDb } from "../db";
-import { loadQuestions } from "./quiz";
+import { getDb } from "../../db";
+import { loadQuestions } from "./quiz-service";
 
 export interface ChapterStats {
   chapterId: string;

@@ -1,7 +1,7 @@
-import { getDb } from "../db";
-import { loadQuestions, toPublicQuestion, type QuizQuestion, type PublicQuestion } from "./quiz";
-import { getWeakPoints, type WeakPoint } from "./weakness";
-import { getConfig, getDecryptedKey } from "./ai-config";
+import { getDb } from "../../db";
+import { loadQuestions, toPublicQuestion, type QuizQuestion, type PublicQuestion } from "../quiz/quiz-service";
+import { getWeakPoints, type WeakPoint } from "../stats/weakness-service";
+import { getConfig, getDecryptedKey } from "../ai/ai-config-service";
 import { generateText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
@@ -177,7 +177,7 @@ ${candidatePool.map((q) => `- ID:${q.id} | 章节:${q.chapter} | 难度:${q.diff
 }`;
 
   try {
-    const provider = createProvider(config.provider as Provider, apiKey, config.baseUrl);
+    const provider = createProvider(config.provider, apiKey, config.baseUrl);
     const model = provider(config.model ?? "gpt-4o-mini");
 
     const { text } = await generateText({
@@ -189,7 +189,14 @@ ${candidatePool.map((q) => `- ID:${q.id} | 章节:${q.chapter} | 难度:${q.diff
 
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     const jsonStr = jsonMatch ? jsonMatch[0] : text;
-    const aiResult = JSON.parse(jsonStr) as { selectedIds: string[]; reason: string };
+    const parsed: unknown = JSON.parse(jsonStr);
+    if (!isRecord(parsed) || !Array.isArray(parsed.selectedIds)) {
+      throw new Error("Invalid AI response format");
+    }
+    const aiResult = {
+      selectedIds: parsed.selectedIds.filter((id): id is string => typeof id === "string"),
+      reason: typeof parsed.reason === "string" ? parsed.reason : "",
+    };
 
     const selectedIds = new Set(aiResult.selectedIds.slice(0, 10));
     const selected = allQuestions.filter((q) => selectedIds.has(q.id));
@@ -213,7 +220,7 @@ ${candidatePool.map((q) => `- ID:${q.id} | 章节:${q.chapter} | 难度:${q.diff
       source: "ai-assisted",
       reason: aiResult.reason || `AI辅助从题库筛选${selected.length}道相关题目`,
     };
-  } catch (err) {
+  } catch {
     // AI fallback: return best local matches
     const scored = allQuestions.map((q) => ({ q, score: scoreQuestion(q) }));
     scored.sort((a, b) => b.score - a.score);
@@ -236,6 +243,10 @@ ${candidatePool.map((q) => `- ID:${q.id} | 章节:${q.chapter} | 难度:${q.diff
  * Select questions by weakPointId (chapter identifier).
  * Looks up the weak point from user's weakness data.
  */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 export async function selectQuestionsByWeakPointId(
   userId: string,
   weakPointId?: string,
@@ -252,7 +263,7 @@ export async function selectQuestionsByWeakPointId(
   // If no weakPointId specified or not found, pick the weakest point
   const weakest = weakPoints
     .filter((wp) => wp.isWeak)
-    .sort((a, b) => a.correctRate - b.correctRate)[0];
+    .toSorted((a, b) => a.correctRate - b.correctRate)[0];
   if (weakest) {
     return selectQuestionsForWeakPoint(userId, weakest);
   }

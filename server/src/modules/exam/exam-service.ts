@@ -1,6 +1,6 @@
-import { getDb } from "../db";
+import { getDb } from "../../db";
 import { randomUUID } from "node:crypto";
-import { loadQuestions } from "./quiz";
+import { loadQuestions } from "../quiz/quiz-service";
 
 export type ExamType = "comprehensive" | "case" | "essay" | "full";
 export type ExamMode = "single" | "full";
@@ -65,6 +65,18 @@ export function getFullModuleDuration(examType: ExamType): number {
   return EXAM_CONFIGS[examType]?.duration ?? 0;
 }
 
+function isExamType(value: string): value is ExamType {
+  return value === "comprehensive" || value === "case" || value === "essay" || value === "full";
+}
+
+function isExamMode(value: string): value is ExamMode {
+  return value === "single" || value === "full";
+}
+
+function isExamStatus(value: string): value is ExamStatus {
+  return value === "in_progress" || value === "finished";
+}
+
 function getDurationFor(examType: ExamType): number {
   if (examType === "full") {
     return EXAM_CONFIGS.comprehensive.duration + EXAM_CONFIGS.case.duration;
@@ -74,7 +86,7 @@ function getDurationFor(examType: ExamType): number {
 
 async function drawQuestions(
   examType: Exclude<ExamType, "full">,
-  userId: string,
+  _userId: string,
 ): Promise<string[]> {
   const all = await loadQuestions();
   const chapterPrefix =
@@ -179,9 +191,9 @@ export async function getExamById(userId: string, examId: string): Promise<ExamR
   return {
     id: row.id,
     userId: row.user_id,
-    examType: row.exam_type as ExamType,
-    mode: row.mode as ExamMode,
-    status: row.status as ExamStatus,
+    examType: isExamType(row.exam_type) ? row.exam_type : "comprehensive",
+    mode: isExamMode(row.mode) ? row.mode : "single",
+    status: isExamStatus(row.status) ? row.status : "in_progress",
     score: row.score,
     duration: row.duration,
     remainingTime: row.remaining_time,
@@ -220,9 +232,9 @@ export async function getActiveExam(userId: string): Promise<ExamRecord | null> 
   return {
     id: row.id,
     userId: row.user_id,
-    examType: row.exam_type as ExamType,
-    mode: row.mode as ExamMode,
-    status: row.status as ExamStatus,
+    examType: isExamType(row.exam_type) ? row.exam_type : "comprehensive",
+    mode: isExamMode(row.mode) ? row.mode : "single",
+    status: isExamStatus(row.status) ? row.status : "in_progress",
     score: row.score,
     duration: row.duration,
     remainingTime: row.remaining_time,

@@ -34,6 +34,7 @@ export default defineConfig({
     ],
     rules: {
       "no-unused-expressions": "error",
+      "unicorn/no-array-sort": "off",
     },
   },
 

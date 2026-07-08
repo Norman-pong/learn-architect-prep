@@ -1,4 +1,4 @@
-import { getDb } from "../db";
+import { getDb } from "../../db";
 
 /**
  * Per-provider pricing in USD per 1M tokens.
@@ -38,13 +38,23 @@ export interface CostSummary {
   total: { inputTokens: number; outputTokens: number; costEstimate: number };
 }
 
+interface UsageStatsRow {
+  feature: string;
+  provider: string;
+  model: string;
+  calls: number;
+  input_tokens: number;
+  output_tokens: number;
+  cost_estimate: number;
+}
+
 /**
  * Group AI usage by feature (and provider/model) for the given user.
  */
 export function getUsageStats(userId: string): FeatureUsage[] {
   const db = getDb();
   const rows = db
-    .query(
+    .query<UsageStatsRow, [string]>(
       `SELECT feature, provider, model,
               COUNT(*) as calls,
               SUM(input_tokens) as input_tokens,
@@ -55,15 +65,7 @@ export function getUsageStats(userId: string): FeatureUsage[] {
        GROUP BY feature, provider, model
        ORDER BY feature, provider`,
     )
-    .all(userId) as Array<{
-    feature: string;
-    provider: string;
-    model: string;
-    calls: number;
-    input_tokens: number;
-    output_tokens: number;
-    cost_estimate: number;
-  }>;
+    .all(userId);
 
   return rows.map((r) => ({
     feature: r.feature,
@@ -97,18 +99,20 @@ export function getCostSummary(userId: string): CostSummary {
   const todayIso = todayStart.toISOString();
   const weekIso = weekStart.toISOString();
 
-  const all = db
-    .query(
-      `SELECT created_at, input_tokens, output_tokens, cost_estimate
-       FROM ai_usage
-       WHERE user_id = ?`,
-    )
-    .all(userId) as Array<{
+  interface UsageRow {
     created_at: string;
     input_tokens: number;
     output_tokens: number;
     cost_estimate: number;
-  }>;
+  }
+
+  const all = db
+    .query<UsageRow, [string]>(
+      `SELECT created_at, input_tokens, output_tokens, cost_estimate
+       FROM ai_usage
+       WHERE user_id = ?`,
+    )
+    .all(userId);
 
   const today = { inputTokens: 0, outputTokens: 0, costEstimate: 0 };
   const thisWeek = { inputTokens: 0, outputTokens: 0, costEstimate: 0 };

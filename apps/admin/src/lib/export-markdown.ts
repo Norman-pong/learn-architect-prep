@@ -1,7 +1,6 @@
 import {
   THESIS_SECTIONS,
   THESIS_SECTION_TARGETS,
-  type ThesisSectionKey,
   type ThesisSections,
 } from "@archprep/shared";
 import { countWords } from "./word-count";
@@ -25,7 +24,7 @@ export function buildMarkdown(title: string, sections: ThesisSections): string {
   const lines: string[] = [`# ${safeTitle}`, ""];
 
   for (const key of THESIS_SECTIONS) {
-    const label = THESIS_SECTION_TARGETS[key as ThesisSectionKey].label;
+    const label = THESIS_SECTION_TARGETS[key].label;
     const body = sections[key]?.trim();
     lines.push(`## ${label}`, "");
     lines.push(body && body.length > 0 ? body : "_（待补充）_");

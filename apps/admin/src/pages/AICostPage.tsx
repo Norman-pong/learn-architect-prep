@@ -58,11 +58,11 @@ export function AICostPage() {
   const [summary, setSummary] = useState<CostSummary | null>(null);
   const [stats, setStats] = useState<FeatureUsage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [providerFilter, setProviderFilter] = useState<string | "all">("all");
+  const [providerFilter, setProviderFilter] = useState<string>("all");
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
+    void Promise.all([
       apiRequest<CostSummary>("/api/ai-cost/summary"),
       apiRequest<FeatureUsage[]>("/api/ai-cost/by-feature"),
     ])

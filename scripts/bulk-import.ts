@@ -1,4 +1,4 @@
-import { importQuestionsFromUrl, readQuestionBank, writeQuestionBank } from "./import-quiz";
+import { importQuestionsFromUrl, readQuestionBank } from "./import-quiz";
 
 /**
  * 题库数据源配置。
@@ -50,4 +50,4 @@ async function bulkImport(): Promise<BulkResult[]> {
   return results;
 }
 
-bulkImport();
+void bulkImport();

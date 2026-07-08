@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { getUsageStats, getCostSummary } from "../services/ai-cost";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getUsageStats, getCostSummary } from "./ai-cost-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 
@@ -40,6 +40,7 @@ export const aiCostRoutes = new Elysia({ prefix: "/api/ai-cost" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

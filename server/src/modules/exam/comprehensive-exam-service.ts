@@ -1,6 +1,6 @@
-import { getDb } from "../db";
-import { loadQuestions, type QuizQuestion } from "./quiz";
-import { recordAnswer } from "./quiz";
+import { getDb } from "../../db";
+import { loadQuestions, type QuizQuestion } from "../quiz/quiz-service";
+import { recordAnswer } from "../quiz/quiz-service";
 
 export interface CompExamPaper {
   examId: string;
@@ -44,6 +44,26 @@ export interface CompExamReport {
 const QUESTION_COUNT = 75;
 const PASS_LINE = 45;
 
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(isString);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isStringRecord(value: unknown): value is Record<string, string> {
+  if (!isRecord(value)) return false;
+  for (const key of Object.keys(value)) {
+    if (typeof value[key] !== "string") return false;
+  }
+  return true;
+}
+
 function shuffle<T>(arr: T[]): T[] {
   const result = arr.slice();
   for (let i = result.length - 1; i > 0; i--) {
@@ -80,12 +100,9 @@ export async function generateExamPaper(
 
   if (!row) return null;
 
-  const snapshot = JSON.parse(row.answers_snapshot || "{}") as {
-    questionIds?: string[];
-    answers?: Record<string, string>;
-  };
-
-  let questionIds: string[] = snapshot.questionIds ?? [];
+  const parsed: unknown = JSON.parse(row.answers_snapshot || "{}");
+  let snapshot = isRecord(parsed) ? parsed : {};
+  let questionIds = isStringArray(snapshot.questionIds) ? snapshot.questionIds : [];
 
   if (questionIds.length === 0) {
     const all = await loadQuestions();
@@ -158,11 +175,9 @@ export async function submitAnswer(
 
   if (!row) return { success: false };
 
-  const snapshot = JSON.parse(row.answers_snapshot || "{}") as {
-    questionIds?: string[];
-    answers?: Record<string, string>;
-  };
-  const answers = snapshot.answers ?? {};
+  const parsed: unknown = JSON.parse(row.answers_snapshot || "{}");
+  const snapshot = isRecord(parsed) ? parsed : {};
+  const answers = isStringRecord(snapshot.answers) ? snapshot.answers : {};
   answers[questionId] = answer;
 
   const newSnapshot = {
@@ -203,12 +218,10 @@ export async function gradeExam(userId: string, examId: string): Promise<CompExa
 
   if (!examRow) return null;
 
-  const snapshot = JSON.parse(examRow.answers_snapshot || "{}") as {
-    questionIds?: string[];
-    answers?: Record<string, string>;
-  };
-  const questionIds = snapshot.questionIds ?? [];
-  const userAnswers = snapshot.answers ?? {};
+  const parsed: unknown = JSON.parse(examRow.answers_snapshot || "{}");
+  const snapshot = isRecord(parsed) ? parsed : {};
+  const questionIds = isStringArray(snapshot.questionIds) ? snapshot.questionIds : [];
+  const userAnswers = isStringRecord(snapshot.answers) ? snapshot.answers : {};
 
   const allQuestions = await loadQuestions();
   const questionMap = new Map(allQuestions.map((q) => [q.id, q]));
@@ -327,12 +340,10 @@ export async function getExamReport(
   if (!examRow) return null;
 
   // If already graded and score present, reconstruct report from snapshot
-  const snapshot = JSON.parse(examRow.answers_snapshot || "{}") as {
-    questionIds?: string[];
-    answers?: Record<string, string>;
-  };
-  const questionIds = snapshot.questionIds ?? [];
-  const userAnswers = snapshot.answers ?? {};
+  const parsed: unknown = JSON.parse(examRow.answers_snapshot || "{}");
+  const snapshot = isRecord(parsed) ? parsed : {};
+  const questionIds = isStringArray(snapshot.questionIds) ? snapshot.questionIds : [];
+  const userAnswers = isStringRecord(snapshot.answers) ? snapshot.answers : {};
 
   const allQuestions = await loadQuestions();
   const questionMap = new Map(allQuestions.map((q) => [q.id, q]));

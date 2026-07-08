@@ -1,7 +1,7 @@
-import { getDb } from "../db";
-import { startExam, getExamById, finishExam, type ExamRecord } from "./exam";
-import { scoreEssay } from "./ai-scoring";
-import { upsertWriting } from "./writings";
+import { getDb } from "../../db";
+import { startExam, getExamById, finishExam, type ExamRecord } from "./exam-service";
+import { scoreEssay } from "./ai-scoring-service";
+import { upsertWriting } from "../writing/writings-service";
 import type { ThesisSections } from "@archprep/shared";
 
 export interface EssayQuestion {

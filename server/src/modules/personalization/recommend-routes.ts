@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { getRecommendations } from "../services/recommend";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getRecommendations } from "./recommend-service";
 
 const RecommendItem = t.Object({
   knowledgePointId: t.String(),
@@ -23,6 +23,7 @@ export const recommendRoutes = new Elysia({ prefix: "/api/recommend" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await getUserIdFromToken(headers.authorization);

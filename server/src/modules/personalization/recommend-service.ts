@@ -1,4 +1,4 @@
-import { getWeakPoints } from "./weakness";
+import { getWeakPoints } from "../stats/weakness-service";
 
 export interface Recommendation {
   knowledgePointId: string;

@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { getDashboard } from "../services/dashboard";
-import { getDb } from "../db";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getDashboard } from "./dashboard-service";
+import { getDb } from "../../db";
 
 const errorResponseSchema = t.Object({
   error: t.String(),
@@ -22,6 +22,21 @@ async function requireUserId(authorization: string | undefined): Promise<string>
   return userId;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function getUserIdFromSet(set: unknown): string {
+  if (!isRecord(set)) {
+    throw new Error("Unauthorized");
+  }
+  const userId = set.userId;
+  if (typeof userId !== "string") {
+    throw new Error("Unauthorized");
+  }
+  return userId;
+}
+
 export const dashboardRoutes = new Elysia({ prefix: "/api/dashboard" })
   .derive(({ headers }) => {
     return { authorization: headers.authorization };
@@ -33,11 +48,12 @@ export const dashboardRoutes = new Elysia({ prefix: "/api/dashboard" })
     }
     const userId = await requireUserId(authorization);
     (set as Record<string, unknown>).userId = userId;
+    return undefined;
   })
   .get(
     "/",
     async ({ set }) => {
-      const userId = (set as Record<string, unknown>).userId as string;
+      const userId = getUserIdFromSet(set);
       const db = getDb();
       return getDashboard(userId, db);
     },

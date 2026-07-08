@@ -109,7 +109,7 @@ export default function CompExamPage() {
         if (active?.examType === "comprehensive" && active.status === "in_progress") {
           setExamId(active.id);
           setRemaining(active.remainingTime);
-          loadPaper(active.id);
+          await loadPaper(active.id);
         } else {
           const res = await apiRequest<ActiveExam>("/api/exam/start", {
             method: "POST",
@@ -118,7 +118,7 @@ export default function CompExamPage() {
           });
           setExamId(res.id);
           setRemaining(res.remainingTime);
-          loadPaper(res.id);
+          await loadPaper(res.id);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "启动考试失败");
@@ -126,7 +126,7 @@ export default function CompExamPage() {
         setLoading(false);
       }
     };
-    init();
+    void init().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -148,7 +148,7 @@ export default function CompExamPage() {
           if (prev <= 1) {
             if (timerRef.current) clearInterval(timerRef.current);
             timerRef.current = null;
-            finishExam();
+            void finishExam().catch(() => {});
             return 0;
           }
           return prev - 1;

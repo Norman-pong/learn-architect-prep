@@ -85,6 +85,21 @@ interface ContentSegment {
   annotations: Annotation[];
 }
 
+function isChapterMetaArray(value: unknown): value is ChapterMeta[] {
+  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && typeof item.title === "string" && typeof item.section === "string" && typeof item.examWeight === "number" && typeof item.order === "number");
+}
+
+function isChapterIndex(value: unknown): value is ChapterIndex {
+  if (!isRecord(value)) return false;
+  if (typeof value.id !== "string" || typeof value.title !== "string" || typeof value.examWeight !== "number") return false;
+  if (!Array.isArray(value.knowledgePoints)) return false;
+  return value.knowledgePoints.every((kp) => isRecord(kp) && typeof kp.id === "string" && typeof kp.title === "string" && typeof kp.examWeight === "number" && typeof kp.file === "string");
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 const WEIGHT_COLOR: Record<number, string> = {
   5: "error",
   4: "warning",
@@ -198,10 +213,12 @@ export default function KnowledgePage() {
     fetch("/api/knowledge/chapters")
       .then(async (res) => {
         if (!res.ok) throw new Error("Failed to load chapters");
-        return (await res.json()) as { chapters: ChapterMeta[] };
-      })
-      .then((data) => {
-        if (!cancelled) setChapters(data.chapters);
+        const data = await res.json();
+        if (isRecord(data) && isChapterMetaArray(data.chapters)) {
+          if (!cancelled) setChapters(data.chapters);
+        } else {
+          if (!cancelled) setChapters([]);
+        }
       })
       .catch(() => {
         if (!cancelled) setChapters([]);
@@ -215,17 +232,21 @@ export default function KnowledgePage() {
   }, []);
 
   useEffect(() => {
-    if (!chapterId) return;
+    if (!chapterId) {
+      return () => {};
+    }
     let cancelled = false;
     if (!chapterMap[chapterId]) {
       fetch(`/api/knowledge/chapters/${chapterId}`)
         .then(async (res) => {
           if (!res.ok) throw new Error("Failed to load chapter");
-          return (await res.json()) as ChapterIndex;
-        })
-        .then((data) => {
-          if (!cancelled) {
-            setChapterMap((prev) => ({ ...prev, [chapterId]: data }));
+          const data = await res.json();
+          if (isChapterIndex(data)) {
+            if (!cancelled) {
+              setChapterMap((prev) => ({ ...prev, [chapterId]: data }));
+            }
+          } else {
+            throw new Error("Invalid chapter data");
           }
         })
         .catch(() => {
@@ -247,7 +268,7 @@ export default function KnowledgePage() {
     setDraftAnnotation(null);
     if (!chapterId || !kpId) {
       setContent("");
-      return;
+      return () => {};
     }
     let cancelled = false;
     setLoadingContent(true);
@@ -273,7 +294,7 @@ export default function KnowledgePage() {
   useEffect(() => {
     if (!kpId) {
       setAnnotations([]);
-      return;
+      return () => {};
     }
     let cancelled = false;
     setLoadingAnnotations(true);
@@ -369,19 +390,20 @@ export default function KnowledgePage() {
   );
 
   useEffect(() => {
-    const sectionKeys = treeData.map((node) => node.key as Key);
+    const sectionKeys = treeData.map((node) => node.key);
     setExpandedKeys(chapterId ? [...sectionKeys, chapterId] : sectionKeys);
   }, [treeData, chapterId]);
 
   const handleSelect = (keys: Key[]) => {
-    const key = keys[0] as string | undefined;
+    const key = keys[0];
+    if (typeof key !== "string") return;
     if (!key) return;
     if (key.startsWith("section-")) return;
     if (key.includes("/")) {
       const [cid, kid] = key.split("/");
-      navigate(`/learn/${cid}/${kid}`);
+      void navigate(`/learn/${cid}/${kid}`);
     } else {
-      navigate(`/learn/${key}`);
+      void navigate(`/learn/${key}`);
     }
   };
 
@@ -610,7 +632,7 @@ export default function KnowledgePage() {
             expandedKeys={expandedKeys}
             selectedKeys={selectedKeys}
             treeData={treeData}
-            onExpand={(keys) => setExpandedKeys(keys as Key[])}
+            onExpand={(keys) => setExpandedKeys(keys)}
             onSelect={handleSelect}
           />
         )}

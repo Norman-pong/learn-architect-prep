@@ -36,6 +36,7 @@ export const errorBookRoutes = new Elysia({ prefix: "/api/error-book" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

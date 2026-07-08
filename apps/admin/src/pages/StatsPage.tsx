@@ -65,24 +65,23 @@ export default function StatsPage() {
       setKnowledgePointStats([]);
       setTrends([]);
       setLoading(false);
-      return;
+    } else {
+      setLoading(true);
+      void Promise.all([
+        apiRequest<ChapterStats[]>(`/stats/chapter${query}`),
+        apiRequest<KnowledgePointStats[]>(`/stats/knowledge-point${query}`),
+        apiRequest<DailyTrend[]>(`/stats/trends${days ? query : "?days=30"}`),
+      ])
+        .then(([c, k, t]) => {
+          if (cancelled) return;
+          setChapterStats(c);
+          setKnowledgePointStats(k);
+          setTrends(t);
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
     }
-
-    setLoading(true);
-    Promise.all([
-      apiRequest<ChapterStats[]>(`/stats/chapter${query}`),
-      apiRequest<KnowledgePointStats[]>(`/stats/knowledge-point${query}`),
-      apiRequest<DailyTrend[]>(`/stats/trends${days ? query : "?days=30"}`),
-    ])
-      .then(([c, k, t]) => {
-        if (cancelled) return;
-        setChapterStats(c);
-        setKnowledgePointStats(k);
-        setTrends(t);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
     return () => {
       cancelled = true;
     };

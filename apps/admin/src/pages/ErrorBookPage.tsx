@@ -43,6 +43,16 @@ interface ChapterMeta {
   order: number;
 }
 
+function isChapterMeta(value: unknown): value is ChapterMeta {
+  const record = typeof value === "object" && value !== null ? value : null;
+  if (!record) return false;
+  const r: Record<string, unknown> = record;
+  return (
+    typeof r.id === "string" &&
+    typeof r.title === "string"
+  );
+}
+
 const DIFFICULTY_TAG: Record<string, string> = {
   easy: "简单",
   medium: "中等",
@@ -86,9 +96,19 @@ export default function ErrorBookPage() {
     fetchWithAuth("/api/knowledge/chapters")
       .then(async (res) => {
         if (!res.ok) throw new Error("加载章节失败");
-        return (await res.json()) as { chapters: ChapterMeta[] };
+        const data: unknown = await res.json();
+        if (
+          typeof data === "object" &&
+          data !== null &&
+          "chapters" in data &&
+          Array.isArray(data.chapters) &&
+          data.chapters.every(isChapterMeta)
+        ) {
+          setChapters(data.chapters);
+        } else {
+          setChapters([]);
+        }
       })
-      .then((data) => setChapters(data.chapters))
       .catch(() => setChapters([]));
   }, []);
 
@@ -115,7 +135,7 @@ export default function ErrorBookPage() {
   };
 
   useEffect(() => {
-    load();
+    void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapter]);
 

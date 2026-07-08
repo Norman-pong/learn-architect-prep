@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { selectQuestionsByWeakPointId, type SmartSelectResult } from "../services/smart-select";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { selectQuestionsByWeakPointId } from "./smart-select-service";
 
 const QuestionItem = t.Object({
   id: t.String(),
@@ -35,6 +35,7 @@ export const smartSelectRoutes = new Elysia({ prefix: "/api/smart-select" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await getUserIdFromToken(headers.authorization);
@@ -43,7 +44,7 @@ export const smartSelectRoutes = new Elysia({ prefix: "/api/smart-select" })
   .post(
     "/",
     async ({ body, userId }) => {
-      const { weakPointId } = body as { weakPointId?: string };
+      const { weakPointId } = body;
       return await selectQuestionsByWeakPointId(userId, weakPointId);
     },
     {

@@ -15,7 +15,9 @@ export function LoginPage() {
   const [loadingLogin, setLoadingLogin] = useState(false);
 
   useEffect(() => {
-    if (countdown <= 0) return;
+    if (countdown <= 0) {
+      return undefined;
+    }
 
     const timer = setTimeout(() => {
       setCountdown((c) => c - 1);
@@ -34,7 +36,6 @@ export function LoginPage() {
     setLoadingSend(true);
     try {
       await sendCode(value);
-      setEmail(value);
       setCountdown(COUNTDOWN_SECONDS);
       message.success("验证码已发送");
     } catch (error) {
@@ -50,7 +51,7 @@ export function LoginPage() {
       const { accessToken, refreshToken } = await verifyCode(values.email, values.code);
       setTokens(accessToken, refreshToken);
       message.success("登录成功");
-      navigate("/");
+      void navigate("/");
     } catch (error) {
       message.error(error instanceof Error ? error.message : "登录失败");
     } finally {
@@ -86,7 +87,7 @@ export function LoginPage() {
           >
             <Space.Compact style={{ width: "100%" }}>
               <Input placeholder="123456" maxLength={6} />
-              <Button loading={loadingSend} disabled={countdown > 0} onClick={handleSendCode}>
+              <Button loading={loadingSend} disabled={countdown > 0} onClick={() => void handleSendCode()}>
                 {countdown > 0 ? `${countdown}s 后重发` : "获取验证码"}
               </Button>
             </Space.Compact>

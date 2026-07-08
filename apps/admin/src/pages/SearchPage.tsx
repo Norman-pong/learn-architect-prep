@@ -15,6 +15,21 @@ interface SearchResult {
   highlights: string[];
 }
 
+function isSearchResult(value: unknown): value is SearchResult {
+  const record = typeof value === "object" && value !== null ? value : null;
+  if (!record) return false;
+  const r: Record<string, unknown> = record;
+  return (
+    typeof r.kpId === "string" &&
+    typeof r.title === "string" &&
+    typeof r.chapterId === "string" &&
+    typeof r.chapterName === "string" &&
+    typeof r.snippet === "string" &&
+    Array.isArray(r.highlights) &&
+    r.highlights.every((h) => typeof h === "string")
+  );
+}
+
 function buildHighlighted(text: string, terms: string[]): React.ReactNode {
   if (terms.length === 0) return text;
   const pattern = new RegExp(
@@ -47,7 +62,12 @@ export function SearchPage() {
     setLoading(true);
     try {
       const res = await api.search.index.get({ query: { q: trimmed } });
-      setResults((res.data?.results as SearchResult[]) ?? []);
+      const raw = res.data?.results;
+      if (Array.isArray(raw) && raw.every(isSearchResult)) {
+        setResults(raw);
+      } else {
+        setResults([]);
+      }
     } finally {
       setLoading(false);
     }

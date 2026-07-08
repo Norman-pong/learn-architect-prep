@@ -1,11 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import {
-  generateExamPaper,
-  submitAnswer,
-  gradeExam,
-  getExamReport,
-} from "../services/comprehensive-exam";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { generateExamPaper, submitAnswer, gradeExam, getExamReport } from "./comprehensive-exam-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 
@@ -86,6 +81,7 @@ export const comprehensiveExamRoutes = new Elysia({ prefix: "/api/exam/comp" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

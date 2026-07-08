@@ -55,13 +55,12 @@ async function refreshAccessToken(): Promise<string | null> {
       return null;
     }
 
-    const data = (await response.json()) as { accessToken?: string };
-    if (!data.accessToken) {
-      return null;
+    const data: unknown = await response.json();
+    if (isRecord(data) && typeof data.accessToken === "string") {
+      localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
+      return data.accessToken;
     }
-
-    localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
-    return data.accessToken;
+    return null;
   } catch {
     return null;
   }
@@ -74,6 +73,10 @@ async function doRefresh(): Promise<string | null> {
     });
   }
   return refreshPromise;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }
 
 export async function fetchWithAuth(input: string, init?: RequestInit): Promise<Response> {
@@ -103,11 +106,14 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
   const response = await fetchWithAuth(path, init);
 
   if (!response.ok) {
-    const data = (await response.json().catch(() => ({}))) as { error?: string };
-    throw new Error(data.error ?? `请求失败: ${response.status}`);
+    const data: unknown = await response.json().catch(() => ({}));
+    if (!isRecord(data)) {
+      throw new Error(`请求失败: ${response.status}`);
+    }
+    throw new Error(typeof data.error === "string" ? data.error : `请求失败: ${response.status}`);
   }
 
-  return (await response.json()) as T;
+  return response.json();
 }
 
 export async function sendCode(email: string): Promise<void> {
@@ -118,8 +124,11 @@ export async function sendCode(email: string): Promise<void> {
   });
 
   if (!response.ok) {
-    const data = (await response.json().catch(() => ({}))) as { error?: string };
-    throw new Error(data.error ?? "发送验证码失败");
+    const data: unknown = await response.json().catch(() => ({}));
+    if (!isRecord(data)) {
+      throw new Error("发送验证码失败");
+    }
+    throw new Error(typeof data.error === "string" ? data.error : "发送验证码失败");
   }
 }
 
@@ -134,11 +143,17 @@ export async function verifyCode(
   });
 
   if (!response.ok) {
-    const data = (await response.json().catch(() => ({}))) as { error?: string };
-    throw new Error(data.error ?? "登录失败");
+    const data: unknown = await response.json().catch(() => ({}));
+    if (!isRecord(data)) {
+      throw new Error("登录失败");
+    }
+    if (typeof data.error === "string") {
+      throw new Error(data.error);
+    }
+    throw new Error("登录失败");
   }
 
-  return (await response.json()) as { accessToken: string; refreshToken: string };
+  return response.json();
 }
 
 export function getMe(): Promise<{ id: string; email: string }> {

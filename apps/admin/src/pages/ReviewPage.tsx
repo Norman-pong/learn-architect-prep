@@ -76,7 +76,7 @@ export default function ReviewPage() {
   }, []);
 
   useEffect(() => {
-    fetchQueue();
+    void fetchQueue();
   }, [fetchQueue]);
 
   const current = queue[0];
@@ -84,7 +84,7 @@ export default function ReviewPage() {
   useEffect(() => {
     if (!current) {
       setAnnotations([]);
-      return;
+      return () => {};
     }
 
     let cancelled = false;
@@ -100,13 +100,17 @@ export default function ReviewPage() {
         if (!cancelled) setLoadingAnnotations(false);
       });
 
+
     return () => {
       cancelled = true;
     };
   }, [current?.knowledgePointId]);
 
   const handleRate = async (score: number) => {
-    if (!current) return;
+    if (!current) {
+      setSubmitting(false);
+      return;
+    }
     setSubmitting(true);
     try {
       await apiRequest("/api/review/rate", {

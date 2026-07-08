@@ -1,16 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import {
-  getExamConfig,
-  getConfigs,
-  startExam,
-  pauseExam,
-  resumeExam,
-  finishExam,
-  getActiveExam,
-  type ExamType,
-  type ExamMode,
-} from "../services/exam";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getConfigs, startExam, pauseExam, resumeExam, finishExam, getActiveExam } from "./exam-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 
@@ -118,6 +108,7 @@ export const examRoutes = new Elysia({ prefix: "/api/exam" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);
@@ -135,7 +126,7 @@ export const examRoutes = new Elysia({ prefix: "/api/exam" })
   .post(
     "/start",
     async ({ body, userId }) => {
-      const record = await startExam(userId, body.examType as ExamType, body.mode as ExamMode);
+      const record = await startExam(userId, body.examType, body.mode);
       return {
         id: record.id,
         examType: record.examType,

@@ -1,10 +1,7 @@
 import { Elysia, t } from "elysia";
 import {
-  computeQuestionHash,
   fetchRemoteQuiz,
-  importQuestions,
   readQuestionBank,
-  validateChoiceQuestion,
   type ChoiceQuestion,
 } from "../services/quiz-bank";
 import { getUserIdFromToken } from "../services/auth";
@@ -49,23 +46,6 @@ const StatsResponse = t.Object({
   bySource: t.Array(t.Object({ source: t.String(), count: t.Integer() })),
 });
 
-function requireAuth() {
-  return async ({
-    headers,
-    set,
-  }: {
-    headers: { authorization?: string };
-    set: { status: number };
-  }) => {
-    const userId = await getUserIdFromToken(headers.authorization);
-    if (!userId) {
-      set.status = 401;
-      return { error: "Unauthorized" };
-    }
-    return { userId };
-  };
-}
-
 function bankStats(questions: ChoiceQuestion[]) {
   const byChapter = new Map<string, number>();
   const bySource = new Map<string, number>();
@@ -92,7 +72,8 @@ export const quizBankRoutes = new Elysia({ prefix: "/api/quiz-bank" })
       const bank = await readQuestionBank();
       let questions = bank.questions;
       if (query.chapter) {
-        questions = questions.filter((q) => q.chapter?.startsWith(query.chapter as string));
+        const chapter = typeof query.chapter === "string" ? query.chapter : "";
+        questions = questions.filter((q) => q.chapter?.startsWith(chapter));
       }
       if (query.difficulty) {
         questions = questions.filter((q) => q.difficulty === query.difficulty);
@@ -101,7 +82,7 @@ export const quizBankRoutes = new Elysia({ prefix: "/api/quiz-bank" })
         questions = questions.filter((q) => q.source === query.source);
       }
       if (query.year) {
-        const year = Number.parseInt(query.year as string, 10);
+        const year = Number.parseInt(query.year, 10);
         if (!Number.isNaN(year)) {
           questions = questions.filter((q) => q.year === year);
         }

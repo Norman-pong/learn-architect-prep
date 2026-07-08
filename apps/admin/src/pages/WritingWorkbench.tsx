@@ -51,6 +51,10 @@ const EMPTY_SECTIONS: ThesisSections = {
   conclusion: "",
 };
 
+function isThesisSectionKey(value: string): value is ThesisSectionKey {
+  return (THESIS_SECTIONS as readonly string[]).includes(value);
+}
+
 type SaveState =
   | { kind: "idle" }
   | { kind: "saving" }
@@ -103,7 +107,14 @@ export function WritingWorkbench() {
 
   // Autosave: arm a 30s timer whenever the draft is dirty; cancel on clean.
   useEffect(() => {
-    if (!dirty) return;
+    if (!dirty) {
+      return () => {
+        if (saveTimerRef.current !== null) {
+          window.clearTimeout(saveTimerRef.current);
+          saveTimerRef.current = null;
+        }
+      };
+    }
     if (saveTimerRef.current !== null) {
       window.clearTimeout(saveTimerRef.current);
     }
@@ -279,6 +290,8 @@ export function WritingWorkbench() {
         );
       case "error":
         return <Badge status="error" text={saveState.message} />;
+      default:
+        return null;
     }
   })();
 
@@ -367,7 +380,10 @@ export function WritingWorkbench() {
 
       <Tabs
         activeKey={activeTab}
-        onChange={(key) => setActiveTab(key as ThesisSectionKey)}
+        onChange={(key) => {
+        const next = isThesisSectionKey(key) ? key : activeTab;
+        setActiveTab(next);
+      }}
         items={sectionItems}
         destroyOnHidden={false}
       />
@@ -400,7 +416,7 @@ export function WritingWorkbench() {
             label: `${THESIS_SECTION_TARGETS[k].label} ${countWords(sections[k])}`,
           }))}
           value={activeTab}
-          onChange={(v) => setActiveTab(v as ThesisSectionKey)}
+          onChange={(v) => setActiveTab(v)}
           aria-label="快速跳转到分节"
         />
         <div style={{ flex: 1 }} />

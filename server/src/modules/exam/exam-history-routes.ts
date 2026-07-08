@@ -1,12 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import {
-  EXAM_MODE_LABELS,
-  EXAM_TYPE_LABELS,
-  PASS_SCORE,
-  getExamHistory,
-  getScoreTrends,
-} from "../services/exam-history";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { EXAM_MODE_LABELS, EXAM_TYPE_LABELS, PASS_SCORE, getExamHistory, getScoreTrends } from "./exam-history-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 
@@ -73,6 +67,7 @@ export const examHistoryRoutes = new Elysia({ prefix: "/api/exam-history" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

@@ -156,10 +156,9 @@ function examWeightColor(weight: number): "red" | "orange" | "gold" | "default" 
 function buildHeatmapGrid(days: HeatmapDay[], year: number): Array<HeatmapDay | null>[] {
   const firstDate = new Date(year, 0, 1);
   const startWeekday = firstDate.getDay(); // 0..6
-  const cells: Array<HeatmapDay | null> = Array.from({ length: startWeekday }).fill(
+  const cells: Array<HeatmapDay | null> = Array.from<HeatmapDay | null>({ length: startWeekday }).fill(
     null,
-  ) as Array<HeatmapDay | null>;
-
+  );
   for (const d of days) cells.push(d);
 
   while (cells.length % 7 !== 0) cells.push(null);
@@ -352,9 +351,9 @@ function MonthlyCalendar({ data, selectedDate, onSelect }: MonthlyCalendarProps)
   }
   const firstDay = new Date(data.days[0].date + "T00:00:00");
   const firstWeekday = firstDay.getDay();
-  const cells: Array<CalendarDay | null> = Array.from({ length: firstWeekday }).fill(
+  const cells: Array<CalendarDay | null> = Array.from<CalendarDay | null>({ length: firstWeekday }).fill(
     null,
-  ) as Array<CalendarDay | null>;
+  );
   cells.push(...data.days);
 
   const palette = isDark ? HEAT_LEVEL_BG_DARK : HEAT_LEVEL_BG_LIGHT;
@@ -633,7 +632,7 @@ export default function ProgressPage() {
       <Card
         title="年度学习热力图"
         extra={
-          <Segmented value={year} onChange={(v) => setYear(Number(v))} options={yearOptions} />
+          <Segmented value={year} onChange={(v) => setYear(v)} options={yearOptions} />
         }
         style={{ marginBottom: token.marginMD }}
       >

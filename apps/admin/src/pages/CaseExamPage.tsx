@@ -117,7 +117,7 @@ export default function CaseExamPage() {
           };
           if (snapshot.selected) setSelected(new Set(snapshot.selected));
           if (snapshot.answers) setAnswers(snapshot.answers);
-          loadPaper(active.id);
+          await loadPaper(active.id);
         } else {
           const res = await apiRequest<{ id: string; questionIds: string[] }>("/api/exam/start", {
             method: "POST",
@@ -130,7 +130,7 @@ export default function CaseExamPage() {
             "/api/exam/status",
           );
           setRemaining(fresh?.remainingTime ?? 90 * 60);
-          loadPaper(res.id);
+          await loadPaper(res.id);
         }
       } catch (err) {
         message.error(err instanceof Error ? err.message : "启动考试失败");
@@ -138,7 +138,7 @@ export default function CaseExamPage() {
         setLoading(false);
       }
     };
-    init();
+    void init().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -160,7 +160,7 @@ export default function CaseExamPage() {
           if (prev <= 1) {
             if (timerRef.current) clearInterval(timerRef.current);
             timerRef.current = null;
-            finishExam();
+            void finishExam().catch(() => {});
             return 0;
           }
           return prev - 1;
@@ -252,14 +252,16 @@ export default function CaseExamPage() {
   const finishExam = async () => {
     if (!examId || report) return;
     if (selectedCount < CHOOSE_COUNT) {
-      Modal.confirm({
+      void Modal.confirm({
         title: "确认提交",
         content: `你只选了 ${selectedCount} 道题，要求选做 ${CHOOSE_COUNT} 道。确定提交吗？`,
-        onOk: () => doFinish(),
+        onOk: () => {
+          void doFinish().catch(() => {});
+        },
       });
       return;
     }
-    doFinish();
+    void doFinish().catch(() => {});
   };
 
   const doFinish = async () => {
@@ -296,7 +298,7 @@ export default function CaseExamPage() {
   };
 
   const handleBlur = (questionId: string) => {
-    submitAnswer(questionId);
+    void submitAnswer(questionId).catch(() => {});
   };
 
   if (report) {

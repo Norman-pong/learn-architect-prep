@@ -41,6 +41,21 @@ async function requireUserId(authorization: string | undefined): Promise<string>
   return userId;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function getUserIdFromSet(set: unknown): string {
+  if (!isRecord(set)) {
+    throw new Error("Unauthorized");
+  }
+  const userId = set.userId;
+  if (typeof userId !== "string") {
+    throw new Error("Unauthorized");
+  }
+  return userId;
+}
+
 export const reviewRoutes = new Elysia({ prefix: "/api/review" })
   .derive(({ headers }) => {
     return { authorization: headers.authorization };
@@ -52,11 +67,12 @@ export const reviewRoutes = new Elysia({ prefix: "/api/review" })
     }
     const userId = await requireUserId(authorization);
     (set as Record<string, unknown>).userId = userId;
+    return undefined;
   })
   .get(
     "/due",
     async ({ set }) => {
-      const userId = (set as Record<string, unknown>).userId as string;
+      const userId = getUserIdFromSet(set);
       const cards = getDueCards(userId, 100);
       const enriched = await Promise.all(
         cards.map((card) => getCardWithKnowledgePoint(card.cardId)),
@@ -78,7 +94,7 @@ export const reviewRoutes = new Elysia({ prefix: "/api/review" })
   .post(
     "/init",
     async ({ body, set }) => {
-      const userId = (set as Record<string, unknown>).userId as string;
+      const userId = getUserIdFromSet(set);
       return initCard(userId, body.knowledgePointId);
     },
     {
@@ -99,7 +115,7 @@ export const reviewRoutes = new Elysia({ prefix: "/api/review" })
   .post(
     "/rate",
     async ({ body, set }) => {
-      const userId = (set as Record<string, unknown>).userId as string;
+      const userId = getUserIdFromSet(set);
       const card = await getCardWithKnowledgePoint(body.cardId);
       if (!card) {
         set.status = 404;

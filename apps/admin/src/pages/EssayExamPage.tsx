@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import {
+  THESIS_SECTIONS,
+  type ThesisSectionKey,
+} from "@archprep/shared";
+import {
   Button,
   Card,
   Divider,
@@ -19,6 +23,25 @@ import {
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isThesisSectionKey(value: string): value is ThesisSectionKey {
+  for (const k of THESIS_SECTIONS) {
+    if (k === value) return true;
+  }
+  return false;
+}
+
+function isStringRecord(value: unknown): value is Record<string, string> {
+  if (!isRecord(value)) return false;
+  for (const k of Object.keys(value)) {
+    if (typeof value[k] !== "string") return false;
+  }
+  return true;
+}
 
 interface EssayQuestion {
   id: string;
@@ -138,17 +161,18 @@ export default function EssayExamPage() {
         if (active?.examType === "essay" && active.status === "in_progress") {
           setExamId(active.id);
           setRemaining(active.remainingTime);
-          const snap = active.answersSnapshot as {
-            selectedQuestionId?: string;
-            sections?: ThesisSections;
-          };
-          if (snap.selectedQuestionId) {
-            setSelectedQuestionId(snap.selectedQuestionId);
+          const snap = active.answersSnapshot;
+          if (isRecord(snap)) {
+            if (typeof snap.selectedQuestionId === "string") {
+              setSelectedQuestionId(snap.selectedQuestionId);
+            }
+            if (isRecord(snap.sections)) {
+              if (isStringRecord(snap.sections)) {
+                setSections({ ...EMPTY_SECTIONS, ...snap.sections });
+              }
+            }
           }
-          if (snap.sections) {
-            setSections({ ...EMPTY_SECTIONS, ...snap.sections });
-          }
-          loadPaper(active.id);
+          await loadPaper(active.id);
         } else {
           const res = await apiRequest<ActiveExam>("/api/exam/start", {
             method: "POST",
@@ -157,7 +181,7 @@ export default function EssayExamPage() {
           });
           setExamId(res.id);
           setRemaining(res.remainingTime);
-          loadPaper(res.id);
+          await loadPaper(res.id);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "启动考试失败");
@@ -165,7 +189,7 @@ export default function EssayExamPage() {
         setLoading(false);
       }
     };
-    init();
+    void init().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -187,7 +211,7 @@ export default function EssayExamPage() {
           if (prev <= 1) {
             if (timerRef.current) clearInterval(timerRef.current);
             timerRef.current = null;
-            finishExam();
+            void finishExam().catch(() => {});
             return 0;
           }
           return prev - 1;
@@ -207,12 +231,14 @@ export default function EssayExamPage() {
 
   // Autosave debounce (30s)
   useEffect(() => {
-    if (!dirty || !examId || !selectedQuestionId) return;
+    if (!dirty || !examId || !selectedQuestionId) {
+      return () => {};
+    }
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
     }
     saveTimerRef.current = setTimeout(() => {
-      void doSubmit(false);
+      void doSubmit(false).catch(() => {});
     }, 30_000);
     return () => {
       if (saveTimerRef.current) {
@@ -560,7 +586,11 @@ export default function EssayExamPage() {
 
       <Tabs
         activeKey={activeTab}
-        onChange={(key) => setActiveTab(key as ThesisSectionKey)}
+        onChange={(key) => {
+          if (isThesisSectionKey(key)) {
+            setActiveTab(key);
+          }
+        }}
         items={sectionItems}
         destroyOnHidden={false}
       />

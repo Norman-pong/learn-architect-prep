@@ -1,6 +1,6 @@
 import path from "node:path";
-import { getDb } from "../db";
-import { loadQuestions } from "./quiz";
+import { getDb } from "../../db";
+import { loadQuestions } from "./quiz-service";
 
 const KNOWLEDGE_DIR = path.resolve(import.meta.dir, "../../../data/knowledge");
 
@@ -27,6 +27,25 @@ let cachedChapters: ChapterMeta[] | null = null;
 let cacheTime = 0;
 const CACHE_TTL_MS = 60_000;
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isChapterMetaArray(value: unknown): value is ChapterMeta[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        isRecord(item) &&
+        typeof item.id === "string" &&
+        typeof item.title === "string" &&
+        typeof item.section === "string" &&
+        typeof item.examWeight === "number" &&
+        typeof item.order === "number",
+    )
+  );
+}
+
 async function loadChapters(): Promise<ChapterMeta[]> {
   if (cachedChapters && Date.now() - cacheTime < CACHE_TTL_MS) {
     return cachedChapters;
@@ -38,8 +57,12 @@ async function loadChapters(): Promise<ChapterMeta[]> {
     return cachedChapters;
   }
   try {
-    const raw = (await file.json()) as { chapters: ChapterMeta[] };
-    cachedChapters = raw.chapters ?? [];
+    const parsed: unknown = await file.json();
+    if (isRecord(parsed) && isChapterMetaArray(parsed.chapters)) {
+      cachedChapters = parsed.chapters;
+    } else {
+      cachedChapters = [];
+    }
   } catch {
     cachedChapters = [];
   }

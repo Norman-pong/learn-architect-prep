@@ -45,10 +45,18 @@ const CACHE_TTL_MS = 5_000;
 let cachedCaseQuestions: CaseQuestion[] | null = null;
 let caseCacheTime = 0;
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isDifficulty(value: unknown): value is "easy" | "medium" | "hard" {
+  return value === "easy" || value === "medium" || value === "hard";
+}
+
 function ensureOptionsShape(raw: unknown): Record<string, string> {
   const out: Record<string, string> = {};
-  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
-    for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+  if (isRecord(raw) && !Array.isArray(raw)) {
+    for (const [key, value] of Object.entries(raw)) {
       if (typeof value === "string") {
         out[key] = value;
       }
@@ -58,21 +66,19 @@ function ensureOptionsShape(raw: unknown): Record<string, string> {
 }
 
 function normalizeQuestion(item: unknown): QuizQuestion | null {
-  if (!item || typeof item !== "object") return null;
-  const raw = item as Record<string, unknown>;
-  const id = String(raw.id ?? "");
-  const question = String(raw.question ?? "");
-  const answer = String(raw.answer ?? "")
-    .trim()
-    .toUpperCase();
-  const explanation = String(raw.explanation ?? "");
-  const chapter = String(raw.chapter ?? "");
-  const difficulty = String(raw.difficulty ?? "medium");
-  const source = String(raw.source ?? "自建");
-  const year = Number(raw.year ?? 2024);
+  if (!isRecord(item)) return null;
+  const raw = item;
+  const id = typeof raw.id === "string" ? raw.id : "";
+  const question = typeof raw.question === "string" ? raw.question : "";
+  const answer = typeof raw.answer === "string" ? raw.answer.trim().toUpperCase() : "";
+  const explanation = typeof raw.explanation === "string" ? raw.explanation : "";
+  const chapter = typeof raw.chapter === "string" ? raw.chapter : "";
+  const difficulty = typeof raw.difficulty === "string" ? raw.difficulty : "medium";
+  const source = typeof raw.source === "string" ? raw.source : "自建";
+  const year = typeof raw.year === "number" ? raw.year : 2024;
 
   if (!id || !question || !answer || !chapter) return null;
-  if (!["easy", "medium", "hard"].includes(difficulty)) return null;
+  if (!isDifficulty(difficulty)) return null;
 
   const options = ensureOptionsShape(raw.options);
   if (!options.A || !options.B) return null;
@@ -87,9 +93,9 @@ function normalizeQuestion(item: unknown): QuizQuestion | null {
     answer,
     explanation,
     chapter,
-    difficulty: difficulty as QuizQuestion["difficulty"],
+    difficulty,
     source,
-    hash: String(raw.hash ?? hash),
+    hash: typeof raw.hash === "string" ? raw.hash : hash,
     year,
   };
 }
@@ -105,11 +111,11 @@ export async function loadQuestions(): Promise<QuizQuestion[]> {
     return cachedQuestions;
   }
   try {
-    const raw = (await file.json()) as unknown;
+    const raw: unknown = await file.json();
     if (Array.isArray(raw)) {
       cachedQuestions = raw.map(normalizeQuestion).filter((q): q is QuizQuestion => q !== null);
-    } else if (raw && typeof raw === "object") {
-      const list = (raw as Record<string, unknown>).questions;
+    } else if (isRecord(raw)) {
+      const list = raw.questions;
       const arr = Array.isArray(list) ? list : [];
       cachedQuestions = arr.map(normalizeQuestion).filter((q): q is QuizQuestion => q !== null);
     } else {
@@ -234,25 +240,25 @@ export async function getUserErrorQuestions(userId: string): Promise<PublicQuest
 }
 
 function normalizeCaseQuestion(item: unknown): CaseQuestion | null {
-  if (!item || typeof item !== "object") return null;
-  const raw = item as Record<string, unknown>;
-  const id = String(raw.id ?? "");
-  const question = String(raw.question ?? "");
-  const referenceAnswer = String(raw.referenceAnswer ?? "");
-  const chapter = String(raw.chapter ?? "");
-  const difficulty = String(raw.difficulty ?? "medium");
-  const source = String(raw.source ?? "自建");
-  const year = Number(raw.year ?? 2024);
+  if (!isRecord(item)) return null;
+  const raw = item;
+  const id = typeof raw.id === "string" ? raw.id : "";
+  const question = typeof raw.question === "string" ? raw.question : "";
+  const referenceAnswer = typeof raw.referenceAnswer === "string" ? raw.referenceAnswer : "";
+  const chapter = typeof raw.chapter === "string" ? raw.chapter : "";
+  const difficulty = typeof raw.difficulty === "string" ? raw.difficulty : "medium";
+  const source = typeof raw.source === "string" ? raw.source : "自建";
+  const year = typeof raw.year === "number" ? raw.year : 2024;
 
   if (!id || !question || !referenceAnswer || !chapter) return null;
-  if (!["easy", "medium", "hard"].includes(difficulty)) return null;
+  if (!isDifficulty(difficulty)) return null;
 
   return {
     id,
     question,
     referenceAnswer,
     chapter,
-    difficulty: difficulty as CaseQuestion["difficulty"],
+    difficulty,
     source,
     year,
   };
@@ -271,9 +277,9 @@ export async function loadCaseQuestions(): Promise<CaseQuestion[]> {
     return cachedCaseQuestions;
   }
   try {
-    const raw = (await file.json()) as unknown;
-    if (raw && typeof raw === "object") {
-      const list = (raw as Record<string, unknown>).cases;
+    const raw: unknown = await file.json();
+    if (isRecord(raw)) {
+      const list = raw.cases;
       const arr = Array.isArray(list) ? list : [];
       cachedCaseQuestions = arr
         .map(normalizeCaseQuestion)

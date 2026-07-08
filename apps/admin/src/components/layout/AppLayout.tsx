@@ -167,7 +167,7 @@ export function AppLayout() {
               icon={<LogoutOutlined />}
               onClick={() => {
                 clearTokens();
-                navigate("/login");
+                void navigate("/login");
               }}
               aria-label="退出登录"
               title="退出登录"

@@ -303,7 +303,7 @@ export default function ExamHistoryPage() {
     setLoading(true);
     const q = examTypeFilter ? `?examType=${examTypeFilter}` : "";
     const tq = `?days=${days}${examTypeFilter ? `&examType=${examTypeFilter}` : ""}`;
-    Promise.all([
+    void Promise.all([
       apiRequest<HistoryResponse>(`/exam-history${q}`).catch(() => null),
       apiRequest<TrendsResponse>(`/exam-history/trends${tq}`).catch(() => null),
     ])
@@ -440,7 +440,7 @@ export default function ExamHistoryPage() {
             <Text type="secondary">趋势区间</Text>
             <Segmented
               value={days}
-              onChange={(v) => setDays(v as string)}
+              onChange={(v) => setDays(v)}
               options={RANGE_OPTIONS}
             />
           </Space>

@@ -30,6 +30,26 @@ export interface ReviewCardWithKnowledgePoint {
   chapterTitle: string;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isKnowledgePointArray(
+  value: unknown,
+): value is Array<{ id: string; title: string; examWeight: number; file: string }> {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        isRecord(item) &&
+        typeof item.id === "string" &&
+        typeof item.title === "string" &&
+        typeof item.examWeight === "number" &&
+        typeof item.file === "string",
+    )
+  );
+}
+
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
@@ -190,23 +210,20 @@ export async function getCardWithKnowledgePoint(
 
   if (await chapterIndexFile.exists()) {
     try {
-      const index = JSON.parse(await chapterIndexFile.text()) as {
-        title?: string;
-        knowledgePoints: Array<{
-          id: string;
-          title: string;
-          examWeight: number;
-          file: string;
-        }>;
-      };
-      if (index.title) {
-        chapterTitle = index.title;
-      }
-      const kp = index.knowledgePoints.find((p) => p.id === card.knowledgePointId);
-      if (kp) {
-        title = kp.title;
-        examWeight = kp.examWeight ?? 3;
-        mdFile = kp.file;
+      const parsed: unknown = JSON.parse(await chapterIndexFile.text());
+      if (isRecord(parsed)) {
+        if (typeof parsed.title === "string") {
+          chapterTitle = parsed.title;
+        }
+        const knowledgePoints = parsed.knowledgePoints;
+        if (isKnowledgePointArray(knowledgePoints)) {
+          const kp = knowledgePoints.find((p) => p.id === card.knowledgePointId);
+          if (kp) {
+            title = kp.title;
+            examWeight = kp.examWeight ?? 3;
+            mdFile = kp.file;
+          }
+        }
       }
     } catch {
       // fall back to defaults

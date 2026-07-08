@@ -3,8 +3,8 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createDeepSeek } from "@ai-sdk/deepseek";
 import path from "node:path";
-import { getDb } from "../db";
-import { getConfig, getDecryptedKey } from "./ai-config";
+import { getDb } from "../../db";
+import { getConfig, getDecryptedKey } from "./ai-config-service";
 import type { Provider } from "@archprep/shared";
 
 const KNOWLEDGE_DIR = path.resolve(import.meta.dir, "../../../data/knowledge");

@@ -42,6 +42,16 @@ interface ChapterMeta {
   order: number;
 }
 
+function isChapterMeta(value: unknown): value is ChapterMeta {
+  const record = typeof value === "object" && value !== null ? value : null;
+  if (!record) return false;
+  const r: Record<string, unknown> = record;
+  return (
+    typeof r.id === "string" &&
+    typeof r.title === "string"
+  );
+}
+
 const MODE_LABELS: Record<string, string> = {
   chapter: "章节练习",
   random: "随机练习",
@@ -73,7 +83,11 @@ export default function QuizPage() {
   const [searchParams] = useSearchParams();
   const smartMode = searchParams.get("smart") === "true";
   const initialChapter = searchParams.get("chapter") || "";
-  const initialMode = (searchParams.get("mode") as "chapter" | "random" | "error") || "random";
+  const rawMode = searchParams.get("mode");
+  const initialMode: "chapter" | "random" | "error" =
+    rawMode === "chapter" || rawMode === "random" || rawMode === "error"
+      ? rawMode
+      : "random";
 
   const [mode, setMode] = useState<"chapter" | "random" | "error">(initialMode);
   const [chapter, setChapter] = useState<string>(initialChapter);
@@ -95,9 +109,19 @@ export default function QuizPage() {
     fetchWithAuth("/api/knowledge/chapters")
       .then(async (res) => {
         if (!res.ok) throw new Error("加载章节失败");
-        return (await res.json()) as { chapters: ChapterMeta[] };
+        const data: unknown = await res.json();
+        if (
+          typeof data === "object" &&
+          data !== null &&
+          "chapters" in data &&
+          Array.isArray(data.chapters) &&
+          data.chapters.every(isChapterMeta)
+        ) {
+          setChapters(data.chapters);
+        } else {
+          setChapters([]);
+        }
       })
-      .then((data) => setChapters(data.chapters))
       .catch(() => setChapters([]));
 
     if (smartMode) {

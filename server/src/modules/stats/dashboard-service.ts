@@ -23,24 +23,24 @@ export function getDashboard(userId: string, db: Database): DashboardSummary {
 
 function getTodayReviewCount(userId: string, db: Database): number {
   const row = db
-    .query(
+    .query<{ count: number }, [string]>(
       `SELECT COUNT(*) AS count
        FROM review_cards
        WHERE user_id = ? AND due_date <= CURRENT_DATE`,
     )
-    .get(userId) as { count: number } | null;
+    .get(userId);
   return row?.count ?? 0;
 }
 
 function getStreak(userId: string, db: Database): number {
   const rows = db
-    .query(
+    .query<{ date: string }, [string]>(
       `SELECT date
        FROM study_sessions
        WHERE user_id = ?
        ORDER BY date DESC`,
     )
-    .all(userId) as { date: string }[];
+    .all(userId);
 
   if (rows.length === 0) {
     return 0;
@@ -69,7 +69,7 @@ function getStreak(userId: string, db: Database): number {
 
 function getWeakPointCount(userId: string, db: Database): number {
   const row = db
-    .query(
+    .query<{ count: number }, [string]>(
       `SELECT COUNT(*) AS count
        FROM (
          SELECT question_id
@@ -79,20 +79,20 @@ function getWeakPointCount(userId: string, db: Database): number {
          HAVING SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / CAST(COUNT(*) AS REAL) < 0.6
        )`,
     )
-    .get(userId) as { count: number } | null;
+    .get(userId);
   return row?.count ?? 0;
 }
 
 function getLastMockScore(userId: string, db: Database): number | null {
   const row = db
-    .query(
+    .query<{ score: number }, [string]>(
       `SELECT score
        FROM exam_records
        WHERE user_id = ?
        ORDER BY created_at DESC
        LIMIT 1`,
     )
-    .get(userId) as { score: number } | null;
+    .get(userId);
   return row?.score ?? null;
 }
 

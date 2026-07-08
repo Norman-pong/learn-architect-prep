@@ -1,5 +1,5 @@
 import path from "node:path";
-import { getDb } from "../db";
+import { getDb } from "../../db";
 
 const KNOWLEDGE_DIR = path.resolve(import.meta.dir, "../../../data/knowledge");
 
@@ -74,16 +74,21 @@ async function loadChapters(): Promise<ChapterMeta[]> {
   const result: ChapterMeta[] = [];
   if (await indexFile.exists()) {
     try {
-      const raw = (await indexFile.json()) as { chapters: ChapterMeta[] };
+      const raw: unknown = await indexFile.json();
+      if (!isRecord(raw) || !Array.isArray(raw.chapters)) {
+        return cachedChapters ?? [];
+      }
       for (const ch of raw.chapters) {
         const chapterIdxFile = Bun.file(path.join(KNOWLEDGE_DIR, ch.id, "index.json"));
         let kps: KnowledgePointLite[] = [];
         if (await chapterIdxFile.exists()) {
           try {
-            const chapterRaw = (await chapterIdxFile.json()) as {
-              knowledgePoints?: KnowledgePointLite[];
-            };
-            kps = chapterRaw.knowledgePoints ?? [];
+            const chapterRaw: unknown = await chapterIdxFile.json();
+            if (isRecord(chapterRaw) && Array.isArray(chapterRaw.knowledgePoints)) {
+              kps = chapterRaw.knowledgePoints.filter(isRecord).map((kp) => ({
+                id: typeof kp.id === "string" ? kp.id : "",
+              }));
+            }
           } catch {
             kps = [];
           }
@@ -108,6 +113,10 @@ async function loadChapters(): Promise<ChapterMeta[]> {
 
 function isValidYear(year: number): boolean {
   return Number.isInteger(year) && year >= 1970 && year <= 9999;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }
 
 function isValidMonth(month: string): boolean {
@@ -375,10 +384,10 @@ export async function getChapterProgress(userId: string): Promise<ChapterProgres
     const entry = chapterAgg.get(meta.chapterId);
     if (!entry) continue;
     entry.studiedKnowledgePoints.add(kpId);
-    entry.totalReviews += Number(agg.reps_sum ?? 0);
-    entry.easeSum += Number(agg.ease_avg ?? 0) * Number(agg.card_count ?? 0);
-    entry.easeCount += Number(agg.card_count ?? 0);
-    if (Number(agg.reps_sum ?? 0) >= 3 && Number(agg.ease_avg ?? 0) >= 2.5) {
+    entry.totalReviews += agg.reps_sum ?? 0;
+    entry.easeSum += (agg.ease_avg ?? 0) * (agg.card_count ?? 0);
+    entry.easeCount += agg.card_count ?? 0;
+    if ((agg.reps_sum ?? 0) >= 3 && (agg.ease_avg ?? 0) >= 2.5) {
       entry.mastered += 1;
     }
   }

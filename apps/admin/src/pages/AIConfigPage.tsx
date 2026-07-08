@@ -29,21 +29,21 @@ interface AIConfigResponse {
   updatedAt: string;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 async function fetchWithAuth<T>(url: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem("accessToken");
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: token ? `Bearer ${token}` : "",
-      "Content-Type": "application/json",
-    },
-  });
+  const headers = new Headers(options.headers);
+  headers.set("Authorization", token ? `Bearer ${token}` : "");
+  headers.set("Content-Type", "application/json");
+  const res = await fetch(url, { ...options, headers });
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: "请求失败" }));
-    throw new Error(err.error || `HTTP ${res.status}`);
+    const err: unknown = await res.json().catch(() => ({ error: "请求失败" }));
+    throw new Error(isRecord(err) && typeof err.error === "string" ? err.error : `HTTP ${res.status}`);
   }
-  return (await res.json()) as T;
+  return res.json();
 }
 
 export function AIConfigPage() {
@@ -56,7 +56,7 @@ export function AIConfigPage() {
 
   useEffect(() => {
     setLoading(true);
-    fetchWithAuth<AIConfigResponse | null>("/api/ai-config")
+    void fetchWithAuth<AIConfigResponse | null>("/api/ai-config")
       .then((config) => {
         if (config) {
           form.setFieldsValue({
@@ -77,8 +77,10 @@ export function AIConfigPage() {
   const handleSave = async (values: AIConfigForm) => {
     setSaving(true);
     try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
       await fetchWithAuth<AIConfigResponse>("/api/ai-config", {
         method: "PUT",
+        headers,
         body: JSON.stringify(values),
       });
       setHasKey(true);
@@ -159,7 +161,7 @@ export function AIConfigPage() {
             <Button type="primary" htmlType="submit" loading={saving}>
               保存
             </Button>
-            <Button onClick={handleTest} loading={testing}>
+            <Button onClick={() => void handleTest()} loading={testing}>
               测试连接
             </Button>
           </Space>

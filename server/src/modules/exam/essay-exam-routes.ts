@@ -1,12 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import {
-  generateEssayExam,
-  generateExamPaper,
-  submitEssay,
-  gradeEssayExam,
-  getExamReport,
-} from "../services/essay-exam";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { generateExamPaper, submitEssay, gradeEssayExam, getExamReport } from "./essay-exam-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 
@@ -95,6 +89,7 @@ export const essayExamRoutes = new Elysia({ prefix: "/api/exam/essay" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);
@@ -117,11 +112,10 @@ export const essayExamRoutes = new Elysia({ prefix: "/api/exam/essay" })
   )
   .post(
     "/submit",
-    async ({ body, userId, set }) => {
+    async ({ body, userId }) => {
       const sections = body.sections as Record<string, string>;
       const result = await submitEssay(userId, body.examId, body.selectedQuestionId, sections);
       if (!result.success) {
-        set.status = 400;
         return { error: "提交失败，请检查考试状态或选题" };
       }
       return result;
@@ -133,21 +127,19 @@ export const essayExamRoutes = new Elysia({ prefix: "/api/exam/essay" })
   )
   .post(
     "/finish",
-    async ({ body, userId, set }) => {
+    async ({ body, userId }) => {
       try {
         const report = await gradeEssayExam(userId, body.examId);
         if (!report) {
-          set.status = 404;
           return { error: "Exam not found or not in progress" };
         }
         return report;
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         if (message === "ESSAY_BANK_EMPTY") {
-          set.status = 500;
           return { error: "论文题库为空，请先导入题库数据" };
         }
-        throw err;
+        return { error: "Internal server error" };
       }
     },
     {
@@ -157,10 +149,9 @@ export const essayExamRoutes = new Elysia({ prefix: "/api/exam/essay" })
   )
   .get(
     "/report",
-    async ({ query, userId, set }) => {
+    async ({ query, userId }) => {
       const report = await getExamReport(userId, query.examId);
       if (!report) {
-        set.status = 404;
         return { error: "Report not found" };
       }
       return report;

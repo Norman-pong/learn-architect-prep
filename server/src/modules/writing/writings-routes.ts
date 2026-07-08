@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { deleteWriting, getWriting, listWritings, upsertWriting } from "../services/writings";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { deleteWriting, getWriting, listWritings, upsertWriting } from "./writings-service";
 
 const AUTH_HEADER = t.Object({ authorization: t.Optional(t.String()) });
 

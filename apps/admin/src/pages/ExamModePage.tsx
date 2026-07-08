@@ -101,7 +101,7 @@ export default function ExamModePage() {
         body: JSON.stringify({ examType, mode }),
       });
       if (res.examType === "comprehensive") {
-        navigate("/exam/comp");
+        void navigate("/exam/comp");
         return;
       }
       setExam(res);
@@ -125,7 +125,7 @@ export default function ExamModePage() {
         body: JSON.stringify({ examId }),
       });
       if (res.examType === "comprehensive") {
-        navigate("/exam/comp");
+        void navigate("/exam/comp");
         return;
       }
       setExam(res);
@@ -184,7 +184,7 @@ export default function ExamModePage() {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
-      apiRequest<{ active: ActiveExam | null }>("/api/exam/status")
+      void apiRequest<{ active: ActiveExam | null }>("/api/exam/status")
         .then((res) => setActive(res.active))
         .catch(() => setActive(null));
     } catch (err) {
@@ -202,7 +202,7 @@ export default function ExamModePage() {
             if (timerRef.current) clearInterval(timerRef.current);
             timerRef.current = null;
             // auto finish when time runs out
-            finish();
+            void finish().catch(() => {});
             return 0;
           }
           return prev - 1;

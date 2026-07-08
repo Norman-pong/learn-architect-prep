@@ -15,7 +15,9 @@ export function usePrefersDark(): boolean {
   });
 
   useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return;
+    if (typeof window === "undefined" || !window.matchMedia) {
+      return undefined;
+    }
     const mql = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = (e: MediaQueryListEvent) => setPrefersDark(e.matches);
     mql.addEventListener("change", onChange);

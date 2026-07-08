@@ -5,7 +5,6 @@ import {
   recordAnswer,
   getUserErrorQuestions,
   getQuestionById,
-  type PublicQuestion,
 } from "../services/quiz";
 
 const QuestionsQuery = t.Object({
@@ -53,6 +52,7 @@ export const quizRoutes = new Elysia({ prefix: "/api/quiz" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);
@@ -67,7 +67,7 @@ export const quizRoutes = new Elysia({ prefix: "/api/quiz" })
         chapter: query.chapter,
         count: Number.isNaN(count) ? 20 : count,
       });
-      return questions as PublicQuestion[];
+      return questions;
     },
     {
       query: QuestionsQuery,
@@ -93,7 +93,7 @@ export const quizRoutes = new Elysia({ prefix: "/api/quiz" })
     "/error-questions",
     async ({ userId }) => {
       const questions = await getUserErrorQuestions(userId);
-      return questions as PublicQuestion[];
+      return questions;
     },
     {
       response: { 200: QuestionsResponse, 401: ErrorResponse },

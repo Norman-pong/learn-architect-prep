@@ -12,7 +12,7 @@ await page.evaluate(() => {
   const origFetch = window.fetch;
   window.fetch = function (...args) {
     const url = typeof args[0] === "string" ? args[0] : args[0].url;
-    window.__lastFetchUrl = url;
+    window.lastFetchUrl = url;
     return origFetch.apply(this, args);
   };
 });
@@ -23,7 +23,7 @@ await page.evaluate(async () => {
   await mod.fetchWithAuth("/api/ai-config").catch(() => {});
 });
 
-const lastUrl = await page.evaluate(() => window.__lastFetchUrl);
+const lastUrl = await page.evaluate(() => window.lastFetchUrl);
 console.log("Last fetch URL:", lastUrl);
 
 await browser.close();

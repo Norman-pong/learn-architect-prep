@@ -1,12 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import {
-  generateCaseExam,
-  getCaseExamPaper,
-  submitCaseAnswer,
-  gradeCaseExam,
-  getCaseExamReport,
-} from "../services/case-exam";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getCaseExamPaper, submitCaseAnswer, gradeCaseExam, getCaseExamReport } from "./case-exam-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 
@@ -86,6 +80,7 @@ export const caseExamRoutes = new Elysia({ prefix: "/api/exam/case" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

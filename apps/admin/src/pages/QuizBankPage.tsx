@@ -105,15 +105,15 @@ export function QuizBankPage() {
   };
 
   useEffect(() => {
-    loadStats();
-    loadQuestions(filters);
+    void loadStats();
+    void loadQuestions(filters);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFilterChange = (key: keyof typeof filters, value: string | undefined) => {
     const next = { ...filters, [key]: value };
     setFilters(next);
-    loadQuestions(next);
+    void loadQuestions(next);
   };
 
   const handleImport = async () => {

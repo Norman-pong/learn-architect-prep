@@ -1,4 +1,4 @@
-import { getDb } from "../db";
+import { getDb } from "../../db";
 
 export const EXAM_TYPES = ["comprehensive", "case", "essay"] as const;
 export type ExamType = (typeof EXAM_TYPES)[number];
@@ -66,8 +66,8 @@ interface ExamHistoryDbRow {
   finished_at: string | null;
 }
 
-function parseExamType(value: string): ExamType | null {
-  return (EXAM_TYPES as readonly string[]).includes(value) ? (value as ExamType) : null;
+function isExamType(value: string): value is ExamType {
+  return EXAM_TYPES.some((t) => t === value);
 }
 
 function toDateString(iso: string): string {
@@ -89,7 +89,7 @@ export function getExamHistory(userId: string, examType?: string, limit = 200): 
   const db = getDb();
   const filters: string[] = ["user_id = ?"];
   const params: (string | number)[] = [userId];
-  if (examType && parseExamType(examType)) {
+  if (examType && isExamType(examType)) {
     filters.push("exam_type = ?");
     params.push(examType);
   }
@@ -107,11 +107,12 @@ export function getExamHistory(userId: string, examType?: string, limit = 200): 
     .all(...params);
 
   return rows.map((row) => {
-    const type = parseExamType(row.exam_type);
+    const type = isExamType(row.exam_type) ? row.exam_type : null;
     const passed = type && row.score != null ? row.score >= PASS_SCORE : null;
+    const rawType = type ?? row.exam_type;
     return {
       id: row.id,
-      examType: (type ?? row.exam_type) as ExamType,
+      examType: isExamType(rawType) ? rawType : (type ?? "comprehensive"),
       mode: row.mode,
       status: row.status,
       score: row.score,
@@ -137,7 +138,7 @@ export function getScoreTrends(userId: string, days = 90, examType?: string): Sc
   const rangeStart = toDateString(start.toISOString());
   const rangeEnd = toDateString(new Date().toISOString());
 
-  const filterExamType = examType && parseExamType(examType);
+  const filterExamType = examType && isExamType(examType) ? examType : null;
   const params: (string | number)[] = [
     userId,
     toDateString(start.toISOString()) + "T00:00:00.000Z",
@@ -175,7 +176,7 @@ export function getScoreTrends(userId: string, days = 90, examType?: string): Sc
   >();
 
   for (const row of rows) {
-    const type = parseExamType(row.exam_type);
+    const type = isExamType(row.exam_type) ? row.exam_type : null;
     if (!type || row.score == null) continue;
     const date = toDateString(row.started_at);
     const inner = bucket.get(type) ?? new Map<string, number>();
@@ -200,7 +201,7 @@ export function getScoreTrends(userId: string, days = 90, examType?: string): Sc
   // 选定展示的科目列表
   const types: ExamType[] = filterExamType
     ? [filterExamType]
-    : (EXAM_TYPES as readonly ExamType[]).slice();
+    : EXAM_TYPES.slice();
 
   // 构造每天一个点的序列
   const today = new Date();

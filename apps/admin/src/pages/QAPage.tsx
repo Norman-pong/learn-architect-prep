@@ -136,8 +136,15 @@ export default function QAPage() {
       });
 
       if (!response.ok) {
-        const data = (await response.json().catch(() => ({}))) as { message?: string };
-        throw new Error(data.message ?? "请求失败");
+        const data: unknown = await response.json().catch(() => ({}));
+        const message =
+          typeof data === "object" &&
+          data !== null &&
+          "message" in data &&
+          typeof data.message === "string"
+            ? data.message
+            : "请求失败";
+        throw new Error(message);
       }
 
       const reader = response.body?.getReader();
@@ -167,24 +174,30 @@ export default function QAPage() {
           if (jsonStr === "[DONE]") continue;
 
           try {
-            const event = JSON.parse(jsonStr) as {
-              type: "chunk" | "done" | "error";
-              data?: string;
-              message?: string;
-            };
-
-            if (event.type === "chunk" && event.data) {
-              assistantContent += event.data;
-              setHistory((prev) => {
-                const next = [...prev];
-                const last = next[next.length - 1];
-                if (last && last.role === "assistant") {
-                  last.content = assistantContent;
-                }
-                return next;
-              });
-            } else if (event.type === "error") {
-              throw new Error(event.message ?? "流式响应错误");
+            const event: unknown = JSON.parse(jsonStr);
+            if (
+              typeof event === "object" &&
+              event !== null &&
+              "type" in event &&
+              (event.type === "chunk" || event.type === "done" || event.type === "error")
+            ) {
+              if (event.type === "chunk" && "data" in event && typeof event.data === "string") {
+                assistantContent += event.data;
+                setHistory((prev) => {
+                  const next = [...prev];
+                  const last = next[next.length - 1];
+                  if (last && last.role === "assistant") {
+                    last.content = assistantContent;
+                  }
+                  return next;
+                });
+              } else if (event.type === "error") {
+                const errMessage =
+                  "message" in event && typeof event.message === "string"
+                    ? event.message
+                    : "流式响应错误";
+                throw new Error(errMessage);
+              }
             }
           } catch {
             // ignore malformed sse lines
@@ -211,7 +224,7 @@ export default function QAPage() {
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        handleAsk();
+        void handleAsk();
       }
     },
     [handleAsk],
@@ -222,7 +235,7 @@ export default function QAPage() {
       setChapterInfo({ chapterId: chId, chapterTitle: chTitle, kpId: kId, kpTitle: kTitle });
       setHistory([]);
       setError(null);
-      navigate(`/qa/${chId}/${kId}`);
+      void navigate(`/qa/${chId}/${kId}`);
     },
     [navigate],
   );
@@ -290,7 +303,7 @@ export default function QAPage() {
                         type="link"
                         size="small"
                         onClick={() => {
-                          fetch(`/api/knowledge/chapters/${ch.id}`)
+                          void fetch(`/api/knowledge/chapters/${ch.id}`)
                             .then((r) => r.json())
                             .then((data: ChapterIndex) => {
                               setChapterIndex(data);

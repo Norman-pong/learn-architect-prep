@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { getWeakPoints } from "../services/weakness";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getWeakPoints } from "./weakness-service";
 
 const WeakPointItem = t.Object({
   chapterId: t.String(),
@@ -24,6 +24,7 @@ export const weaknessRoutes = new Elysia({ prefix: "/api/weakness" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await getUserIdFromToken(headers.authorization);

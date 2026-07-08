@@ -125,7 +125,7 @@ export function WritingTipsPage() {
         setLoading(false);
       }
     }
-    load();
+    void load();
   }, []);
 
   if (loading) {
@@ -278,11 +278,13 @@ export function WritingTipsPage() {
       title: "频率",
       dataIndex: "frequency",
       key: "frequency",
-      render: (frequency: string) => (
-        <Tag color={frequencyColor[frequency as keyof typeof frequencyColor] || "default"}>
-          {frequency}
-        </Tag>
-      ),
+      render: (frequency: string) => {
+        const color =
+          frequency === "high" || frequency === "medium" || frequency === "low"
+            ? frequencyColor[frequency]
+            : "default";
+        return <Tag color={color}>{frequency}</Tag>;
+      },
     },
   ];
 

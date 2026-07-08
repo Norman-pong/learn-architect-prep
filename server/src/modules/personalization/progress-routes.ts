@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { getCalendarData, getChapterProgress, getHeatmapData } from "../services/progress";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getCalendarData, getChapterProgress, getHeatmapData } from "./progress-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 
@@ -70,6 +70,7 @@ export const progressRoutes = new Elysia({ prefix: "/api/progress" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

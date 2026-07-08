@@ -1,7 +1,7 @@
-import { getDb } from "../db";
+import { getDb } from "../../db";
 import { randomUUID } from "node:crypto";
-import { loadCaseQuestions } from "./quiz";
-import { getConfig, getDecryptedKey } from "./ai-config";
+import { loadCaseQuestions } from "../quiz/quiz-service";
+import { getConfig, getDecryptedKey } from "../ai/ai-config-service";
 import { streamText, type ModelMessage } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
@@ -94,6 +94,43 @@ const CASE_DIMENSION_CONFIG: {
 const PASS_LINE = 45;
 const MAX_TOTAL_SCORE = 75;
 
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(isString);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isCaseAnswerMap(value: unknown): value is Record<string, { answer: string; mermaid?: string }> {
+  if (!isRecord(value)) return false;
+  for (const key of Object.keys(value)) {
+    const item = value[key];
+    if (!isRecord(item)) return false;
+    if (typeof item.answer !== "string") return false;
+  }
+  return true;
+}
+
+function isCaseScoreDimension(value: unknown): value is CaseScoreDimension {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.name === "string" &&
+    typeof value.weight === "number" &&
+    typeof value.score === "number" &&
+    typeof value.maxScore === "number" &&
+    typeof value.comment === "string"
+  );
+}
+
+function isCaseScoreDimensionArray(value: unknown): value is CaseScoreDimension[] {
+  return Array.isArray(value) && value.every(isCaseScoreDimension);
+}
+
 function shuffle<T>(arr: T[]): T[] {
   const result = arr.slice();
   for (let i = result.length - 1; i > 0; i--) {
@@ -180,11 +217,11 @@ function parseCaseScoreResult(text: string): CaseScoreResult {
 
   const dimensions: CaseScoreDimension[] = (parsed.dimensions ?? []).map(
     (d: Record<string, unknown>) => ({
-      name: String(d.name ?? ""),
+      name: typeof d.name === "string" ? d.name : "",
       weight: CASE_DIMENSION_CONFIG.find((c) => c.name === d.name)?.weight ?? 0,
       score: Number(d.score ?? 0),
       maxScore: CASE_DIMENSION_CONFIG.find((c) => c.name === d.name)?.maxScore ?? 0,
-      comment: String(d.comment ?? ""),
+      comment: typeof d.comment === "string" ? d.comment : "",
     }),
   );
 
@@ -390,12 +427,11 @@ export async function getCaseExamPaper(
 
   if (!row || row.exam_type !== "case") return null;
 
-  const snapshot = JSON.parse(row.answers_snapshot || "{}") as {
-    questionIds?: string[];
-  };
+  const parsed: unknown = JSON.parse(row.answers_snapshot || "{}");
+  const questionIds = isRecord(parsed) && isStringArray(parsed.questionIds) ? parsed.questionIds : [];
 
   const all = await loadCaseQuestions();
-  const questions = (snapshot.questionIds ?? [])
+  const questions = questionIds
     .map((id) => all.find((q) => q.id === id))
     .filter((q): q is CaseQuestion => q !== undefined);
 
@@ -423,11 +459,9 @@ export async function submitCaseAnswer(
 
   if (!row) return { success: false };
 
-  const snapshot = JSON.parse(row.answers_snapshot || "{}") as {
-    answers?: Record<string, { answer: string; mermaid?: string }>;
-  };
-
-  const answers = snapshot.answers ?? {};
+  const parsed: unknown = JSON.parse(row.answers_snapshot || "{}");
+  const snapshot = isRecord(parsed) ? parsed : {};
+  const answers = isRecord(parsed) && isCaseAnswerMap(parsed.answers) ? parsed.answers : {};
   answers[questionId] = { answer, mermaid };
 
   db.prepare("UPDATE exam_records SET answers_snapshot = ? WHERE id = ? AND user_id = ?;").run(
@@ -461,14 +495,11 @@ export async function gradeCaseExam(
 
   if (!row || row.status !== "in_progress") return null;
 
-  const snapshot = JSON.parse(row.answers_snapshot || "{}") as {
-    questionIds?: string[];
-    answers?: Record<string, { answer: string; mermaid?: string }>;
-  };
+  const parsed: unknown = JSON.parse(row.answers_snapshot || "{}");
+  const questionIds = isRecord(parsed) && isStringArray(parsed.questionIds) ? parsed.questionIds : [];
+  const answers = isRecord(parsed) && isCaseAnswerMap(parsed.answers) ? parsed.answers : {};
 
   const all = await loadCaseQuestions();
-  const answers = snapshot.answers ?? {};
-  const questionIds = snapshot.questionIds ?? [];
 
   let totalScore = 0;
   const allDimensions: CaseScoreDimension[] = [];
@@ -476,7 +507,7 @@ export async function gradeCaseExam(
   const allSuggestions: string[] = [];
 
   for (const qid of questionIds) {
-    const question = all.find((q) => q.id === qid);
+    const question = all.find((q: CaseQuestion) => q.id === qid);
     if (!question) continue;
 
     const ans = answers[qid];
@@ -559,7 +590,7 @@ export async function gradeCaseExam(
   ).run(
     finishedAt,
     finalScore,
-    JSON.stringify(snapshot),
+    JSON.stringify(parsed),
     JSON.stringify(detailJson),
     examId,
     userId,
@@ -600,12 +631,19 @@ export async function getCaseExamReport(
 
   if (!row) return null;
 
-  const snapshot = JSON.parse(row.answers_snapshot || "{}") as {
-    answers?: Record<string, { answer: string; mermaid?: string }>;
-  };
-  const detail = row.detail_json ? (JSON.parse(row.detail_json) as Record<string, unknown>) : null;
+  const snapshotParsed: unknown = JSON.parse(row.answers_snapshot || "{}");
+  const answers = isRecord(snapshotParsed) && isCaseAnswerMap(snapshotParsed.answers) ? snapshotParsed.answers : {};
 
-  const dimensions: CaseScoreDimension[] = (detail?.dimensions as CaseScoreDimension[]) ?? [];
+  const detail = row.detail_json
+    ? ((): Record<string, unknown> | null => {
+        const p: unknown = JSON.parse(row.detail_json);
+        return isRecord(p) ? p : null;
+      })()
+    : null;
+
+  const dimensions: CaseScoreDimension[] = isCaseScoreDimensionArray(detail?.dimensions)
+    ? detail.dimensions
+    : [];
   for (const config of CASE_DIMENSION_CONFIG) {
     if (!dimensions.find((d) => d.name === config.name)) {
       dimensions.push({
@@ -625,10 +663,10 @@ export async function getCaseExamReport(
     passLine: PASS_LINE,
     passed: (row.score ?? 0) >= PASS_LINE,
     dimensions,
-    overallComment: String(detail?.overallComment ?? ""),
-    improvementSuggestions: Array.isArray(detail?.improvementSuggestions)
-      ? (detail?.improvementSuggestions as string[])
+    overallComment: typeof detail?.overallComment === "string" ? detail.overallComment : "",
+    improvementSuggestions: isStringArray(detail?.improvementSuggestions)
+      ? detail.improvementSuggestions
       : [],
-    answers: snapshot.answers ?? {},
+    answers,
   };
 }

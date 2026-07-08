@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { searchKnowledge } from "../services/search";
+import { searchKnowledge } from "./search-service";
 
 export const searchRoutes = new Elysia({ prefix: "/api/search" }).get(
   "/",

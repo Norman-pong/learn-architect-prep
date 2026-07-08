@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { getReminderStatus, toggleReminder } from "../services/reminder";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { getReminderStatus, toggleReminder } from "./reminder-service";
 
 const StatusResponse = t.Object({
   enabled: t.Boolean(),
@@ -24,6 +24,7 @@ export const reminderRoutes = new Elysia({ prefix: "/api/reminder" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

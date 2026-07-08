@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
-import { answerQuestion } from "../services/qa";
+import { getUserIdFromToken } from "../auth/auth-service";
+import { answerQuestion } from "./qa-service";
 
 const AUTH_HEADER = t.Object({ authorization: t.Optional(t.String()) });
 

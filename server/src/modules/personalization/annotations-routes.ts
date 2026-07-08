@@ -1,11 +1,11 @@
 import { Elysia, t } from "elysia";
-import { getUserIdFromToken } from "../services/auth";
+import { getUserIdFromToken } from "../auth/auth-service";
 import {
   AnnotationValidationError,
   addAnnotation,
   deleteAnnotation,
   getAnnotations,
-} from "../services/annotations";
+} from "./annotations-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 
@@ -32,6 +32,7 @@ export const annotationsRoutes = new Elysia({ prefix: "/api/annotations" })
       set.status = 401;
       return { error: "Unauthorized" };
     }
+    return undefined;
   })
   .derive(async ({ headers }) => {
     const userId = await requireUserId(headers.authorization);

@@ -30,7 +30,10 @@ function parseAnnotations(raw: string): { type: keyof typeof ANNOTATION_LABELS; 
   const re = /<!--\s*(decision|compare|reflection)\s*:\s*([\s\S]*?)-->/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(raw)) !== null) {
-    anns.push({ type: m[1] as keyof typeof ANNOTATION_LABELS, text: m[2].trim() });
+    const type = m[1];
+    if (type === "decision" || type === "compare" || type === "reflection") {
+      anns.push({ type, text: m[2].trim() });
+    }
   }
   return anns;
 }

@@ -2,9 +2,9 @@ import { streamText, type ModelMessage } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createDeepSeek } from "@ai-sdk/deepseek";
-import { getDb } from "../db";
-import { getWriting } from "./writings";
-import { getConfig, getDecryptedKey } from "./ai-config";
+import { getDb } from "../../db";
+import { getWriting } from "../writing/writings-service";
+import { getConfig, getDecryptedKey } from "../ai/ai-config-service";
 import type { Provider, ThesisSections, AiScoreSummary } from "@archprep/shared";
 
 interface ScoreDimension {
@@ -157,6 +157,10 @@ function createProvider(provider: Provider, apiKey: string, baseUrl?: string) {
   }
 }
 
+function isSeverity(value: unknown): value is "minor" | "major" | "critical" {
+  return value === "minor" || value === "major" || value === "critical";
+}
+
 function parseScoreResult(text: string): EssayScoreResult {
   // Try to extract JSON from the response (handle markdown code blocks)
   let jsonStr = text.trim();
@@ -169,11 +173,11 @@ function parseScoreResult(text: string): EssayScoreResult {
 
   const dimensions: ScoreDimension[] = (parsed.dimensions ?? []).map(
     (d: Record<string, unknown>) => ({
-      name: String(d.name ?? ""),
+      name: typeof d.name === "string" ? d.name : "",
       weight: DIMENSION_CONFIG.find((c) => c.name === d.name)?.weight ?? 0,
       score: Number(d.score ?? 0),
       maxScore: DIMENSION_CONFIG.find((c) => c.name === d.name)?.maxScore ?? 0,
-      comment: String(d.comment ?? ""),
+      comment: typeof d.comment === "string" ? d.comment : "",
     }),
   );
 
@@ -198,16 +202,14 @@ function parseScoreResult(text: string): EssayScoreResult {
     maxTotalScore,
     dimensions,
     sectionFeedbacks: (parsed.sectionFeedbacks ?? []).map((s: Record<string, unknown>) => ({
-      section: String(s.section ?? ""),
-      comment: String(s.comment ?? ""),
+      section: typeof s.section === "string" ? s.section : "",
+      comment: typeof s.comment === "string" ? s.comment : "",
       suggestions: Array.isArray(s.suggestions) ? s.suggestions.map(String) : [],
     })),
     deductions: (parsed.deductions ?? []).map((d: Record<string, unknown>) => ({
-      reason: String(d.reason ?? ""),
-      severity: ["minor", "major", "critical"].includes(String(d.severity))
-        ? (String(d.severity) as "minor" | "major" | "critical")
-        : "minor",
-      suggestion: String(d.suggestion ?? ""),
+      reason: typeof d.reason === "string" ? d.reason : "",
+      severity: isSeverity(d.severity) ? d.severity : "minor",
+      suggestion: typeof d.suggestion === "string" ? d.suggestion : "",
     })),
     overallComment: String(parsed.overallComment ?? ""),
     improvementSuggestions: Array.isArray(parsed.improvementSuggestions)

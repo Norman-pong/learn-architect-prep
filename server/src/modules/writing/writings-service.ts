@@ -1,12 +1,13 @@
 import {
   THESIS_SECTIONS,
+  type AiScoreSummary,
   type ThesisSectionKey,
   type ThesisSections,
   type Writing,
   type WritingSummary,
   type WritingUpsertBody,
 } from "@archprep/shared";
-import { getDb } from "../db";
+import { getDb } from "../../db";
 
 interface WritingRow {
   id: string;
@@ -25,6 +26,10 @@ const EMPTY_SECTIONS: ThesisSections = {
   conclusion: "",
 };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 /**
  * Parse the JSON-encoded `content` column back into a `ThesisSections`.
  * Falls back to empty strings for any missing / malformed fields so
@@ -35,9 +40,9 @@ function parseContent(raw: string | null): ThesisSections {
   if (!raw) return out;
   try {
     const parsed: unknown = JSON.parse(raw);
-    if (parsed && typeof parsed === "object") {
+    if (isRecord(parsed)) {
       for (const key of THESIS_SECTIONS) {
-        const candidate = (parsed as Record<string, unknown>)[key];
+        const candidate = parsed[key];
         if (typeof candidate === "string") {
           out[key] = candidate;
         }
@@ -59,14 +64,21 @@ function sumWords(sections: ThesisSections): number {
   return total;
 }
 
+function isAiScoreSummary(value: unknown): value is AiScoreSummary {
+  if (!isRecord(value)) return false;
+  if (value.total !== undefined && typeof value.total !== "number") return false;
+  if (value.scoredAt !== undefined && typeof value.scoredAt !== "string") return false;
+  return true;
+}
+
 function toPublic(row: WritingRow): Writing {
   const content = parseContent(row.content);
   let aiScore: Writing["aiScore"] = null;
   if (row.ai_score_json) {
     try {
       const parsed: unknown = JSON.parse(row.ai_score_json);
-      if (parsed && typeof parsed === "object") {
-        aiScore = parsed as Writing["aiScore"];
+      if (isAiScoreSummary(parsed)) {
+        aiScore = parsed;
       }
     } catch {
       aiScore = null;

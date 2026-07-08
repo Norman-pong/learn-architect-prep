@@ -1,5 +1,5 @@
-import { encrypt, decrypt } from "./crypto";
-import { getDb } from "../db";
+import { encrypt, decrypt } from "../auth/crypto";
+import { getDb } from "../../db";
 import type { AIConfig, Provider } from "@archprep/shared";
 
 const DEFAULT_BASE_URLS: Record<Provider, string | undefined> = {
@@ -37,18 +37,30 @@ interface AIConfigRow {
   updated_at: string;
 }
 
+function isProvider(value: unknown): value is Provider {
+  return (
+    value === "openai" ||
+    value === "anthropic" ||
+    value === "deepseek" ||
+    value === "minimax" ||
+    value === "kimi" ||
+    value === "custom"
+  );
+}
+
 function toPublic(row: AIConfigRow): AIConfig {
+  const provider = isProvider(row.provider) ? row.provider : "custom";
   return {
     id: row.id,
     userId: row.user_id,
-    provider: row.provider as Provider,
+    provider,
     model: row.model ?? undefined,
     baseUrl: row.base_url ?? undefined,
     updatedAt: row.updated_at,
   };
 }
 
-export function saveConfig(userId: string, input: AIConfigInput): AIConfig {
+export function saveConfig(userId: string, input: AIConfigInput): AIConfig | null {
   const db = getDb();
   const id = crypto.randomUUID();
   const updatedAt = new Date().toISOString();
@@ -70,8 +82,9 @@ export function saveConfig(userId: string, input: AIConfigInput): AIConfig {
       RETURNING *
       `,
     )
-    .get(id, userId, input.provider, encryptedKey, model, baseUrl, updatedAt) as AIConfigRow;
+    .get(id, userId, input.provider, encryptedKey, model, baseUrl, updatedAt);
 
+  if (!row) return null;
   return toPublic(row);
 }
 
@@ -108,7 +121,7 @@ export async function testConnection(
   }
 
   const apiKey = decrypt(row.api_key_encrypted);
-  const provider = row.provider as Provider;
+  const provider = isProvider(row.provider) ? row.provider : "custom";
   const baseUrl = row.base_url || DEFAULT_BASE_URLS[provider];
 
   if (!baseUrl) {
