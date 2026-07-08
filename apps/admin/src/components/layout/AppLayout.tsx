@@ -25,7 +25,14 @@ const menuItems = [
   { key: "/learn", icon: <BookOutlined />, label: "学习" },
   { key: "/quiz", icon: <EditOutlined />, label: "习题" },
   { key: "/writing", icon: <FileTextOutlined />, label: "论文" },
-  { key: "/settings", icon: <SettingOutlined />, label: "设置" },
+  {
+    key: "/settings",
+    icon: <SettingOutlined />,
+    label: "设置",
+    children: [
+      { key: "/settings/ai", label: "AI 配置" },
+    ],
+  },
 ];
 
 const THEME_ICON: Record<ThemeMode, React.ReactNode> = {
