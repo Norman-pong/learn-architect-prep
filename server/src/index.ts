@@ -13,6 +13,7 @@ import { quizBankRoutes } from "./routes/quiz-bank";
 import { reviewRoutes } from "./routes/review";
 import { statsRoutes } from "./routes/stats";
 import { dashboardRoutes } from "./routes/dashboard";
+import { examRoutes } from "./routes/exam";
 import { errorBookRoutes } from "./routes/error-book";
 import { weaknessRoutes } from "./routes/weakness";
 
@@ -41,6 +42,7 @@ const app = new Elysia()
   .use(dashboardRoutes)
   .use(quizRoutes)
   .use(weaknessRoutes)
+  .use(examRoutes)
   .use(errorBookRoutes)
   .listen(PORT);
 

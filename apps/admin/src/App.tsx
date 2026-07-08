@@ -12,7 +12,7 @@ import ReviewPage from "./pages/ReviewPage";
 import QuizPage from "./pages/QuizPage";
 import StatsPage from "./pages/StatsPage";
 import ErrorBookPage from "./pages/ErrorBookPage";
-import WeaknessPage from "./pages/WeaknessPage";
+import ExamModePage from "./pages/ExamModePage";
 
 export default function App() {
   return (
@@ -30,6 +30,7 @@ export default function App() {
           <Route path="quiz" element={<QuizPage />} />
           <Route path="stats" element={<StatsPage />} />
           <Route path="error-book" element={<ErrorBookPage />} />
+          <Route path="exam" element={<ExamModePage />} />
           <Route path="weakness" element={<WeaknessPage />} />
         </Route>
       </Routes>

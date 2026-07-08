@@ -34,6 +34,11 @@ const menuItems = [
   { key: "/stats", icon: <BarChartOutlined />, label: "统计" },
   { key: "/weakness", icon: <WarningOutlined />, label: "薄弱点" },
   {
+    key: "/exam",
+    icon: <DesktopOutlined />,
+    label: "模拟考",
+  },
+  {
     key: "/writing",
     icon: <FileTextOutlined />,
     label: "论文",
