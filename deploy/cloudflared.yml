@@ -1,0 +1,28 @@
+# ArchPrep cloudflared 隧道配置
+#
+# 使用方法：
+# 1. 先通过 Cloudflare 账号创建 named tunnel，获取 tunnel-id 与 credentials 文件。
+# 2. 将 <your-tunnel-id> 替换为真实 tunnel-id，并配置 credentials-file 路径。
+# 3. 将 <your-domain.example.com> 替换为 Cloudflare 托管的域名。
+# 4. 运行：cloudflared tunnel --config deploy/cloudflared.yml run <tunnel-name>
+#
+# 快速测试（无需持久域名）请使用：
+#   cloudflared tunnel --url http://localhost:8787
+
+tunnel: <your-tunnel-id>
+credentials-file: /Users/<you>/.cloudflared/<your-tunnel-id>.json
+
+# 日志级别，调试时可改为 debug
+loglevel: info
+
+ingress:
+  # 将公网域名映射到本地 ArchPrep 服务
+  - hostname: <your-domain.example.com>
+    service: http://localhost:8787
+    originRequest:
+      # 强制请求通过 HTTP/1.1，避免本地 Bun/Elysia 对 HTTP/2 的兼容问题
+      http2Origin: false
+      # 信任 cloudflared 转发的真实 IP
+      noTLSVerify: true
+  # 兜底：未匹配到域名时返回 404
+  - service: http_status:404

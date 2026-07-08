@@ -1,47 +1,64 @@
-import { ConfigProvider, theme } from "antd";
+import { App, ConfigProvider, theme as antdTheme } from "antd";
 import zhCN from "antd/locale/zh_CN";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useMemo } from "react";
 
-interface ThemeContextValue {
-  mode: "light" | "dark";
-  toggle: () => void;
+import { usePrefersDark } from "../hooks/usePrefersDark";
+import { useThemeMode, type ThemeMode } from "../store/theme";
+
+/**
+ * The mode resolved from the user's `ThemeMode` plus OS preference.
+ * This is what antd's algorithm accepts (it is binary).
+ */
+type ActualMode = "light" | "dark";
+
+interface AppThemeProviderProps {
+  children: React.ReactNode;
 }
 
-export const ThemeContext = createContext<ThemeContextValue>({
-  mode: "light",
-  toggle: () => {},
-});
-
-export function useTheme() {
-  return useContext(ThemeContext);
+function resolveActualMode(mode: ThemeMode, prefersDark: boolean): ActualMode {
+  if (mode === "system") return prefersDark ? "dark" : "light";
+  return mode;
 }
 
-export function AppThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<"light" | "dark">("light");
+/**
+ * Wraps the entire admin app with antd's `ConfigProvider`, picking
+ * `darkAlgorithm` / `defaultAlgorithm` based on the resolved mode.
+ *
+ * The provider is intentionally thin: it owns the algorithm decision
+ * and exposes the raw `ThemeMode` (system/light/dark) via `useTheme()`
+ * so callers can build their own UI (e.g. a three-way switch).
+ *
+ * The `algorithm` field is injected here — never inside a `as const`
+ * factory — so antd's `ThemeConfig` keeps its mutable shape and
+ * accepts the algorithm without a TS2322 readonly mismatch.
+ */
+export function AppThemeProvider({ children }: AppThemeProviderProps) {
+  const [mode] = useThemeMode();
+  const prefersDark = usePrefersDark();
 
-  useEffect(() => {
-    const saved = window.localStorage.getItem("archprep-theme") as "light" | "dark" | null;
-    if (saved === "light" || saved === "dark") {
-      setMode(saved);
-    }
-  }, []);
+  const actualMode = resolveActualMode(mode, prefersDark);
 
-  const toggle = () => {
-    setMode((prev) => {
-      const next = prev === "light" ? "dark" : "light";
-      window.localStorage.setItem("archprep-theme", next);
-      return next;
-    });
-  };
+  const themeConfig = useMemo(
+    () => ({
+      algorithm: actualMode === "dark" ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+    }),
+    [actualMode],
+  );
 
   return (
-    <ConfigProvider
-      locale={zhCN}
-      theme={{
-        algorithm: mode === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm,
-      }}
-    >
-      <ThemeContext.Provider value={{ mode, toggle }}>{children}</ThemeContext.Provider>
+    <ConfigProvider locale={zhCN} theme={themeConfig}>
+      <App>{children}</App>
     </ConfigProvider>
   );
+}
+
+/**
+ * Convenience hook for components that need the current `ThemeMode`
+ * (e.g. to render the three-way switch icon). Re-exports the store
+ * hook so callers don't need to know about the internal file layout.
+ */
+export function useTheme(): { mode: ThemeMode; prefersDark: boolean; actualMode: ActualMode } {
+  const [mode] = useThemeMode();
+  const prefersDark = usePrefersDark();
+  return { mode, prefersDark, actualMode: resolveActualMode(mode, prefersDark) };
 }
