@@ -7,7 +7,7 @@ import { examHistoryRoutes } from "./exam-history-routes";
 import { aiScoringRoutes } from "./ai-scoring-routes";
 import { smartSelectRoutes } from "./smart-select-routes";
 
-export const examPlugin = new Elysia({ prefix: "/api" })
+export const examPlugin = new Elysia({ name: "Module.Exam" })
   .use(examRoutes)
   .use(comprehensiveExamRoutes)
   .use(caseExamRoutes)
