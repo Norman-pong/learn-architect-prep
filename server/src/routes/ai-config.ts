@@ -74,7 +74,7 @@ export const aiConfigRoutes = new Elysia({ prefix: "/api/ai-config" })
         tags: ["AI Config"],
         security: [{ bearerAuth: [] }],
       },
-    }
+    },
   )
   .put(
     "/",
@@ -98,7 +98,7 @@ export const aiConfigRoutes = new Elysia({ prefix: "/api/ai-config" })
         tags: ["AI Config"],
         security: [{ bearerAuth: [] }],
       },
-    }
+    },
   )
   .post(
     "/test",
@@ -116,5 +116,5 @@ export const aiConfigRoutes = new Elysia({ prefix: "/api/ai-config" })
         tags: ["AI Config"],
         security: [{ bearerAuth: [] }],
       },
-    }
+    },
   );

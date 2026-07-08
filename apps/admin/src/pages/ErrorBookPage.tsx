@@ -13,11 +13,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-import {
-  CheckCircleOutlined,
-  RedoOutlined,
-  BookOutlined,
-} from "@ant-design/icons";
+import { CheckCircleOutlined, RedoOutlined, BookOutlined } from "@ant-design/icons";
 import { apiRequest, fetchWithAuth } from "../api/client";
 
 const { Title, Text, Paragraph } = Typography;
@@ -96,9 +92,7 @@ export default function ErrorBookPage() {
       const params = new URLSearchParams();
       params.set("mastered", "false");
       if (chapter) params.set("chapter", chapter);
-      const data = await apiRequest<ErrorBookItem[]>(
-        `/api/error-book?${params.toString()}`,
-      );
+      const data = await apiRequest<ErrorBookItem[]>(`/api/error-book?${params.toString()}`);
       setItems(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "加载失败");
@@ -198,11 +192,7 @@ export default function ErrorBookPage() {
               {OPTION_LABELS.map(
                 (key) =>
                   detailItem.options[key] && (
-                    <Radio.Button
-                      key={key}
-                      value={key}
-                      style={{ width: "100%", height: "auto" }}
-                    >
+                    <Radio.Button key={key} value={key} style={{ width: "100%", height: "auto" }}>
                       <Text strong>{key}.&nbsp;</Text>
                       {detailItem.options[key]}
                     </Radio.Button>
@@ -253,15 +243,8 @@ export default function ErrorBookPage() {
 
   return (
     <div style={{ maxWidth: 960, margin: "24px auto", padding: "0 16px" }}>
-      <Space
-        direction="vertical"
-        size="large"
-        style={{ width: "100%" }}
-      >
-        <Space
-          wrap
-          style={{ width: "100%", justifyContent: "space-between" }}
-        >
+      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        <Space wrap style={{ width: "100%", justifyContent: "space-between" }}>
           <Title level={4} style={{ margin: 0 }}>
             <BookOutlined /> 错题本
           </Title>
@@ -357,10 +340,7 @@ export default function ErrorBookPage() {
                         ),
                     )}
                   </Space>
-                  <Paragraph
-                    type="secondary"
-                    style={{ marginTop: 12, fontSize: 13 }}
-                  >
+                  <Paragraph type="secondary" style={{ marginTop: 12, fontSize: 13 }}>
                     {item.explanation}
                   </Paragraph>
                 </Card>

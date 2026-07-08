@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Button,
@@ -63,6 +64,7 @@ function formatSeconds(total: number): string {
 }
 
 export default function ExamModePage() {
+  const navigate = useNavigate();
   const { token } = theme.useToken();
 
   const [configs, setConfigs] = useState<ExamConfig[]>([]);
@@ -97,6 +99,10 @@ export default function ExamModePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ examType, mode }),
       });
+      if (res.examType === "comprehensive") {
+        navigate("/exam/comp");
+        return;
+      }
       setExam(res);
       setRemaining(res.remainingTime);
       setStarted(true);
@@ -117,6 +123,10 @@ export default function ExamModePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ examId }),
       });
+      if (res.examType === "comprehensive") {
+        navigate("/exam/comp");
+        return;
+      }
       setExam(res);
       setRemaining(res.remainingTime);
       setStarted(true);

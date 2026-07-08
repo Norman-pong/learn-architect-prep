@@ -6,15 +6,15 @@ import { importQuestionsFromUrl, readQuestionBank, writeQuestionBank } from "./i
  */
 const SOURCES = [
   {
-    name: "system_architect (gitee镜像)", 
+    name: "system_architect (gitee镜像)",
     url: "https://gitee.com/xxlllq/system_architect/raw/master/软考系统架构师历年真题/综合知识/2009-2025.json",
-    note: "xxlllq/system_architect 仓库，含 2009-2025 真题，GitHub 可能被墙改用 gitee"
+    note: "xxlllq/system_architect 仓库，含 2009-2025 真题，GitHub 可能被墙改用 gitee",
   },
   // GitHub raw URLs — 可能因为网络原因失败，用 gitee 镜像备选
   {
     name: "system_architect GitHub",
     url: "https://raw.githubusercontent.com/xxlllq/system_architect/main/题库/综合知识.json",
-    note: "GitHub 真题仓库，格式与 PRD §6.3 不同，需要转换脚本处理"
+    note: "GitHub 真题仓库，格式与 PRD §6.3 不同，需要转换脚本处理",
   },
 ];
 

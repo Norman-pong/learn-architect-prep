@@ -177,7 +177,7 @@ export async function getStatsByChapter(userId: string, days?: number): Promise<
   result.sort((a, b) => b.accuracy - a.accuracy || b.total - a.total);
 
   // 排名：做题数降序，同分按准确率降序
-  const ranked = [...result].sort(
+  const ranked = [...result].toSorted(
     (a: ChapterStats, b: ChapterStats) => b.total - a.total || b.accuracy - a.accuracy,
   );
   const rankMap = new Map<string, number>();

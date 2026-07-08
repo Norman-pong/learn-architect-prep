@@ -1,22 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  Card,
-  Empty,
-  Input,
-  List,
-  Space,
-  Spin,
-  Tag,
-  Typography,
-} from "antd";
+import { Button, Card, Empty, Input, List, Space, Spin, Tag, Typography } from "antd";
 
-import {
-  BookOutlined,
-  EyeOutlined,
-  FilterOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { BookOutlined, EyeOutlined, FilterOutlined, SearchOutlined } from "@ant-design/icons";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8787";
 
 const { Title, Paragraph, Text } = Typography;
@@ -40,9 +25,7 @@ interface SampleMeta {
 }
 
 /** Parse HTML‑style comment blocks out of raw markdown */
-function parseAnnotations(
-  raw: string,
-): { type: keyof typeof ANNOTATION_LABELS; text: string }[] {
+function parseAnnotations(raw: string): { type: keyof typeof ANNOTATION_LABELS; text: string }[] {
   const anns: { type: keyof typeof ANNOTATION_LABELS; text: string }[] = [];
   const re = /<!--\s*(decision|compare|reflection)\s*:\s*([\s\S]*?)-->/g;
   let m: RegExpExecArray | null;
@@ -56,7 +39,6 @@ function parseAnnotations(
 function stripComments(raw: string): string {
   return raw.replace(/<!--[\s\S]*?-->/g, "");
 }
-
 
 export function SamplesPage() {
   const [samples, setSamples] = useState<SampleMeta[]>([]);
@@ -77,10 +59,7 @@ export function SamplesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const topics = useMemo(
-    () => [...new Set(samples.map((s) => s.topic))].sort(),
-    [samples],
-  );
+  const topics = useMemo(() => [...new Set(samples.map((s) => s.topic))].toSorted(), [samples]);
 
   const filtered = useMemo(() => {
     let list = samples;
@@ -90,35 +69,36 @@ export function SamplesPage() {
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       list = list.filter(
-        (s) =>
-          s.title.toLowerCase().includes(q) ||
-          s.tags.some((t) => t.toLowerCase().includes(q)),
+        (s) => s.title.toLowerCase().includes(q) || s.tags.some((t) => t.toLowerCase().includes(q)),
       );
     }
     return list;
   }, [topicFilter, search, samples]);
 
-  const handleView = useCallback(async (id: string) => {
-    setActiveId(id);
-    setLoadingMd(true);
-    setMdContent(null);
-    try {
-      const s = samples.find((x) => x.id === id);
-      if (!s) return;
-      const slug = s.file.replace(/\.md$/, "");
-      const res = await fetch(`${API_BASE_URL}/api/samples/${slug}`);
-      if (!res.ok) {
+  const handleView = useCallback(
+    async (id: string) => {
+      setActiveId(id);
+      setLoadingMd(true);
+      setMdContent(null);
+      try {
+        const s = samples.find((x) => x.id === id);
+        if (!s) return;
+        const slug = s.file.replace(/\.md$/, "");
+        const res = await fetch(`${API_BASE_URL}/api/samples/${slug}`);
+        if (!res.ok) {
+          setMdContent("范文加载失败，请稍后重试。");
+          return;
+        }
+        const raw = await res.text();
+        setMdContent(raw);
+      } catch {
         setMdContent("范文加载失败，请稍后重试。");
-        return;
+      } finally {
+        setLoadingMd(false);
       }
-      const raw = await res.text();
-      setMdContent(raw);
-    } catch {
-      setMdContent("范文加载失败，请稍后重试。");
-    } finally {
-      setLoadingMd(false);
-    }
-  }, [samples]);
+    },
+    [samples],
+  );
 
   const activeSample = samples.find((s) => s.id === activeId);
 
@@ -130,7 +110,8 @@ export function SamplesPage() {
           <BookOutlined /> 范文库
         </Title>
         <Paragraph type="secondary">
-          覆盖系统架构设计师考试 10 大高频主题范文，每篇标注技术决策点、数字量化、对比分析与反思。点击查看全文与点评。
+          覆盖系统架构设计师考试 10
+          大高频主题范文，每篇标注技术决策点、数字量化、对比分析与反思。点击查看全文与点评。
         </Paragraph>
         <Space wrap>
           <Button
@@ -163,19 +144,10 @@ export function SamplesPage() {
         </div>
       </Card>
 
-      <Space
-        direction="horizontal"
-        align="start"
-        style={{ width: "100%" }}
-        size="middle"
-      >
+      <Space direction="horizontal" align="start" style={{ width: "100%" }} size="middle">
         {/* List panel */}
         <Card
-          title={
-            loading
-              ? "范文列表（加载中…）"
-              : `范文列表（${filtered.length} 篇）`
-          }
+          title={loading ? "范文列表（加载中…）" : `范文列表（${filtered.length} 篇）`}
           style={{
             width: 420,
             minWidth: 320,
@@ -204,8 +176,7 @@ export function SamplesPage() {
                     </Button>,
                   ]}
                   style={{
-                    background:
-                      activeId === item.id ? "#f0f5ff" : undefined,
+                    background: activeId === item.id ? "#f0f5ff" : undefined,
                     cursor: "pointer",
                   }}
                   onClick={() => handleView(item.id)}
@@ -213,9 +184,7 @@ export function SamplesPage() {
                   <List.Item.Meta
                     title={
                       <Text strong={activeId === item.id}>
-                        {item.title.length > 30
-                          ? item.title.slice(0, 30) + "…"
-                          : item.title}
+                        {item.title.length > 30 ? item.title.slice(0, 30) + "…" : item.title}
                       </Text>
                     }
                     description={
@@ -293,9 +262,7 @@ export function SamplesPage() {
               </div>
             </div>
           ) : (
-            <Paragraph type="secondary">
-              从左侧列表选择一篇范文，查看全文及标注点评。
-            </Paragraph>
+            <Paragraph type="secondary">从左侧列表选择一篇范文，查看全文及标注点评。</Paragraph>
           )}
         </Card>
       </Space>

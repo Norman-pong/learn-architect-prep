@@ -1,11 +1,6 @@
 import { Elysia, t } from "elysia";
 import { getUserIdFromToken } from "../services/auth";
-import {
-  getDueCards,
-  getCardWithKnowledgePoint,
-  initCard,
-  processReview,
-} from "../services/sm2";
+import { getDueCards, getCardWithKnowledgePoint, initCard, processReview } from "../services/sm2";
 
 const errorResponseSchema = t.Object({
   error: t.String(),

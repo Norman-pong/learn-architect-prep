@@ -76,7 +76,9 @@ export async function sendCode(email: string): Promise<AuthOutcome<void>> {
   const now = new Date();
   if (existing?.codeExpiresAt) {
     const expiresAt = new Date(existing.codeExpiresAt);
-    const cooldownEnd = new Date(expiresAt.getTime() - (CODE_VALID_SECONDS - CODE_COOLDOWN_SECONDS) * 1000);
+    const cooldownEnd = new Date(
+      expiresAt.getTime() - (CODE_VALID_SECONDS - CODE_COOLDOWN_SECONDS) * 1000,
+    );
     if (now < cooldownEnd) {
       return { ok: false, error: "请 60 秒后再试", status: 429 };
     }
@@ -136,7 +138,9 @@ export async function verifyCode(email: string, code: string): Promise<AuthOutco
   return { ok: true, data: { accessToken, refreshToken } };
 }
 
-export async function refreshAccessToken(refreshToken: string): Promise<AuthOutcome<{ accessToken: string }>> {
+export async function refreshAccessToken(
+  refreshToken: string,
+): Promise<AuthOutcome<{ accessToken: string }>> {
   const db = getDb();
   const row = db
     .query<{ id: string; email: string; refreshExpiresAt: string | null }, [string]>(
@@ -157,7 +161,9 @@ export async function refreshAccessToken(refreshToken: string): Promise<AuthOutc
   return { ok: true, data: { accessToken } };
 }
 
-export async function getUserIdFromToken(authorization: string | undefined): Promise<string | null> {
+export async function getUserIdFromToken(
+  authorization: string | undefined,
+): Promise<string | null> {
   if (!authorization?.startsWith("Bearer ")) {
     return null;
   }

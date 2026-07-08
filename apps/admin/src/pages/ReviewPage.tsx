@@ -78,9 +78,7 @@ export default function ReviewPage() {
       <Title level={2}>
         今日复习
         <Text type="secondary" style={{ marginLeft: 16, fontSize: 16, fontWeight: "normal" }}>
-          {finished && queue.length === 0
-            ? "已完成全部复习"
-            : `剩余 ${queue.length} 张卡片`}
+          {finished && queue.length === 0 ? "已完成全部复习" : `剩余 ${queue.length} 张卡片`}
         </Text>
       </Title>
 
@@ -102,7 +100,14 @@ export default function ReviewPage() {
         <Empty description="今日没有到期复习卡片" style={{ padding: 48 }} />
       ) : current ? (
         <Card
-          title={<Space><span>{current.title}</span><Tag color={weightColors[current.examWeight] ?? "default"}>{weightText(current.examWeight)}</Tag></Space>}
+          title={
+            <Space>
+              <span>{current.title}</span>
+              <Tag color={weightColors[current.examWeight] ?? "default"}>
+                {weightText(current.examWeight)}
+              </Tag>
+            </Space>
+          }
           extra={<Text type="secondary">{current.chapterTitle}</Text>}
           loading={submitting}
         >

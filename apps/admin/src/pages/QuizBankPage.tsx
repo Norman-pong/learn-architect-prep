@@ -169,11 +169,7 @@ export function QuizBankPage() {
       key: "difficulty",
       width: 80,
       render: (d: string) =>
-        d ? (
-          <Tag color={DIFFICULTY_COLORS[d] || "default"}>{DIFFICULTY_LABELS[d] || d}</Tag>
-        ) : (
-          "-"
-        ),
+        d ? <Tag color={DIFFICULTY_COLORS[d] || "default"}>{DIFFICULTY_LABELS[d] || d}</Tag> : "-",
     },
     {
       title: "来源",
@@ -262,22 +258,16 @@ export function QuizBankPage() {
           <Space direction="vertical" style={{ marginTop: 16 }}>
             <div>
               结果：
-              {importResult.ok ? (
-                <Tag color="green">成功</Tag>
-              ) : (
-                <Tag color="red">失败</Tag>
-              )}
+              {importResult.ok ? <Tag color="green">成功</Tag> : <Tag color="red">失败</Tag>}
             </div>
             <div>
               新增 <Tag color="green">{importResult.added}</Tag> / 跳过{" "}
-              <Tag>{importResult.skipped}</Tag> / 失败{" "}
-              <Tag color="red">{importResult.failed}</Tag>
+              <Tag>{importResult.skipped}</Tag> / 失败 <Tag color="red">{importResult.failed}</Tag>
             </div>
             {importResult.errors && importResult.errors.length > 0 && (
               <div style={{ color: "#cf1322" }}>
                 错误：{importResult.errors[0].reason}
-                {importResult.errors.length > 1 &&
-                  ` 等 ${importResult.errors.length} 项`}
+                {importResult.errors.length > 1 && ` 等 ${importResult.errors.length} 项`}
               </div>
             )}
           </Space>
@@ -346,7 +336,9 @@ export function QuizBankPage() {
                   </div>
                 ))}
                 {record.explanation && <div>解析：{record.explanation}</div>}
-                {record.hash && <div style={{ color: "#888" }}>hash: {record.hash.slice(0, 16)}…</div>}
+                {record.hash && (
+                  <div style={{ color: "#888" }}>hash: {record.hash.slice(0, 16)}…</div>
+                )}
               </Space>
             ),
           }}

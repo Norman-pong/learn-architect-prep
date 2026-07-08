@@ -75,6 +75,8 @@ export function decrypt(ciphertext: string): string {
     return plaintext.toString("utf8");
   } catch (err) {
     key.fill(0);
-    throw new Error("Decryption failed: authentication tag mismatch or corrupted data");
+    throw new Error("Decryption failed: authentication tag mismatch or corrupted data", {
+      cause: err,
+    });
   }
 }

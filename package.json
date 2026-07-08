@@ -16,6 +16,7 @@
     "fmt": "vp fmt"
   },
   "devDependencies": {
+    "playwright": "^1.61.1",
     "vite-plus": "latest"
   },
   "devEngines": {

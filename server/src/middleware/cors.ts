@@ -10,10 +10,7 @@ import type { CORSConfig } from "@elysiajs/cors";
  *   .use(cors(createCorsConfig()))
  */
 export function createCorsConfig(): CORSConfig {
-  const origins: CORSConfig["origin"] = [
-    /localhost/,
-    /127\.0\.0\.1/,
-  ];
+  const origins: CORSConfig["origin"] = [/localhost/, /127\.0\.0\.1/];
 
   const cloudflaredDomain = process.env.CLOUDFLARED_DOMAIN?.trim();
   if (cloudflaredDomain) {

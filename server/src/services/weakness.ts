@@ -66,10 +66,7 @@ function chapterIdToDisplay(raw: string): string {
 export async function getWeakPoints(userId: string): Promise<WeakPoint[]> {
   const db = getDb();
   const rows = db
-    .query<
-      { question_id: string; is_correct: number },
-      [string]
-    >(
+    .query<{ question_id: string; is_correct: number }, [string]>(
       `SELECT question_id, is_correct
        FROM quiz_records
        WHERE user_id = ?
@@ -83,10 +80,7 @@ export async function getWeakPoints(userId: string): Promise<WeakPoint[]> {
   const allQuestions = await loadQuestions();
   const questionMap = new Map(allQuestions.map((q) => [q.id, q]));
 
-  const statsByChapter = new Map<
-    string,
-    { correct: number; total: number }
-  >();
+  const statsByChapter = new Map<string, { correct: number; total: number }>();
 
   for (const row of rows) {
     const q = questionMap.get(row.question_id);

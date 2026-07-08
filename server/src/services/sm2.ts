@@ -213,9 +213,7 @@ export async function getCardWithKnowledgePoint(
     }
   }
 
-  const mdFileObj = Bun.file(
-    path.join(KNOWLEDGE_DIR, chapterDirName(chapterId), mdFile),
-  );
+  const mdFileObj = Bun.file(path.join(KNOWLEDGE_DIR, chapterDirName(chapterId), mdFile));
   let content = "";
   if (await mdFileObj.exists()) {
     content = await mdFileObj.text();

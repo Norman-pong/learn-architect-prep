@@ -1,19 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import {
-  Card,
-  List,
-  Progress,
-  Space,
-  Tag,
-  Typography,
-  Empty,
-  Button,
-  Spin,
-} from "antd";
-import {
-  apiRequest,
-} from "../api/client";
+import { Card, List, Progress, Space, Tag, Typography, Empty, Button, Spin } from "antd";
+import { RobotOutlined } from "@ant-design/icons";
+import { apiRequest } from "../api/client";
 
 const { Title, Text } = Typography;
 
@@ -68,23 +57,24 @@ export default function WeaknessPage() {
                 extra={
                   <Button
                     type="primary"
+                    icon={<RobotOutlined />}
                     size="small"
-                    onClick={() => navigate(`/quiz?chapter=${item.chapterId}&mode=chapter`)}
+                    onClick={() =>
+                      navigate(`/quiz?chapter=${item.chapterId}&mode=chapter&smart=true`)
+                    }
                   >
-                    去练习
+                    智能选题
                   </Button>
                 }
               >
                 <Space direction="vertical" style={{ width: "100%" }}>
                   <Space style={{ justifyContent: "space-between", width: "100%" }}>
                     <Text>正确率</Text>
-                    <Text type="danger" strong>{item.correctRate}%</Text>
+                    <Text type="danger" strong>
+                      {item.correctRate}%
+                    </Text>
                   </Space>
-                  <Progress
-                    percent={item.correctRate}
-                    status="exception"
-                    showInfo={false}
-                  />
+                  <Progress percent={item.correctRate} status="exception" showInfo={false} />
                   <Text type="secondary">
                     共{item.totalQuestions}题，答对{item.correctCount}题
                   </Text>

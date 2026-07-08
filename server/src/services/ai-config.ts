@@ -68,17 +68,9 @@ export function saveConfig(userId: string, input: AIConfigInput): AIConfig {
         base_url = excluded.base_url,
         updated_at = excluded.updated_at
       RETURNING *
-      `
+      `,
     )
-    .get(
-      id,
-      userId,
-      input.provider,
-      encryptedKey,
-      model,
-      baseUrl,
-      updatedAt
-    ) as AIConfigRow;
+    .get(id, userId, input.provider, encryptedKey, model, baseUrl, updatedAt) as AIConfigRow;
 
   return toPublic(row);
 }
@@ -86,9 +78,7 @@ export function saveConfig(userId: string, input: AIConfigInput): AIConfig {
 export function getConfig(userId: string): AIConfig | null {
   const db = getDb();
   const row = db
-    .query<AIConfigRow, [string]>(
-      "SELECT * FROM ai_configs WHERE user_id = ? LIMIT 1"
-    )
+    .query<AIConfigRow, [string]>("SELECT * FROM ai_configs WHERE user_id = ? LIMIT 1")
     .get(userId);
 
   return row ? toPublic(row) : null;
@@ -98,7 +88,7 @@ export function getDecryptedKey(userId: string): string | null {
   const db = getDb();
   const row = db
     .query<{ api_key_encrypted: string }, [string]>(
-      "SELECT api_key_encrypted FROM ai_configs WHERE user_id = ? LIMIT 1"
+      "SELECT api_key_encrypted FROM ai_configs WHERE user_id = ? LIMIT 1",
     )
     .get(userId);
 
@@ -106,13 +96,11 @@ export function getDecryptedKey(userId: string): string | null {
 }
 
 export async function testConnection(
-  userId: string
+  userId: string,
 ): Promise<{ success: boolean; message: string }> {
   const db = getDb();
   const row = db
-    .query<AIConfigRow, [string]>(
-      "SELECT * FROM ai_configs WHERE user_id = ? LIMIT 1"
-    )
+    .query<AIConfigRow, [string]>("SELECT * FROM ai_configs WHERE user_id = ? LIMIT 1")
     .get(userId);
 
   if (!row) {

@@ -34,12 +34,7 @@ import {
   type WritingSummary,
 } from "@archprep/shared";
 
-import {
-  deleteWriting,
-  getWriting,
-  listWritings,
-  upsertWriting,
-} from "../lib/writings-api";
+import { deleteWriting, getWriting, listWritings, upsertWriting } from "../lib/writings-api";
 import { exportThesisAsMarkdown } from "../lib/export-markdown";
 import { countTotalWords, countWords } from "../lib/word-count";
 
@@ -224,7 +219,6 @@ export function WritingWorkbench() {
     message.success("Markdown 已下载");
   }
 
-
   // ---- Derived UI bits ----
 
   function patchSection(key: ThesisSectionKey, value: string): void {
@@ -318,7 +312,11 @@ export function WritingWorkbench() {
               新建论文
             </Button>
           </Tooltip>
-          <Button icon={<RobotOutlined />} onClick={notifyAiScoreUnavailable} aria-label="请求 AI 评分">
+          <Button
+            icon={<RobotOutlined />}
+            onClick={notifyAiScoreUnavailable}
+            aria-label="请求 AI 评分"
+          >
             AI 评分
           </Button>
         </Space>

@@ -99,12 +99,12 @@ export async function markMastered(userId: string, questionId: string): Promise<
   if (!question) return false;
 
   const db = getDb();
-  const id = createHash("sha256")
-    .update(`${userId}:${questionId}`)
-    .digest("hex");
+  const id = createHash("sha256").update(`${userId}:${questionId}`).digest("hex");
 
   const existing = db
-    .query<{ count: number }, [string]>("SELECT COUNT(*) as count FROM error_book_mastered WHERE id = ?;")
+    .query<{ count: number }, [string]>(
+      "SELECT COUNT(*) as count FROM error_book_mastered WHERE id = ?;",
+    )
     .get(id);
 
   if (existing && existing.count > 0) return true;

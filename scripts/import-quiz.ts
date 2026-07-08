@@ -122,7 +122,7 @@ function sha256(input: string): string {
 }
 
 export function computeQuestionHash(q: ChoiceQuestion): string {
-  const sortedKeys = Object.keys(q.options).sort();
+  const sortedKeys = Object.keys(q.options).toSorted();
   const sortedOptions = sortedKeys.reduce(
     (acc, key) => {
       acc[key] = q.options[key];
