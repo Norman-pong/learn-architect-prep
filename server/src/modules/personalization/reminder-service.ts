@@ -1,6 +1,6 @@
 import { getDb } from "../../db";
 import { sendEmail } from "../auth/email";
-import { getDueCards } from "../quiz/sm2";
+import { getDueCards } from "../../services/sm2";
 
 interface UserReminder {
   id: string;

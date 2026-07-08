@@ -25,3 +25,5 @@ export const searchRoutes = new Elysia({ prefix: "/api/search" }).get(
     }),
   },
 );
+
+export default searchRoutes;
