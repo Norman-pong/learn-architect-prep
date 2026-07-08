@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import path from "node:path";
 
-const TEMPLATES_DIR = path.resolve(import.meta.dir, "../../data/writing/templates");
+const TEMPLATES_DIR = path.resolve(import.meta.dir, "../../../data/writing/templates");
 
 export const templateRoutes = new Elysia({ prefix: "/api/templates" })
   .get(
