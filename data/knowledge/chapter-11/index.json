@@ -1,0 +1,16 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-11-01",
+      "title": "云原生技术",
+      "examWeight": 3,
+      "file": "kp-11-01-云原生技术.md"
+    },
+    {
+      "id": "kp-11-02",
+      "title": "新兴技术概览",
+      "examWeight": 2,
+      "file": "kp-11-02-新兴技术概览.md"
+    }
+  ]
+}

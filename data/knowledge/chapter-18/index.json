@@ -1,0 +1,34 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-18-01",
+      "title": "安全体系框架",
+      "examWeight": 5,
+      "file": "kp-18-01-安全体系框架.md"
+    },
+    {
+      "id": "kp-18-02",
+      "title": "零信任架构",
+      "examWeight": 5,
+      "file": "kp-18-02-零信任架构.md"
+    },
+    {
+      "id": "kp-18-03",
+      "title": "隐私计算",
+      "examWeight": 5,
+      "file": "kp-18-03-隐私计算.md"
+    },
+    {
+      "id": "kp-18-04",
+      "title": "身份认证与访问控制",
+      "examWeight": 4,
+      "file": "kp-18-04-身份认证与访问控制.md"
+    },
+    {
+      "id": "kp-18-05",
+      "title": "安全架构设计原则",
+      "examWeight": 4,
+      "file": "kp-18-05-安全架构设计原则.md"
+    }
+  ]
+}

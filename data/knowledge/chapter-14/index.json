@@ -1,0 +1,34 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-14-01",
+      "title": "容器与Kubernetes",
+      "examWeight": 5,
+      "file": "kp-14-01-容器与kubernetes.md"
+    },
+    {
+      "id": "kp-14-02",
+      "title": "Service Mesh",
+      "examWeight": 5,
+      "file": "kp-14-02-service-mesh.md"
+    },
+    {
+      "id": "kp-14-03",
+      "title": "Serverless与云原生设计原则",
+      "examWeight": 4,
+      "file": "kp-14-03-serverless与云原生设计原则.md"
+    },
+    {
+      "id": "kp-14-04",
+      "title": "DevOps与CI/CD",
+      "examWeight": 4,
+      "file": "kp-14-04-devops与ci-cd.md"
+    },
+    {
+      "id": "kp-14-05",
+      "title": "云原生可观测性",
+      "examWeight": 3,
+      "file": "kp-14-05-云原生可观测性.md"
+    }
+  ]
+}

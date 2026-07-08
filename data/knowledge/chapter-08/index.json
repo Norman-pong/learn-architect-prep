@@ -1,0 +1,28 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-08-01",
+      "title": "质量属性场景六要素",
+      "examWeight": 5,
+      "file": "kp-08-01-质量属性场景六要素.md"
+    },
+    {
+      "id": "kp-08-02",
+      "title": "ATAM详细步骤",
+      "examWeight": 5,
+      "file": "kp-08-02-atam详细步骤.md"
+    },
+    {
+      "id": "kp-08-03",
+      "title": "敏感点、权衡点与风险点",
+      "examWeight": 5,
+      "file": "kp-08-03-敏感点-权衡点与风险点.md"
+    },
+    {
+      "id": "kp-08-04",
+      "title": "架构评估实践",
+      "examWeight": 4,
+      "file": "kp-08-04-架构评估实践.md"
+    }
+  ]
+}

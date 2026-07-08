@@ -1,0 +1,16 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-01-01",
+      "title": "系统架构的定义与分类",
+      "examWeight": 3,
+      "file": "kp-01-01-系统架构的定义与分类.md"
+    },
+    {
+      "id": "kp-01-02",
+      "title": "4+1视图模型",
+      "examWeight": 4,
+      "file": "kp-01-02-4-1视图模型.md"
+    }
+  ]
+}

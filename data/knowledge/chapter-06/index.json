@@ -1,0 +1,22 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-06-01",
+      "title": "关系数据库与范式",
+      "examWeight": 4,
+      "file": "kp-06-01-关系数据库与范式.md"
+    },
+    {
+      "id": "kp-06-02",
+      "title": "事务与并发控制",
+      "examWeight": 4,
+      "file": "kp-06-02-事务与并发控制.md"
+    },
+    {
+      "id": "kp-06-03",
+      "title": "NoSQL、NewSQL与CAP/BASE",
+      "examWeight": 3,
+      "file": "kp-06-03-nosql-newsql与cap-base.md"
+    }
+  ]
+}

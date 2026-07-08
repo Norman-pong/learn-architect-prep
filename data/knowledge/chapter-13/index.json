@@ -1,0 +1,10 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-13-01",
+      "title": "层次式架构模式",
+      "examWeight": 3,
+      "file": "kp-13-01-层次式架构模式.md"
+    }
+  ]
+}

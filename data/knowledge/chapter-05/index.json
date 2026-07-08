@@ -1,0 +1,28 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-05-01",
+      "title": "软件生命周期模型",
+      "examWeight": 4,
+      "file": "kp-05-01-软件生命周期模型.md"
+    },
+    {
+      "id": "kp-05-02",
+      "title": "需求与设计方法",
+      "examWeight": 3,
+      "file": "kp-05-02-需求与设计方法.md"
+    },
+    {
+      "id": "kp-05-03",
+      "title": "设计模式",
+      "examWeight": 4,
+      "file": "kp-05-03-设计模式.md"
+    },
+    {
+      "id": "kp-05-04",
+      "title": "软件测试与CMMI",
+      "examWeight": 3,
+      "file": "kp-05-04-软件测试与cmmi.md"
+    }
+  ]
+}

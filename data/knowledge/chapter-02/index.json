@@ -1,0 +1,28 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-02-01",
+      "title": "Flynn计算机体系结构分类",
+      "examWeight": 4,
+      "file": "kp-02-01-flynn计算机体系结构分类.md"
+    },
+    {
+      "id": "kp-02-02",
+      "title": "进程状态与死锁",
+      "examWeight": 4,
+      "file": "kp-02-02-进程状态与死锁.md"
+    },
+    {
+      "id": "kp-02-03",
+      "title": "操作系统存储与文件管理",
+      "examWeight": 3,
+      "file": "kp-02-03-操作系统存储与文件管理.md"
+    },
+    {
+      "id": "kp-02-04",
+      "title": "计算机网络与协议栈",
+      "examWeight": 4,
+      "file": "kp-02-04-计算机网络与协议栈.md"
+    }
+  ]
+}

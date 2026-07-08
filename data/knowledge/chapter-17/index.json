@@ -1,0 +1,10 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-17-01",
+      "title": "通信系统架构",
+      "examWeight": 2,
+      "file": "kp-17-01-通信系统架构.md"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-12-01",
+      "title": "企业架构与TOGAF",
+      "examWeight": 3,
+      "file": "kp-12-01-企业架构与togaf.md"
+    }
+  ]
+}

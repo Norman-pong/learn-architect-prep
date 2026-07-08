@@ -1,0 +1,22 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-04-01",
+      "title": "安全体系结构与等级保护",
+      "examWeight": 4,
+      "file": "kp-04-01-安全体系结构与等级保护.md"
+    },
+    {
+      "id": "kp-04-02",
+      "title": "密码学基础",
+      "examWeight": 4,
+      "file": "kp-04-02-密码学基础.md"
+    },
+    {
+      "id": "kp-04-03",
+      "title": "PKI与数字证书",
+      "examWeight": 3,
+      "file": "kp-04-03-pki与数字证书.md"
+    }
+  ]
+}

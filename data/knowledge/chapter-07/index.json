@@ -1,0 +1,34 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-07-01",
+      "title": "软件架构风格",
+      "examWeight": 5,
+      "file": "kp-07-01-软件架构风格.md"
+    },
+    {
+      "id": "kp-07-02",
+      "title": "质量属性与战术",
+      "examWeight": 5,
+      "file": "kp-07-02-质量属性与战术.md"
+    },
+    {
+      "id": "kp-07-03",
+      "title": "架构评估方法",
+      "examWeight": 5,
+      "file": "kp-07-03-架构评估方法.md"
+    },
+    {
+      "id": "kp-07-04",
+      "title": "质量属性效用树",
+      "examWeight": 4,
+      "file": "kp-07-04-质量属性效用树.md"
+    },
+    {
+      "id": "kp-07-05",
+      "title": "4+1视图与架构建模",
+      "examWeight": 4,
+      "file": "kp-07-05-4-1视图与架构建模.md"
+    }
+  ]
+}

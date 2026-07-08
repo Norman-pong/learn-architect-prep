@@ -1,0 +1,10 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-16-01",
+      "title": "嵌入式系统与RTOS",
+      "examWeight": 2,
+      "file": "kp-16-01-嵌入式系统与rtos.md"
+    }
+  ]
+}

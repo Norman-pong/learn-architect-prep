@@ -1,0 +1,10 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-10-01",
+      "title": "架构演化与重构",
+      "examWeight": 2,
+      "file": "kp-10-01-架构演化与重构.md"
+    }
+  ]
+}

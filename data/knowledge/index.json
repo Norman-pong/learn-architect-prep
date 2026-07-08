@@ -1,0 +1,144 @@
+{
+  "chapters": [
+    {
+      "id": "ch01",
+      "title": "绪论",
+      "section": "上篇",
+      "examWeight": 3,
+      "order": 1
+    },
+    {
+      "id": "ch02",
+      "title": "计算机系统基础知识",
+      "section": "上篇",
+      "examWeight": 4,
+      "order": 2
+    },
+    {
+      "id": "ch03",
+      "title": "信息系统基础知识",
+      "section": "上篇",
+      "examWeight": 3,
+      "order": 3
+    },
+    {
+      "id": "ch04",
+      "title": "信息安全技术基础知识",
+      "section": "上篇",
+      "examWeight": 4,
+      "order": 4
+    },
+    {
+      "id": "ch05",
+      "title": "软件工程基础知识",
+      "section": "上篇",
+      "examWeight": 4,
+      "order": 5
+    },
+    {
+      "id": "ch06",
+      "title": "数据库设计基础知识",
+      "section": "上篇",
+      "examWeight": 4,
+      "order": 6
+    },
+    {
+      "id": "ch07",
+      "title": "系统架构设计基础知识",
+      "section": "上篇",
+      "examWeight": 5,
+      "order": 7
+    },
+    {
+      "id": "ch08",
+      "title": "系统质量属性与架构评估",
+      "section": "上篇",
+      "examWeight": 5,
+      "order": 8
+    },
+    {
+      "id": "ch09",
+      "title": "软件可靠性基础知识",
+      "section": "上篇",
+      "examWeight": 3,
+      "order": 9
+    },
+    {
+      "id": "ch10",
+      "title": "软件架构的演化和维护",
+      "section": "上篇",
+      "examWeight": 2,
+      "order": 10
+    },
+    {
+      "id": "ch11",
+      "title": "未来信息综合技术",
+      "section": "上篇",
+      "examWeight": 3,
+      "order": 11
+    },
+    {
+      "id": "ch12",
+      "title": "信息系统架构设计理论与实践",
+      "section": "下篇",
+      "examWeight": 3,
+      "order": 12
+    },
+    {
+      "id": "ch13",
+      "title": "层次式架构设计理论与实践",
+      "section": "下篇",
+      "examWeight": 3,
+      "order": 13
+    },
+    {
+      "id": "ch14",
+      "title": "云原生架构设计理论与实践",
+      "section": "下篇",
+      "examWeight": 5,
+      "order": 14
+    },
+    {
+      "id": "ch15",
+      "title": "面向服务架构设计理论与实践",
+      "section": "下篇",
+      "examWeight": 5,
+      "order": 15
+    },
+    {
+      "id": "ch16",
+      "title": "嵌入式系统架构设计理论与实践",
+      "section": "下篇",
+      "examWeight": 2,
+      "order": 16
+    },
+    {
+      "id": "ch17",
+      "title": "通信系统架构设计理论与实践",
+      "section": "下篇",
+      "examWeight": 2,
+      "order": 17
+    },
+    {
+      "id": "ch18",
+      "title": "安全架构设计理论与实践",
+      "section": "下篇",
+      "examWeight": 5,
+      "order": 18
+    },
+    {
+      "id": "ch19",
+      "title": "大数据架构设计理论与实践",
+      "section": "下篇",
+      "examWeight": 5,
+      "order": 19
+    },
+    {
+      "id": "ch20",
+      "title": "综合案例实践",
+      "section": "下篇",
+      "examWeight": 2,
+      "order": 20
+    }
+  ]
+}

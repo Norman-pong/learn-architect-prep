@@ -1,0 +1,34 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-15-01",
+      "title": "SOA与企业服务总线",
+      "examWeight": 5,
+      "file": "kp-15-01-soa与企业服务总线.md"
+    },
+    {
+      "id": "kp-15-02",
+      "title": "微服务架构",
+      "examWeight": 5,
+      "file": "kp-15-02-微服务架构.md"
+    },
+    {
+      "id": "kp-15-03",
+      "title": "服务通信与发现",
+      "examWeight": 4,
+      "file": "kp-15-03-服务通信与发现.md"
+    },
+    {
+      "id": "kp-15-04",
+      "title": "分布式事务",
+      "examWeight": 5,
+      "file": "kp-15-04-分布式事务.md"
+    },
+    {
+      "id": "kp-15-05",
+      "title": "服务治理",
+      "examWeight": 4,
+      "file": "kp-15-05-服务治理.md"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "knowledgePoints": [
+    {
+      "id": "kp-03-01",
+      "title": "信息系统类型",
+      "examWeight": 3,
+      "file": "kp-03-01-信息系统类型.md"
+    },
+    {
+      "id": "kp-03-02",
+      "title": "企业信息化系统",
+      "examWeight": 3,
+      "file": "kp-03-02-企业信息化系统.md"
+    }
+  ]
+}
