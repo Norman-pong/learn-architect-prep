@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-08T09:00:00+00:00",
+  "periods": {
+    "2018-2020": "传统架构风格（微服务、云原生、数据湖、企业集成）",
+    "2021-2023": "企业级中台/EA/DevOps/分布式事务",
+    "2024-2025": "AI/大模型、隐私计算、边缘计算、数据治理"
+  },
+  "topics": [
+    {
+      "year": 2018,
+      "session": "上",
+      "title": "论微服务架构及其应用",
+      "theme": "microservices",
+      "frequency": "high"
+    },
+    {
+      "year": 2018,
+      "session": "下",
+      "title": "论数据湖架构及其应用",
+      "theme": "data-lake",
+      "frequency": "medium"
+    },
+    {
+      "year": 2019,
+      "session": "上",
+      "title": "论软件架构评估及其应用",
+      "theme": "architecture-evaluation",
+      "frequency": "high"
+    },
+    {
+      "year": 2019,
+      "session": "下",
+      "title": "论软件设计模式及其应用",
+      "theme": "design-patterns",
+      "frequency": "high"
+    },
+    {
+      "year": 2020,
+      "session": "上",
+      "title": "论云原生架构及其应用",
+      "theme": "cloud-native",
+      "frequency": "high"
+    },
+    {
+      "year": 2020,
+      "session": "下",
+      "title": "论企业集成平台（EAI）的设计与应用",
+      "theme": "enterprise-integration",
+      "frequency": "medium"
+    },
+    {
+      "year": 2021,
+      "session": "上",
+      "title": "论面向方面编程（AOP）及其应用",
+      "theme": "aop",
+      "frequency": "low"
+    },
+    {
+      "year": 2021,
+      "session": "下",
+      "title": "论企业架构（EA）及其应用",
+      "theme": "enterprise-architecture",
+      "frequency": "medium"
+    },
+    {
+      "year": 2022,
+      "session": "上",
+      "title": "论多源数据集成架构及其应用",
+      "theme": "data-integration",
+      "frequency": "medium"
+    },
+    {
+      "year": 2022,
+      "session": "下",
+      "title": "论数据中台架构及其应用",
+      "theme": "data-middle-platform",
+      "frequency": "high"
+    },
+    {
+      "year": 2023,
+      "session": "上",
+      "title": "论分布式事务架构设计",
+      "theme": "distributed-transaction",
+      "frequency": "high"
+    },
+    {
+      "year": 2023,
+      "session": "下",
+      "title": "论DevOps平台架构",
+      "theme": "devops",
+      "frequency": "medium"
+    },
+    {
+      "year": 2024,
+      "session": "上",
+      "title": "论大模型（LLM）应用系统架构设计",
+      "theme": "llm",
+      "frequency": "high"
+    },
+    {
+      "year": 2024,
+      "session": "下",
+      "title": "论隐私计算（联邦学习）架构设计",
+      "theme": "privacy-computing",
+      "frequency": "medium"
+    },
+    {
+      "year": 2025,
+      "session": "上",
+      "title": "论边缘计算架构设计",
+      "theme": "edge-computing",
+      "frequency": "high"
+    },
+    {
+      "year": 2025,
+      "session": "下",
+      "title": "论数据治理体系建设",
+      "theme": "data-governance",
+      "frequency": "high"
+    }
+  ],
+  "historical_before_2018": [
+    {
+      "year": 2009,
+      "title": "论基于DSSA的软件架构设计与应用"
+    },
+    {
+      "year": 2010,
+      "title": "论软件的静态演化和动态演化及其应用"
+    },
+    {
+      "year": 2011,
+      "title": "论面向服务架构设计及其应用"
+    },
+    {
+      "year": 2012,
+      "title": "论软件系统架构风格及其应用"
+    },
+    {
+      "year": 2013,
+      "title": "论软件系统架构评估及其应用"
+    },
+    {
+      "year": 2014,
+      "title": "论分布式存储系统架构设计"
+    },
+    {
+      "year": 2015,
+      "title": "论应用服务器基础软件"
+    },
+    {
+      "year": 2016,
+      "title": "论数据挖掘技术的应用"
+    },
+    {
+      "year": 2017,
+      "title": "论软件架构演化及其应用"
+    }
+  ],
+  "high_frequency_themes": [
+    {
+      "rank": 1,
+      "theme": "微服务架构设计",
+      "frequency": "历年最高频"
+    },
+    {
+      "rank": 2,
+      "theme": "软件架构评估（ATAM）",
+      "frequency": "高频"
+    },
+    {
+      "rank": 3,
+      "theme": "系统可靠性/高可用设计",
+      "frequency": "高频"
+    },
+    {
+      "rank": 4,
+      "theme": "分布式系统架构",
+      "frequency": "高频"
+    },
+    {
+      "rank": 5,
+      "theme": "系统安全设计",
+      "frequency": "中高频"
+    },
+    {
+      "rank": 6,
+      "theme": "云原生架构",
+      "frequency": "中高频"
+    },
+    {
+      "rank": 7,
+      "theme": "大数据/数据湖/数据治理",
+      "frequency": "中高频"
+    },
+    {
+      "rank": 8,
+      "theme": "软件架构风格（对比与选择）",
+      "frequency": "中频"
+    },
+    {
+      "rank": 9,
+      "theme": "企业集成/SOA",
+      "frequency": "中频"
+    },
+    {
+      "rank": 10,
+      "theme": "设计模式",
+      "frequency": "中频"
+    }
+  ],
+  "strategy": {
+    "quick_judgment": [
+      "题1：通常是企业级/传统系统架构类",
+      "题2：通常是面向对象/设计模式类",
+      "题3：通常是新技术类（上云/大数据/AI）",
+      "题4：通常是软件工程/项目管理/安全类"
+    ],
+    "selection_principles": [
+      "选你最熟悉且有真实项目数据支撑的题",
+      "宁可选“平淡但有数据”的题，不选“炫技但没干过”的题",
+      "优先选择能套用母版项目的题目",
+      "避免选择技术栈完全不熟悉或无法量化的方向"
+    ],
+    "preparation_plan": "准备2-3个母版项目，每个项目覆盖5-8个技术决策点。考前将历年题目按主题分类，建立题目→母版项目→技术决策点的快速映射。"
+  },
+  "hash": "57ce46958449ce25d85ebf504ade803c39cd43ca7d39ec35f911ff402079c985"
+}

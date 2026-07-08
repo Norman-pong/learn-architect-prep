@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-08T09:00:00+00:00",
+  "projects": [
+    {
+      "id": "ecommerce",
+      "name": "电商/交易系统",
+      "industry": "零售/电商",
+      "scale": "日均订单150万，用户5000万，峰值2.3万TPS",
+      "role": "系统架构师",
+      "tech_decisions": [
+        {
+          "id": "microservices",
+          "name": "微服务拆分",
+          "description": "基于DDD限界上下文将单体拆分为12个微服务，每个服务独立数据库"
+        },
+        {
+          "id": "distributed-transaction",
+          "name": "分布式事务",
+          "description": "TCC（强一致）+ Saga（最终一致），引入Seata框架"
+        },
+        {
+          "id": "cache",
+          "name": "缓存策略",
+          "description": "Redis Cluster缓存热点商品/库存，读写比例7:3"
+        },
+        {
+          "id": "mq",
+          "name": "MQ削峰",
+          "description": "RocketMQ事务消息，异步处理订单/库存/物流通知"
+        },
+        {
+          "id": "sharding",
+          "name": "分库分表",
+          "description": "订单表按user_id分片，支持水平扩展"
+        },
+        {
+          "id": "gateway",
+          "name": "API网关",
+          "description": "Spring Cloud Gateway统一鉴权/限流/路由"
+        },
+        {
+          "id": "observability",
+          "name": "可观测性",
+          "description": "SkyWalking全链路追踪 + Prometheus监控"
+        }
+      ],
+      "quantifiable_metrics": {
+        "before": {
+          "daily_tps": 1500,
+          "peak_tps": 3000,
+          "release_cycle": "2周/次",
+          "mttr_minutes": 45
+        },
+        "after": {
+          "daily_tps": 8000,
+          "peak_tps": 23000,
+          "release_cycle": "每天10+次",
+          "mttr_minutes": 8
+        }
+      },
+      "applicable_themes": [
+        "微服务架构",
+        "分布式事务",
+        "高可用设计",
+        "缓存设计",
+        "MQ设计",
+        "云原生架构",
+        "系统性能优化",
+        "数据架构"
+      ]
+    },
+    {
+      "id": "middle-platform",
+      "name": "中台/数据平台",
+      "industry": "零售/金融",
+      "scale": "日生成数据100TB，覆盖10+业务线，数据资产5000+",
+      "role": "数据架构师",
+      "tech_decisions": [
+        {
+          "id": "data-lake",
+          "name": "数据湖架构",
+          "description": "基于HDFS+对象存储，支持结构化/半结构化/非结构化数据"
+        },
+        {
+          "id": "lambda",
+          "name": "Lambda/Kappa架构",
+          "description": "实时流(Flink)+离线批(Spark)双路径，逐步向Kappa演进"
+        },
+        {
+          "id": "etl",
+          "name": "ETL调度",
+          "description": "Airflow任务编排，支持依赖管理和失败重试"
+        },
+        {
+          "id": "data-quality",
+          "name": "数据质量管控",
+          "description": "数据质量规则引擎+自动对账+血缘追踪"
+        },
+        {
+          "id": "data-service",
+          "name": "数据服务化",
+          "description": "统一数据API网关，数据资产目录+自助分析"
+        },
+        {
+          "id": "governance",
+          "name": "数据治理",
+          "description": "元数据管理、数据分级分类、访问控制、数据血缘"
+        }
+      ],
+      "quantifiable_metrics": {
+        "before": {
+          "report_latency_hours": 24,
+          "data_discovery_days": 5,
+          "storage_cost_monthly": "¥200万"
+        },
+        "after": {
+          "report_latency_hours": 2,
+          "data_discovery_days": 0.5,
+          "storage_cost_monthly": "¥120万"
+        }
+      },
+      "applicable_themes": [
+        "数据湖架构",
+        "数据中台",
+        "数据治理",
+        "大数据架构",
+        "多源数据集成",
+        "企业架构(EA)",
+        "DevOps平台"
+      ]
+    },
+    {
+      "id": "government",
+      "name": "政务/企业系统",
+      "industry": "政务/大型国企",
+      "scale": "覆盖50+委办局，用户10万+，等保三级",
+      "role": "系统架构师/安全架构师",
+      "tech_decisions": [
+        {
+          "id": "soa",
+          "name": "SOA/ESB",
+          "description": "企业服务总线统一路由/协议转换/服务编排，对接异构系统"
+        },
+        {
+          "id": "sso",
+          "name": "统一认证",
+          "description": "基于OAuth2.0+国密SM2的统一身份认证平台"
+        },
+        {
+          "id": "workflow",
+          "name": "工作流引擎",
+          "description": "BPMN2.0流程引擎，支持会签、转办、超时提醒"
+        },
+        {
+          "id": "security",
+          "name": "安全等级保护",
+          "description": "等保2.0三级合规：访问控制、审计日志、数据加密、分级分类"
+        },
+        {
+          "id": "integration",
+          "name": "异构系统集成",
+          "description": "适配器模式对接遗留系统（SOAP/Oracle/COBOL）"
+        },
+        {
+          "id": "archive",
+          "name": "电子档案",
+          "description": "分布式对象存储+区块链存证，确保档案不可篡改"
+        }
+      ],
+      "quantifiable_metrics": {
+        "before": {
+          "system_count": 80,
+          "avg_integration_days": 45,
+          "security_incidents_year": 12
+        },
+        "after": {
+          "system_count": 80,
+          "avg_integration_days": 15,
+          "security_incidents_year": 2
+        }
+      },
+      "applicable_themes": [
+        "企业集成平台(EAI)",
+        "安全架构设计",
+        "SOA架构",
+        "企业架构(EA)",
+        "系统可靠性",
+        "隐私计算"
+      ]
+    }
+  ],
+  "hash": "16a22fa56aa9a91e332fcdfbbf92c09c0fdd062d632abee003e569992a5fb5a1"
+}
