@@ -30,6 +30,7 @@ import { writingTipsRoutes } from "./routes/writing-tips";
 import { progressRoutes } from "./routes/progress";
 import { reminderRoutes } from "./routes/reminder";
 import { scoringStandardsRoutes } from "./routes/scoring-standards";
+import { annotationsRoutes } from "./routes/annotations";
 
 // Initialize database connection (WAL mode enabled in getDb)
 getDb();
@@ -66,6 +67,7 @@ const app = new Elysia()
   .use(errorReportsRoutes)
   .use(scoringStandardsRoutes)
   .use(recommendRoutes)
+  .use(annotationsRoutes)
   .use(searchRoutes)
   .use(aiCostRoutes)
   .use(dataTransferRoutes)

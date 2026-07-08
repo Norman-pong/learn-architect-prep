@@ -8,6 +8,7 @@ const TABLES = [
     code_expires_at TEXT,
     refresh_token TEXT,
     refresh_expires_at TEXT,
+    reminder_enabled INTEGER DEFAULT 0,
     created_at TEXT NOT NULL
   );`,
   `CREATE TABLE IF NOT EXISTS ai_configs (
@@ -134,6 +135,12 @@ export function initDatabase(db: Database): void {
     }
     for (const sql of INDEXES) {
       db.exec(sql);
+    }
+    // Migration: add reminder_enabled column if not exists
+    const colInfo = db.query<{ name: string }, []>("PRAGMA table_info(users);").all();
+    const hasReminderEnabled = colInfo.some((c) => c.name === "reminder_enabled");
+    if (!hasReminderEnabled) {
+      db.exec("ALTER TABLE users ADD COLUMN reminder_enabled INTEGER DEFAULT 0;");
     }
   })();
 }
