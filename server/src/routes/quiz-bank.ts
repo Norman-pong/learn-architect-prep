@@ -1,8 +1,8 @@
 import { Elysia, t } from "elysia";
 import {
   computeQuestionHash,
+  fetchRemoteQuiz,
   importQuestions,
-  importQuestionsFromUrl,
   readQuestionBank,
   validateChoiceQuestion,
   type ChoiceQuestion,
@@ -50,7 +50,13 @@ const StatsResponse = t.Object({
 });
 
 function requireAuth() {
-  return async ({ headers, set }: { headers: { authorization?: string }; set: { status: number } }) => {
+  return async ({
+    headers,
+    set,
+  }: {
+    headers: { authorization?: string };
+    set: { status: number };
+  }) => {
     const userId = await getUserIdFromToken(headers.authorization);
     if (!userId) {
       set.status = 401;
@@ -71,10 +77,10 @@ function bankStats(questions: ChoiceQuestion[]) {
     total: questions.length,
     byChapter: Array.from(byChapter.entries())
       .map(([chapter, count]) => ({ chapter, count }))
-      .sort((a, b) => b.count - a.count),
+      .toSorted((a: { count: number }, b: { count: number }) => b.count - a.count),
     bySource: Array.from(bySource.entries())
       .map(([source, count]) => ({ source, count }))
-      .sort((a, b) => b.count - a.count),
+      .toSorted((a: { count: number }, b: { count: number }) => b.count - a.count),
   };
 }
 
@@ -136,7 +142,7 @@ export const quizBankRoutes = new Elysia({ prefix: "/api/quiz-bank" })
       return {
         sources: Array.from(map.entries())
           .map(([source, count]) => ({ source, count }))
-          .sort((a, b) => b.count - a.count),
+          .toSorted((a: { count: number }, b: { count: number }) => b.count - a.count),
       };
     },
     {
@@ -153,7 +159,7 @@ export const quizBankRoutes = new Elysia({ prefix: "/api/quiz-bank" })
         return { error: "Unauthorized" };
       }
       try {
-        const result = await importQuestionsFromUrl(body.url);
+        const result = await fetchRemoteQuiz(body.url);
         return {
           ok: true,
           added: result.added,

@@ -54,6 +54,7 @@ export async function readQuestionBank(): Promise<QuestionsFile> {
   } catch (err) {
     throw new Error(
       `读取 questions.json 失败: ${err instanceof Error ? err.message : String(err)}`,
+      { cause: err },
     );
   }
 }
@@ -121,7 +122,7 @@ function sha256(input: string): string {
 }
 
 export function computeQuestionHash(q: ChoiceQuestion): string {
-  const sortedKeys = Object.keys(q.options).sort();
+  const sortedKeys = Object.keys(q.options).toSorted();
   const sortedOptions = sortedKeys.reduce(
     (acc, key) => {
       acc[key] = q.options[key];
@@ -191,12 +192,14 @@ export async function importQuestions(
 /**
  * 从 URL 拉取题库并导入。Bun 的 fetch 在服务端可直接使用。
  */
-export async function importQuestionsFromUrl(url: string): Promise<ImportResult> {
+export async function fetchRemoteQuiz(url: string): Promise<ImportResult> {
   let res: Response;
   try {
     res = await fetch(url, { redirect: "follow" });
   } catch (err) {
-    throw new Error(`拉取 ${url} 失败: ${err instanceof Error ? err.message : String(err)}`);
+    throw new Error(`拉取 ${url} 失败: ${err instanceof Error ? err.message : String(err)}`, {
+      cause: err,
+    });
   }
   if (!res.ok) {
     throw new Error(`拉取 ${url} 失败: HTTP ${res.status}`);
@@ -240,7 +243,7 @@ if (import.meta.main) {
   try {
     let result: ImportResult;
     if (target.startsWith("http://") || target.startsWith("https://")) {
-      result = await importQuestionsFromUrl(target);
+      result = await fetchRemoteQuiz(target);
     } else {
       const file = Bun.file(path.resolve(target));
       if (!(await file.exists())) {
@@ -252,7 +255,9 @@ if (import.meta.main) {
       }
       result = await importQuestions(items, { sourceName: "本地导入" });
     }
-    console.log(`导入完成: 新增 ${result.added}, 重复跳过 ${result.skipped}, 失败 ${result.failed}`);
+    console.log(
+      `导入完成: 新增 ${result.added}, 重复跳过 ${result.skipped}, 失败 ${result.failed}`,
+    );
     if (result.errors.length > 0) {
       console.error("失败项:");
       for (const e of result.errors.slice(0, 10)) {

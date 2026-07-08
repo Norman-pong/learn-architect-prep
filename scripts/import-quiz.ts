@@ -1,6 +1,6 @@
 import path from "node:path";
 
-const QUIZ_DIR = path.resolve(import.meta.dir, "../../data/quiz");
+const QUIZ_DIR = path.resolve(import.meta.dir, "../data/quiz");
 const QUESTIONS_FILE = path.join(QUIZ_DIR, "questions.json");
 
 export interface ChoiceQuestion {
@@ -54,6 +54,7 @@ export async function readQuestionBank(): Promise<QuestionsFile> {
   } catch (err) {
     throw new Error(
       `读取 questions.json 失败: ${err instanceof Error ? err.message : String(err)}`,
+      { cause: err },
     );
   }
 }
@@ -87,16 +88,16 @@ export function validateChoiceQuestion(item: unknown): ChoiceQuestion {
   return {
     id: typeof q.id === "string" ? q.id : generateId(),
     question: q.question.trim(),
-    options: optionKeys.reduce((acc, key) => {
-      acc[key] = String(options[key]).trim();
-      return acc;
-    }, {} as Record<string, string>),
+    options: optionKeys.reduce(
+      (acc, key) => {
+        acc[key] = String(options[key]).trim();
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
     answer: q.answer,
     explanation: typeof q.explanation === "string" ? q.explanation : undefined,
-    chapter:
-      typeof q.chapter === "string" && q.chapter.length > 0
-        ? q.chapter
-        : "1",
+    chapter: typeof q.chapter === "string" && q.chapter.length > 0 ? q.chapter : "1",
     difficulty: normalizeDifficulty(q.difficulty),
     source: typeof q.source === "string" && q.source.length > 0 ? q.source : "远程拉取",
     hash: typeof q.hash === "string" && q.hash.length > 0 ? q.hash : undefined,
@@ -121,7 +122,15 @@ function sha256(input: string): string {
 }
 
 export function computeQuestionHash(q: ChoiceQuestion): string {
-  const payload = `${q.question}:${JSON.stringify(q.options, Object.keys(q.options).sort(), undefined)}:${q.answer}`;
+  const sortedKeys = Object.keys(q.options).toSorted();
+  const sortedOptions = sortedKeys.reduce(
+    (acc, key) => {
+      acc[key] = q.options[key];
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+  const payload = `${q.question}:${JSON.stringify(sortedOptions, undefined, undefined)}:${q.answer}`;
   return sha256(payload);
 }
 
@@ -188,9 +197,9 @@ export async function importQuestionsFromUrl(url: string): Promise<ImportResult>
   try {
     res = await fetch(url, { redirect: "follow" });
   } catch (err) {
-    throw new Error(
-      `拉取 ${url} 失败: ${err instanceof Error ? err.message : String(err)}`,
-    );
+    throw new Error(`拉取 ${url} 失败: ${err instanceof Error ? err.message : String(err)}`, {
+      cause: err,
+    });
   }
   if (!res.ok) {
     throw new Error(`拉取 ${url} 失败: HTTP ${res.status}`);
@@ -199,7 +208,11 @@ export async function importQuestionsFromUrl(url: string): Promise<ImportResult>
   let items: unknown[] = [];
   if (Array.isArray(data)) {
     items = data;
-  } else if (typeof data === "object" && data !== null && Array.isArray((data as Record<string, unknown>).questions)) {
+  } else if (
+    typeof data === "object" &&
+    data !== null &&
+    Array.isArray((data as Record<string, unknown>).questions)
+  ) {
     items = (data as Record<string, unknown>).questions as unknown[];
   } else {
     throw new Error("远程题库格式不正确：顶层必须是数组或 { questions: [] }");
@@ -219,11 +232,21 @@ function detectYearFromUrl(url: string): number | undefined {
  * 命令行入口：
  *   bun scripts/import-quiz.ts data/import/xxx.json
  *   bun scripts/import-quiz.ts https://example.com/questions.json
+ *   bun scripts/import-quiz.ts --url https://example.com/questions.json
  */
 if (import.meta.main) {
-  const target = process.argv[2];
+  const args = process.argv.slice(2);
+  let target: string | undefined;
+
+  const urlFlag = args.indexOf("--url");
+  if (urlFlag !== -1) {
+    target = args[urlFlag + 1];
+  } else if (args.length > 0 && !args[0].startsWith("--")) {
+    target = args[0];
+  }
+
   if (!target) {
-    console.error("用法: bun scripts/import-quiz.ts <file-or-url>");
+    console.error("用法: bun scripts/import-quiz.ts <file-or-url> | --url <url>");
     process.exit(1);
   }
 
