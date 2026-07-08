@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { knowledgeRoutes } from "./routes/knowledge";
+import { quizRoutes } from "./routes/quiz";
 import { getDb } from "./db";
 import { healthRoutes } from "./routes/health";
 import { authRoutes } from "./routes/auth";
@@ -32,6 +33,7 @@ const app = new Elysia()
   .use(knowledgeRoutes)
   .use(quizBankRoutes)
   .use(reviewRoutes)
+  .use(quizRoutes)
   .listen(PORT);
 
 console.log(`🦊 Server running at ${app.server?.hostname}:${app.server?.port}`);
