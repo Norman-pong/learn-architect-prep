@@ -1,6 +1,7 @@
 import { Database } from "bun:sqlite";
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
+import { initDatabase } from "./schema";
 
 const DB_DIR = resolve(import.meta.dir, "../../data");
 const DB_PATH = resolve(DB_DIR, "archprep.db");
@@ -14,6 +15,7 @@ export function getDb(): Database {
   dbInstance = new Database(DB_PATH, { create: true });
   dbInstance.exec("PRAGMA journal_mode = WAL;");
   dbInstance.exec("PRAGMA foreign_keys = ON;");
+  initDatabase(dbInstance);
   return dbInstance;
 }
 
