@@ -11,7 +11,7 @@ const PORT = process.env.PORT ? Number(process.env.PORT) : 8787;
 const app = new Elysia()
   .use(
     cors({
-      origin: [/localhost/, /127\.0\.0\.1/],
+      origin: [/^https?:\/\/localhost(:\d+)?$/, /^https?:\/\/127\.0\.0\.1(:\d+)?$/],
       credentials: true,
     }),
   )

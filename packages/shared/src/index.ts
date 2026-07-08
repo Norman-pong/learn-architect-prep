@@ -17,13 +17,16 @@ export interface HealthCheckResponse {
 
 export type Provider = "openai" | "anthropic" | "deepseek" | "minimax" | "kimi" | "custom";
 
+/**
+ * Public AI config - safe to share with the frontend (API responses).
+ * The encrypted API key is server-side only and never appears here.
+ * Server-side code uses its own internal type that includes the key.
+ */
 export interface AIConfig {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   provider: Provider;
-  apiKey: string; // encrypted
   baseUrl?: string;
   model?: string;
-  createdAt: string;
   updatedAt: string;
 }
