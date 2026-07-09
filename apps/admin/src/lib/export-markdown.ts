@@ -1,8 +1,4 @@
-import {
-  THESIS_SECTIONS,
-  THESIS_SECTION_TARGETS,
-  type ThesisSections,
-} from "@archprep/shared";
+import { THESIS_SECTIONS, THESIS_SECTION_TARGETS, type ThesisSections } from "@archprep/shared";
 import { countWords } from "./word-count";
 
 /**

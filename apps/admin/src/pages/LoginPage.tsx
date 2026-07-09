@@ -87,7 +87,11 @@ export function LoginPage() {
           >
             <Space.Compact style={{ width: "100%" }}>
               <Input placeholder="123456" maxLength={6} />
-              <Button loading={loadingSend} disabled={countdown > 0} onClick={() => void handleSendCode()}>
+              <Button
+                loading={loadingSend}
+                disabled={countdown > 0}
+                onClick={() => void handleSendCode()}
+              >
                 {countdown > 0 ? `${countdown}s 后重发` : "获取验证码"}
               </Button>
             </Space.Compact>

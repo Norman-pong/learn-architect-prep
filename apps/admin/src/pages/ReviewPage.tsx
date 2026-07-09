@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import MarkdownRenderer from "../components/MarkdownRenderer";
 import { Alert, Button, Card, Empty, List, Rate, Space, Spin, Tag, Typography, theme } from "antd";
 
 import { apiRequest } from "../api/client";
@@ -30,23 +31,11 @@ function weightText(w: number): string {
 }
 
 function sortAnnotations(a: Annotation, b: Annotation): number {
-  const aStart = a.startOffset ?? Number.MAX_SAFE_INTEGER;
-  const bStart = b.startOffset ?? Number.MAX_SAFE_INTEGER;
-  if (aStart !== bStart) return aStart - bStart;
   return a.createdAt.localeCompare(b.createdAt);
 }
 
-function getAnnotationRangeText(content: string, annotation: Annotation): string {
-  if (
-    annotation.startOffset === null ||
-    annotation.endOffset === null ||
-    annotation.startOffset < 0 ||
-    annotation.endOffset <= annotation.startOffset ||
-    annotation.endOffset > content.length
-  ) {
-    return annotation.content;
-  }
-  return content.slice(annotation.startOffset, annotation.endOffset);
+function getAnnotationContent(annotation: Annotation): string {
+  return annotation.content;
 }
 
 export default function ReviewPage() {
@@ -100,7 +89,6 @@ export default function ReviewPage() {
         if (!cancelled) setLoadingAnnotations(false);
       });
 
-
     return () => {
       cancelled = true;
     };
@@ -147,7 +135,7 @@ export default function ReviewPage() {
             dataSource={annotations}
             renderItem={(annotation) => {
               const meta = ANNOTATION_META[annotation.type];
-              const selectedText = getAnnotationRangeText(current.content, annotation);
+              const selectedText = getAnnotationContent(annotation);
               return (
                 <List.Item>
                   <Space direction="vertical" size={token.marginXXS} style={{ width: "100%" }}>
@@ -214,9 +202,11 @@ export default function ReviewPage() {
               <Text type="secondary">考试权重: </Text>
               <Rate disabled value={current.examWeight} count={5} />
             </div>
-            <Paragraph style={{ fontSize: 16, whiteSpace: "pre-wrap" }}>
-              {current.content || "暂无知识点内容"}
-            </Paragraph>
+            {current.content ? (
+              <MarkdownRenderer content={current.content} />
+            ) : (
+              <Paragraph>暂无知识点内容</Paragraph>
+            )}
           </div>
 
           <div

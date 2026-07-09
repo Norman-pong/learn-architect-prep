@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import {
-  THESIS_SECTIONS,
-  type ThesisSectionKey,
-} from "@archprep/shared";
+import { THESIS_SECTIONS, type ThesisSectionKey } from "@archprep/shared";
 import {
   Button,
   Card,

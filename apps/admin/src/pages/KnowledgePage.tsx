@@ -4,8 +4,9 @@ import {
   HighlightOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
+import MarkdownRenderer from "../components/MarkdownRenderer";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, Key, ReactNode } from "react";
+import type { Key, ReactNode } from "react";
 import {
   App as AntdApp,
   Button,
@@ -78,22 +79,38 @@ interface DraftAnnotation extends SelectionState {
   content: string;
 }
 
-interface ContentSegment {
-  start: number;
-  end: number;
-  text: string;
-  annotations: Annotation[];
-}
-
 function isChapterMetaArray(value: unknown): value is ChapterMeta[] {
-  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && typeof item.title === "string" && typeof item.section === "string" && typeof item.examWeight === "number" && typeof item.order === "number");
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) =>
+        isRecord(item) &&
+        typeof item.id === "string" &&
+        typeof item.title === "string" &&
+        typeof item.section === "string" &&
+        typeof item.examWeight === "number" &&
+        typeof item.order === "number",
+    )
+  );
 }
 
 function isChapterIndex(value: unknown): value is ChapterIndex {
   if (!isRecord(value)) return false;
-  if (typeof value.id !== "string" || typeof value.title !== "string" || typeof value.examWeight !== "number") return false;
+  if (
+    typeof value.id !== "string" ||
+    typeof value.title !== "string" ||
+    typeof value.examWeight !== "number"
+  )
+    return false;
   if (!Array.isArray(value.knowledgePoints)) return false;
-  return value.knowledgePoints.every((kp) => isRecord(kp) && typeof kp.id === "string" && typeof kp.title === "string" && typeof kp.examWeight === "number" && typeof kp.file === "string");
+  return value.knowledgePoints.every(
+    (kp) =>
+      isRecord(kp) &&
+      typeof kp.id === "string" &&
+      typeof kp.title === "string" &&
+      typeof kp.examWeight === "number" &&
+      typeof kp.file === "string",
+  );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -106,12 +123,6 @@ const WEIGHT_COLOR: Record<number, string> = {
   3: "processing",
   2: "default",
   1: "default",
-};
-
-const ANNOTATION_PRIORITY: Record<AnnotationType, number> = {
-  question: 3,
-  note: 2,
-  highlight: 1,
 };
 
 const ANNOTATION_ICON: Record<AnnotationType, ReactNode> = {
@@ -129,59 +140,8 @@ function WeightTag({ weight }: { weight?: number }) {
   );
 }
 
-function isRangedAnnotation(annotation: Annotation, contentLength: number): boolean {
-  return (
-    annotation.startOffset !== null &&
-    annotation.endOffset !== null &&
-    annotation.startOffset >= 0 &&
-    annotation.endOffset > annotation.startOffset &&
-    annotation.endOffset <= contentLength
-  );
-}
-
-function getAnnotationRangeText(content: string, annotation: Annotation): string {
-  if (!isRangedAnnotation(annotation, content.length)) return annotation.content;
-  return content.slice(annotation.startOffset ?? 0, annotation.endOffset ?? 0);
-}
-
 function sortAnnotations(a: Annotation, b: Annotation): number {
-  const aStart = a.startOffset ?? Number.MAX_SAFE_INTEGER;
-  const bStart = b.startOffset ?? Number.MAX_SAFE_INTEGER;
-  if (aStart !== bStart) return aStart - bStart;
   return a.createdAt.localeCompare(b.createdAt);
-}
-
-function getSegmentType(annotations: Annotation[]): AnnotationType {
-  return annotations.toSorted(
-    (a, b) => ANNOTATION_PRIORITY[b.type] - ANNOTATION_PRIORITY[a.type],
-  )[0].type;
-}
-
-function buildContentSegments(content: string, annotations: Annotation[]): ContentSegment[] {
-  if (!content) return [];
-  const ranged = annotations.filter((annotation) => isRangedAnnotation(annotation, content.length));
-  if (ranged.length === 0) {
-    return [{ start: 0, end: content.length, text: content, annotations: [] }];
-  }
-
-  const boundaries = [0, content.length];
-  for (const annotation of ranged) {
-    boundaries.push(annotation.startOffset ?? 0, annotation.endOffset ?? content.length);
-  }
-  const sortedBoundaries = Array.from(new Set(boundaries)).toSorted((a, b) => a - b);
-
-  return sortedBoundaries.slice(0, -1).map((start, index) => {
-    const end = sortedBoundaries[index + 1];
-    return {
-      start,
-      end,
-      text: content.slice(start, end),
-      annotations: ranged.filter(
-        (annotation) =>
-          (annotation.startOffset ?? 0) <= start && (annotation.endOffset ?? 0) >= end,
-      ),
-    };
-  });
 }
 
 export default function KnowledgePage() {
@@ -364,30 +324,7 @@ export default function KnowledgePage() {
     return chapterMap[chapterId]?.knowledgePoints.find((kp) => kp.id === kpId) ?? null;
   }, [chapterId, chapterMap, kpId]);
 
-  const contentSegments = useMemo(
-    () => buildContentSegments(content, annotations),
-    [annotations, content],
-  );
-
   const sidebarAnnotations = useMemo(() => annotations.toSorted(sortAnnotations), [annotations]);
-
-  const annotationTextStyles = useMemo<Record<AnnotationType, CSSProperties>>(
-    () => ({
-      highlight: {
-        backgroundColor: token.colorWarningBg,
-        borderBottom: `1px solid ${token.colorWarningBorder}`,
-      },
-      note: {
-        backgroundColor: token.colorInfoBg,
-        borderBottom: `1px solid ${token.colorInfoBorder}`,
-      },
-      question: {
-        backgroundColor: token.colorErrorBg,
-        borderBottom: `1px solid ${token.colorErrorBorder}`,
-      },
-    }),
-    [token],
-  );
 
   useEffect(() => {
     const sectionKeys = treeData.map((node) => node.key);
@@ -461,12 +398,11 @@ export default function KnowledgePage() {
 
       setSavingAnnotation(true);
       try {
+        const fullContent = type === "highlight" ? trimmed : `「${selection.text}」\n${trimmed}`;
         const annotation = await createAnnotation({
           knowledgePointId: kpId,
           type,
-          content: trimmed,
-          startOffset: selection.startOffset,
-          endOffset: selection.endOffset,
+          content: fullContent,
         });
         setAnnotations((prev) => [...prev, annotation].toSorted(sortAnnotations));
         message.success(`${ANNOTATION_META[type].label}已保存`);
@@ -504,7 +440,7 @@ export default function KnowledgePage() {
     }
   };
 
-  const renderAnnotatedContent = () => (
+  const renderContent = () => (
     <div
       ref={contentRef}
       role="article"
@@ -512,34 +448,9 @@ export default function KnowledgePage() {
       aria-label="知识点正文，选中文本后可添加标注"
       onKeyUp={handleTextSelection}
       onMouseUp={handleTextSelection}
-      style={{
-        whiteSpace: "pre-wrap",
-        fontFamily: token.fontFamilyCode,
-        fontSize: token.fontSize,
-        lineHeight: token.lineHeightLG,
-        outline: "none",
-      }}
+      style={{ outline: "none" }}
     >
-      {contentSegments.map((segment) => {
-        if (segment.annotations.length === 0) {
-          return <span key={`${segment.start}-${segment.end}`}>{segment.text}</span>;
-        }
-        const segmentType = getSegmentType(segment.annotations);
-        return (
-          <mark
-            key={`${segment.start}-${segment.end}`}
-            style={{
-              ...annotationTextStyles[segmentType],
-              color: "inherit",
-              borderRadius: token.borderRadiusXS,
-              paddingInline: token.paddingXXS,
-            }}
-            title={segment.annotations.map((item) => ANNOTATION_META[item.type].label).join(" / ")}
-          >
-            {segment.text}
-          </mark>
-        );
-      })}
+      {content ? <MarkdownRenderer content={content} /> : null}
     </div>
   );
 
@@ -564,7 +475,7 @@ export default function KnowledgePage() {
           dataSource={sidebarAnnotations}
           renderItem={(annotation) => {
             const meta = ANNOTATION_META[annotation.type];
-            const selectedText = getAnnotationRangeText(content, annotation);
+            const selectedText = annotation.content;
             return (
               <List.Item
                 actions={[
@@ -657,9 +568,7 @@ export default function KnowledgePage() {
                     <Space>
                       <Button
                         size="small"
-                        onClick={() =>
-                          navigate(`/qa/${chapterId}/${currentKnowledgePoint.id}`)
-                        }
+                        onClick={() => navigate(`/qa/${chapterId}/${currentKnowledgePoint.id}`)}
                       >
                         AI 答疑
                       </Button>
@@ -672,7 +581,7 @@ export default function KnowledgePage() {
                 <Paragraph type="secondary">
                   选中文本后，可添加高亮、笔记或疑问；标注会同步到复习卡片。
                 </Paragraph>
-                {renderAnnotatedContent()}
+                {renderContent()}
               </Card>
               {renderAnnotationPanel()}
             </div>

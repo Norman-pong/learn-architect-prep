@@ -46,10 +46,7 @@ function isChapterMeta(value: unknown): value is ChapterMeta {
   const record = typeof value === "object" && value !== null ? value : null;
   if (!record) return false;
   const r: Record<string, unknown> = record;
-  return (
-    typeof r.id === "string" &&
-    typeof r.title === "string"
-  );
+  return typeof r.id === "string" && typeof r.title === "string";
 }
 
 const MODE_LABELS: Record<string, string> = {
@@ -85,9 +82,7 @@ export default function QuizPage() {
   const initialChapter = searchParams.get("chapter") || "";
   const rawMode = searchParams.get("mode");
   const initialMode: "chapter" | "random" | "error" =
-    rawMode === "chapter" || rawMode === "random" || rawMode === "error"
-      ? rawMode
-      : "random";
+    rawMode === "chapter" || rawMode === "random" || rawMode === "error" ? rawMode : "random";
 
   const [mode, setMode] = useState<"chapter" | "random" | "error">(initialMode);
   const [chapter, setChapter] = useState<string>(initialChapter);

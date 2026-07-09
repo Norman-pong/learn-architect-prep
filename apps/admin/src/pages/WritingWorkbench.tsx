@@ -381,9 +381,9 @@ export function WritingWorkbench() {
       <Tabs
         activeKey={activeTab}
         onChange={(key) => {
-        const next = isThesisSectionKey(key) ? key : activeTab;
-        setActiveTab(next);
-      }}
+          const next = isThesisSectionKey(key) ? key : activeTab;
+          setActiveTab(next);
+        }}
         items={sectionItems}
         destroyOnHidden={false}
       />

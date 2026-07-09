@@ -41,7 +41,9 @@ async function fetchWithAuth<T>(url: string, options: RequestInit = {}): Promise
   const res = await fetch(url, { ...options, headers });
   if (!res.ok) {
     const err: unknown = await res.json().catch(() => ({ error: "请求失败" }));
-    throw new Error(isRecord(err) && typeof err.error === "string" ? err.error : `HTTP ${res.status}`);
+    throw new Error(
+      isRecord(err) && typeof err.error === "string" ? err.error : `HTTP ${res.status}`,
+    );
   }
   return res.json();
 }

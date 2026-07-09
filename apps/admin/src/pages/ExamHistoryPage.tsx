@@ -77,7 +77,6 @@ const RANGE_OPTIONS = [
   { label: "近 365 天", value: "365" },
 ];
 
-
 const STATUS_TAG: Record<string, { label: string; color: string }> = {
   finished: { label: "已完成", color: "success" },
   in_progress: { label: "进行中", color: "processing" },
@@ -125,8 +124,7 @@ function TrendLineChart({ series, passScore }: LineChartProps) {
   const totalDays = series[0]?.points.length ?? 0;
   const xTick = (i: number) =>
     padding.left + (totalDays <= 1 ? innerWidth / 2 : (i / (totalDays - 1)) * innerWidth);
-  const yScale = (score: number) =>
-    padding.top + innerHeight - (score / maxY) * innerHeight;
+  const yScale = (score: number) => padding.top + innerHeight - (score / maxY) * innerHeight;
   const passY = yScale(passScore);
 
   // Y 轴刻度：0/25/50/75
@@ -233,7 +231,9 @@ function TrendLineChart({ series, passScore }: LineChartProps) {
         />
         {/* X 轴标签（首/中/尾三个日期） */}
         {series[0]?.points
-          .filter((_, i, arr) => i === 0 || i === arr.length - 1 || i === Math.floor(arr.length / 2))
+          .filter(
+            (_, i, arr) => i === 0 || i === arr.length - 1 || i === Math.floor(arr.length / 2),
+          )
           .map((p, idx, arr) => {
             const i =
               idx === 0
@@ -371,7 +371,10 @@ export default function ExamHistoryPage() {
         score == null ? (
           <Text type="secondary">未交卷</Text>
         ) : (
-          <Tag color={scoreTagColor(score, passScore)} style={{ minWidth: 48, textAlign: "center" }}>
+          <Tag
+            color={scoreTagColor(score, passScore)}
+            style={{ minWidth: 48, textAlign: "center" }}
+          >
             {score}
           </Tag>
         ),
@@ -396,7 +399,11 @@ export default function ExamHistoryPage() {
             </Tag>
           );
         return passed ? (
-          <Tag color="success" icon={<TrophyOutlined />} style={{ minWidth: 48, textAlign: "center" }}>
+          <Tag
+            color="success"
+            icon={<TrophyOutlined />}
+            style={{ minWidth: 48, textAlign: "center" }}
+          >
             通过
           </Tag>
         ) : (
@@ -438,15 +445,9 @@ export default function ExamHistoryPage() {
           </Space>
           <Space>
             <Text type="secondary">趋势区间</Text>
-            <Segmented
-              value={days}
-              onChange={(v) => setDays(v)}
-              options={RANGE_OPTIONS}
-            />
+            <Segmented value={days} onChange={(v) => setDays(v)} options={RANGE_OPTIONS} />
           </Space>
-          <Text type="secondary">
-            {trends ? `${trends.rangeStart} ~ ${trends.rangeEnd}` : ""}
-          </Text>
+          <Text type="secondary">{trends ? `${trends.rangeStart} ~ ${trends.rangeEnd}` : ""}</Text>
         </Space>
       </Card>
 

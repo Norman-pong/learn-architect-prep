@@ -283,9 +283,7 @@ export default function QAPage() {
                             type={chapterInfo?.kpId === kp.id ? "primary" : "text"}
                             size="small"
                             block
-                            onClick={() =>
-                              selectKnowledgePoint(ch.id, kp.id, kp.title, ch.title)
-                            }
+                            onClick={() => selectKnowledgePoint(ch.id, kp.id, kp.title, ch.title)}
                           >
                             <Space>
                               <Text style={{ fontSize: 12 }}>{kp.title}</Text>
@@ -309,12 +307,7 @@ export default function QAPage() {
                               setChapterIndex(data);
                               if (data.knowledgePoints.length > 0) {
                                 const first = data.knowledgePoints[0];
-                                selectKnowledgePoint(
-                                  ch.id,
-                                  first.id,
-                                  first.title,
-                                  data.title,
-                                );
+                                selectKnowledgePoint(ch.id, first.id, first.title, data.title);
                               }
                             })
                             .catch(() => {});
@@ -358,10 +351,7 @@ export default function QAPage() {
           }
         >
           {!chapterInfo ? (
-            <Empty
-              style={{ margin: "auto" }}
-              description="请从左侧选择一个知识点开始提问"
-            />
+            <Empty style={{ margin: "auto" }} description="请从左侧选择一个知识点开始提问" />
           ) : (
             <>
               {/* Messages */}
@@ -379,8 +369,7 @@ export default function QAPage() {
                     <List.Item
                       key={index}
                       style={{
-                        justifyContent:
-                          item.role === "user" ? "flex-end" : "flex-start",
+                        justifyContent: item.role === "user" ? "flex-end" : "flex-start",
                         padding: `${token.paddingXS}px 0`,
                       }}
                     >
@@ -390,25 +379,22 @@ export default function QAPage() {
                           padding: token.paddingSM,
                           borderRadius: token.borderRadiusLG,
                           background:
-                            item.role === "user"
-                              ? token.colorPrimaryBg
-                              : token.colorFillAlter,
+                            item.role === "user" ? token.colorPrimaryBg : token.colorFillAlter,
                           whiteSpace: "pre-wrap",
                           wordBreak: "break-word",
                         }}
                       >
-                        {item.role === "assistant" && index === history.length - 1 && loading && item.content === "" ? (
+                        {item.role === "assistant" &&
+                        index === history.length - 1 &&
+                        loading &&
+                        item.content === "" ? (
                           <Spin size="small" />
                         ) : (
-                          <Paragraph style={{ margin: 0 }}>
-                            {item.content}
-                          </Paragraph>
+                          <Paragraph style={{ margin: 0 }}>{item.content}</Paragraph>
                         )}
                         {item.role === "assistant" && item.content && (
                           <div style={{ marginTop: token.marginXS }}>
-                            <Tag color="default">
-                              引用：{chapterInfo.chapterTitle}
-                            </Tag>
+                            <Tag color="default">引用：{chapterInfo.chapterTitle}</Tag>
                           </div>
                         )}
                       </div>
