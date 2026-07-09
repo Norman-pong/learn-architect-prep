@@ -60,8 +60,7 @@ graph LR
 |:---|:---|:---|
 | 前端框架 | React 19 + TypeScript | 组件化 UI、类型安全 |
 | 前端构建 | Vite（vite-plus） | 开发服务器、构建、HMR |
-| 前端组件 | antd 6 | 表单、表格、模态、布局 |
-| 状态管理 | React Context / Zustand | 本地状态与缓存 |
+| 前端组件 | antd 6（[即将替换为 Base UI + Tailwind v4，见 PRD 2026-07-09](../prd/2026-07-09-frontend-refactor-to-base-ui.md)） | 表单、表格、模态、布局 |
 | 后端框架 | Elysia + TypeScript | REST API、路由、中间件 |
 | 数据库 | SQLite（bun:sqlite） | 用户学习数据持久化 |
 | 运行时 | Bun | 后端执行与构建 |

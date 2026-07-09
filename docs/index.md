@@ -25,17 +25,25 @@
 
 | 日期 | 文档名称 | 状态 | 对应 Phase | 说明 |
 |------|---------|------|-----------|------|
-| [2026-07-08](prd/2026-07-08-archprep.md) | [ArchPrep PRD v0.2](prd/2026-07-08-archprep.md) | 草稿 | TBD | 四大功能+注册制+AI SDK多模型+模拟考单/全模块 |
+| [2026-07-08](prd/2026-07-08-archprep.md) | [ArchPrep PRD v0.4](prd/2026-07-08-archprep.md) | 草稿 | [Phase 1-5](phase/2026-07-08-foundation.md) | 四大功能+注册制+AI SDK多模型+模拟考单/全模块 |
+| [2026-07-09](prd/2026-07-09-frontend-refactor-to-base-ui.md) | [前端栈重构 PRD](prd/2026-07-09-frontend-refactor-to-base-ui.md) | 草稿 | [Phase F](phase/2026-07-09-frontend-refactor.md) | antd 6 → Base UI + Tailwind v4 + TanStack 全家桶 + Eden Treaty 主路径，业务功能不变 |
+
+## 已归档 PRD（archive）
+
+| 日期 | 文档名称 | 状态 | 对应 Phase | 说明 |
+|------|---------|------|-----------|------|
+| [2026-07-09](prd/archive/2026-07-09-p1-foundation-archive.md) | [Phase 1 归档子 PRD](prd/archive/2026-07-09-p1-foundation-archive.md) | 已归档 | [Phase 1](phase/2026-07-08-foundation.md) | 主 PRD §0.2 §0.3 不全勾；分阶段归档已交付项：FR-US-01/02/03 + FR-SY-01/02 + 6 项技术约束 |
 
 ## 阶段文档（Phase）
 
 | 日期 | 阶段名称 | 状态 | 对应 PRD | 说明 |
 |------|---------|------|---------|------|
-| [2026-07-08](phase/2026-07-08-foundation.md) | [Phase 1: 基础设施与用户](phase/2026-07-08-foundation.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 用户模块+部署基础 |
+| [2026-07-08](phase/2026-07-08-foundation.md) | [Phase 1: 基础设施与用户](phase/2026-07-08-foundation.md) | 已完成 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 用户模块+部署基础 |
 | [2026-07-08](phase/2026-07-08-learning-quiz.md) | [Phase 2: 学习与习题核心](phase/2026-07-08-learning-quiz.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 知识点+SM-2+选择题+错题本 |
 | [2026-07-08](phase/2026-07-08-quizbank-ai.md) | [Phase 3: 题库与AI集成](phase/2026-07-08-quizbank-ai.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 题库拉取+AI选题+AI评分 |
 | [2026-07-08](phase/2026-07-08-writing-exam.md) | [Phase 4: 写作指导与模拟考](phase/2026-07-08-writing-exam.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 论文模板+工作台+模拟考 |
 | [2026-07-08](phase/2026-07-08-personalization.md) | [Phase 5: 个性化与P1增强](phase/2026-07-08-personalization.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 搜索+提醒+推荐+成本展示 |
+| [2026-07-09](phase/2026-07-09-frontend-refactor.md) | [Phase F: 前端栈重构](phase/2026-07-09-frontend-refactor.md) | 未开始 | [前端栈重构 PRD](prd/2026-07-09-frontend-refactor-to-base-ui.md) | antd 6 → Base UI + Tailwind v4，与 Phase 2-5 并行，不改业务逻辑 |
 
 ## 架构文档（Architecture）
 
@@ -53,9 +61,10 @@
 ## 文档统计
 
 - Spec 总数：1
-- PRD 总数：1
-- Phase 总数：5
+- PRD 总数：2（含前端栈重构）
+- 已归档 PRD：1（Phase 1 基础设施与用户模块）
+- Phase 总数：6（含 Phase F）
 - 架构文档：2
 - 参考资料：1
 
-最后更新：2026-07-08
+最后更新：2026-07-09
