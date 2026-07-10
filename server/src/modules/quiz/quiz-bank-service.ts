@@ -1,6 +1,7 @@
 import path from "node:path";
+import { DATA_DIR } from "../../config/paths";
 
-const QUIZ_DIR = path.resolve(import.meta.dir, "../../../data/quiz");
+const QUIZ_DIR = path.join(DATA_DIR, "quiz");
 const QUESTIONS_FILE = path.join(QUIZ_DIR, "questions.json");
 
 export interface ChoiceQuestion {

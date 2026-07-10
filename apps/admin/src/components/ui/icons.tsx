@@ -160,6 +160,7 @@ export const FileTextOutlined = createIcon(File01Icon);
 export const LogoutOutlined = createIcon(Logout01Icon);
 export const MenuFoldOutlined = createIcon(Menu01Icon);
 export const MenuUnfoldOutlined = createIcon(Menu01Icon);
+export const MenuOutlined = createIcon(Menu01Icon);
 export const MoonOutlined = createIcon(MoonIcon);
 export const SunOutlined = createIcon(Sun01Icon);
 export const SettingOutlined = createIcon(Settings01Icon);

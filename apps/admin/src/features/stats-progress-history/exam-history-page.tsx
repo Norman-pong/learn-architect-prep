@@ -1,3 +1,4 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { LineChartOutlined, BarChartOutlined } from "@/components/ui/icons";
 import { useExamHistory, useExamTrends } from "./api";
 import { EXAM_FILTER_OPTIONS, RANGE_OPTIONS } from "./constants";
 import { ExamHistoryTable } from "./components/exam-history-table";
@@ -42,15 +44,15 @@ export function ExamHistoryPage() {
   }, [trends]);
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold">成绩记录与趋势</h2>
-
-      <Card>
-        <CardContent className="flex flex-wrap items-center gap-4 py-4">
+    <SectionPageLayout
+      title="成绩记录与趋势"
+      description="历次模考成绩与趋势分析"
+      actions={
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">科目</span>
             <Select value={examTypeFilter} onValueChange={(v) => setExamTypeFilter(v ?? "")}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger className="w-full sm:w-36">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -66,7 +68,7 @@ export function ExamHistoryPage() {
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">趋势区间</span>
             <Select value={days} onValueChange={(v) => setDays(v ?? "")}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full sm:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -81,12 +83,13 @@ export function ExamHistoryPage() {
 
           {trends && (
             <span className="text-sm text-muted-foreground">
-              {trends.rangeStart} ~ {trends.rangeEnd}
+              {String(trends.rangeStart ?? "").slice(0, 10)} ~{" "}
+              {String(trends.rangeEnd ?? "").slice(0, 10)}
             </span>
           )}
-        </CardContent>
-      </Card>
-
+        </div>
+      }
+    >
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">分数趋势</CardTitle>
@@ -102,8 +105,12 @@ export function ExamHistoryPage() {
               passScore={passScore}
             />
           ) : (
-            <div className="flex h-40 items-center justify-center text-sm text-muted-foreground">
-              暂无趋势数据
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="mb-4 rounded-full bg-muted p-4">
+                <LineChartOutlined className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">暂无趋势数据</p>
+              <p className="mt-1 text-xs text-muted-foreground">选择科目或调整时间区间后重试</p>
             </div>
           )}
         </CardContent>
@@ -131,9 +138,9 @@ export function ExamHistoryPage() {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">最近一次</span>
                       {t.latestScore == null ? (
-                        <span className="text-muted-foreground">—</span>
+                        <Badge variant="secondary">—</Badge>
                       ) : (
-                        <Badge variant={t.latestPassed ? "default" : "destructive"}>
+                        <Badge variant={t.latestPassed ? "success" : "destructive"}>
                           {t.latestScore}
                         </Badge>
                       )}
@@ -153,8 +160,12 @@ export function ExamHistoryPage() {
               ))}
             </div>
           ) : (
-            <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-              暂无数据
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="mb-4 rounded-full bg-muted p-4">
+                <BarChartOutlined className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">暂无数据</p>
+              <p className="mt-1 text-xs text-muted-foreground">完成模考后将在此展示三科概况</p>
             </div>
           )}
         </CardContent>
@@ -164,7 +175,7 @@ export function ExamHistoryPage() {
         <CardHeader className="pb-2">
           <CardTitle className="text-base">历次记录</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           {historyLoading ? (
             <div className="space-y-2">
               <Skeleton className="h-8" />
@@ -181,6 +192,6 @@ export function ExamHistoryPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </SectionPageLayout>
   );
 }

@@ -1,5 +1,6 @@
 import { getDb } from "../../db";
 import type { SQLQueryBindings } from "bun:sqlite";
+import { DATA_DIR } from "../../config/paths";
 
 export interface UserDataBackup {
   version: number;

@@ -1,3 +1,4 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -221,177 +222,197 @@ export default function CaseExamPage() {
 
   if (!paper || !examId) {
     return (
-      <div className="mx-auto w-full max-w-2xl space-y-4 py-12">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
+      <SectionPageLayout title="案例分析模拟考" description="5 选 4，90 分钟">
+        <div className="mx-auto w-full max-w-2xl space-y-4 py-12">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </SectionPageLayout>
     );
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl gap-6 py-6">
-      <div className="flex-1 space-y-6">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-xl font-semibold tracking-tight">案例分析模拟考</h1>
-                <p className="text-sm text-muted-foreground">请从 5 道题中选做 4 道</p>
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <ExamTimer remaining={remaining} isRunning={isRunning && !isPaused} />
-                {isPaused ? (
-                  <Button onClick={handleResume}>继续</Button>
-                ) : (
-                  <Button variant="outline" onClick={handlePause}>
-                    暂停
-                  </Button>
-                )}
-                <Button onClick={() => handleFinish()} disabled={finishCaseExam.isPending}>
-                  提交
-                </Button>
-              </div>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
-              <span>
-                已选 <strong className="text-foreground">{selectedCount}</strong> /{" "}
-                {CASE_CHOOSE_COUNT}
-              </span>
-              <span>
-                已作答 <strong className="text-foreground">{answeredCount}</strong> /{" "}
-                {CASE_CHOOSE_COUNT}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="space-y-4">
-          {paper.questions.map((q, idx) => {
-            const isSelected = selected.has(q.id);
-            const ans = answers[q.id] ?? { answer: "" };
-            return (
-              <Card
-                key={q.id}
-                id={`question-${idx}`}
-                className={cn(
-                  "transition-colors",
-                  isSelected && "border-primary ring-1 ring-primary",
-                )}
-              >
-                <CardContent className="space-y-4 pt-5">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                        checked={isSelected}
-                        onChange={() => toggleQuestion(q.id)}
-                        disabled={isPaused}
-                      />
-                      第 {idx + 1} 题
-                    </label>
-                    <Badge variant="secondary">{q.chapter}</Badge>
-                    <Badge
-                      variant={
-                        q.difficulty === "hard"
-                          ? "destructive"
-                          : q.difficulty === "medium"
-                            ? "default"
-                            : "outline"
-                      }
-                    >
-                      {q.difficulty}
-                    </Badge>
-                  </div>
-
-                  <p className="text-sm leading-relaxed text-foreground">{q.question}</p>
-
-                  {isSelected && (
-                    <>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">答题区</label>
-                        <Textarea
-                          value={ans.answer}
-                          onChange={(e) => updateAnswer(q.id, "answer", e.target.value)}
-                          onBlur={() => submitAnswer(q.id)}
-                          placeholder="在此输入案例分析答案..."
-                          rows={8}
-                          disabled={isPaused}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-muted-foreground">
-                          Mermaid 图（可选）
-                        </label>
-                        <Textarea
-                          value={ans.mermaid ?? ""}
-                          onChange={(e) => updateAnswer(q.id, "mermaid", e.target.value)}
-                          onBlur={() => submitAnswer(q.id)}
-                          placeholder="在此输入 Mermaid 语法描述架构图..."
-                          rows={4}
-                          disabled={isPaused}
-                        />
-                      </div>
-                    </>
+    <SectionPageLayout title="案例分析模拟考" description="5 选 4，90 分钟">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 sm:gap-6">
+        <div className="flex-1 space-y-4 sm:space-y-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h1 className="text-lg font-semibold tracking-tight sm:text-xl">
+                    案例分析模拟考
+                  </h1>
+                  <p className="text-sm text-muted-foreground">请从 5 道题中选做 4 道</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <ExamTimer remaining={remaining} isRunning={isRunning && !isPaused} />
+                  {isPaused ? (
+                    <Button onClick={handleResume} className="flex-1 sm:flex-none">
+                      继续
+                    </Button>
+                  ) : (
+                    <Button variant="outline" onClick={handlePause} className="flex-1 sm:flex-none">
+                      暂停
+                    </Button>
                   )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                  <Button
+                    onClick={() => handleFinish()}
+                    disabled={finishCaseExam.isPending}
+                    className="flex-1 sm:flex-none"
+                  >
+                    提交
+                  </Button>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <span>
+                  已选 <strong className="text-foreground">{selectedCount}</strong> /{" "}
+                  {CASE_CHOOSE_COUNT}
+                </span>
+                <span>
+                  已作答 <strong className="text-foreground">{answeredCount}</strong> /{" "}
+                  {CASE_CHOOSE_COUNT}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
 
-        <div className="sticky bottom-4 z-10 rounded-lg border bg-card p-4 shadow-lg">
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {isPaused ? (
-              <Button onClick={handleResume}>继续</Button>
-            ) : (
-              <Button variant="outline" onClick={handlePause}>
-                暂停
+          <div className="space-y-4">
+            {paper.questions.map((q, idx) => {
+              const isSelected = selected.has(q.id);
+              const ans = answers[q.id] ?? { answer: "" };
+              return (
+                <Card
+                  key={q.id}
+                  id={`question-${idx}`}
+                  className={cn(
+                    "transition-colors",
+                    isSelected && "border-primary ring-1 ring-primary",
+                  )}
+                >
+                  <CardContent className="space-y-4 pt-5">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                          checked={isSelected}
+                          onChange={() => toggleQuestion(q.id)}
+                          disabled={isPaused}
+                        />
+                        第 {idx + 1} 题
+                      </label>
+                      <Badge variant="secondary">{q.chapter}</Badge>
+                      <Badge
+                        variant={
+                          q.difficulty === "hard"
+                            ? "destructive"
+                            : q.difficulty === "medium"
+                              ? "default"
+                              : "outline"
+                        }
+                      >
+                        {q.difficulty}
+                      </Badge>
+                    </div>
+
+                    <p className="text-sm leading-relaxed text-foreground">{q.question}</p>
+
+                    {isSelected && (
+                      <>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">答题区</label>
+                          <Textarea
+                            value={ans.answer}
+                            onChange={(e) => updateAnswer(q.id, "answer", e.target.value)}
+                            onBlur={() => submitAnswer(q.id)}
+                            placeholder="在此输入案例分析答案..."
+                            rows={6}
+                            disabled={isPaused}
+                            className="min-h-[160px] sm:min-h-[200px]"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-muted-foreground">
+                            Mermaid 图（可选）
+                          </label>
+                          <Textarea
+                            value={ans.mermaid ?? ""}
+                            onChange={(e) => updateAnswer(q.id, "mermaid", e.target.value)}
+                            onBlur={() => submitAnswer(q.id)}
+                            placeholder="在此输入 Mermaid 语法描述架构图..."
+                            rows={3}
+                            disabled={isPaused}
+                            className="min-h-[80px] sm:min-h-[100px]"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          <div className="sticky bottom-4 z-10 rounded-lg border bg-card p-3 shadow-lg sm:p-4">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+              {isPaused ? (
+                <Button onClick={handleResume} className="flex-1 sm:flex-none">
+                  继续
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={handlePause} className="flex-1 sm:flex-none">
+                  暂停
+                </Button>
+              )}
+              <Button
+                onClick={() => handleFinish()}
+                disabled={finishCaseExam.isPending}
+                className="flex-1 sm:flex-none"
+              >
+                提交
               </Button>
-            )}
-            <Button onClick={() => handleFinish()} disabled={finishCaseExam.isPending}>
-              提交
-            </Button>
+            </div>
           </div>
         </div>
+
+        <AnswerSheet
+          items={navItems}
+          currentIndex={currentIndex}
+          onSelect={(idx) => {
+            setCurrentIndex(idx);
+            document
+              .getElementById(`question-${idx}`)
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          className="hidden lg:block"
+        />
+
+        <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>确认提交</DialogTitle>
+              <DialogDescription>
+                你只选了 {selectedCount} 道题，要求选做 {CASE_CHOOSE_COUNT} 道。确定提交吗？
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+                取消
+              </Button>
+              <Button
+                onClick={() => {
+                  setConfirmOpen(false);
+                  void handleFinish(true);
+                }}
+              >
+                确认提交
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <AnswerSheet
-        items={navItems}
-        currentIndex={currentIndex}
-        onSelect={(idx) => {
-          setCurrentIndex(idx);
-          document
-            .getElementById(`question-${idx}`)
-            ?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }}
-        className="hidden lg:block"
-      />
-
-      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>确认提交</DialogTitle>
-            <DialogDescription>
-              你只选了 {selectedCount} 道题，要求选做 {CASE_CHOOSE_COUNT} 道。确定提交吗？
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
-              取消
-            </Button>
-            <Button
-              onClick={() => {
-                setConfirmOpen(false);
-                void handleFinish(true);
-              }}
-            >
-              确认提交
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </SectionPageLayout>
   );
 }

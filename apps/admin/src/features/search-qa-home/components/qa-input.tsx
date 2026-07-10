@@ -29,7 +29,7 @@ export function QAInput({
   );
 
   return (
-    <div className="flex items-end gap-2 border-t border-border bg-card p-3">
+    <div className="flex items-end gap-2 border-t border-border bg-card p-2 sm:p-3">
       <Textarea
         ref={textareaRef}
         value={value}
@@ -42,7 +42,7 @@ export function QAInput({
       />
       <Button
         size="icon"
-        className="h-10 w-10 shrink-0 rounded-xl"
+        className="h-11 w-11 shrink-0 rounded-xl sm:h-10 sm:w-10"
         onClick={onSubmit}
         disabled={!value.trim() || loading || disabled}
       >

@@ -124,7 +124,7 @@ export function ExamTrendChart({ series, passScore }: ExamTrendChartProps) {
                 className="fill-muted-foreground text-[10px]"
                 textAnchor="middle"
               >
-                {point.date.slice(5)}
+                {String(point.date ?? "").slice(5)}
               </text>
             );
           })}

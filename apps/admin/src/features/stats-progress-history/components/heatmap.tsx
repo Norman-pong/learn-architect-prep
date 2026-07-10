@@ -60,7 +60,7 @@ export function Heatmap({ data, selectedDate, onSelect }: HeatmapProps) {
   const weeks = useMemo(() => buildHeatmapGrid(data.days, data.year), [data.days, data.year]);
   const monthMarks = useMemo(() => monthLabelsForYear(data.year), [data.year]);
 
-  const cellSize = 12;
+  const cellSize = 10;
   const cellGap = 2;
 
   return (

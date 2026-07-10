@@ -85,8 +85,8 @@ export function AIConfigForm() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>AI 配置</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg sm:text-xl">AI 配置</CardTitle>
         <CardDescription>配置您的 AI Provider 和 API Key</CardDescription>
       </CardHeader>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -98,7 +98,7 @@ export function AIConfigForm() {
               value={form.watch("provider")}
               onValueChange={(value) => form.setValue("provider", value as FormValues["provider"])}
             >
-              <SelectTrigger>
+              <SelectTrigger className="h-11 sm:h-10">
                 <SelectValue placeholder="选择 Provider" />
               </SelectTrigger>
               <SelectContent>
@@ -121,6 +121,7 @@ export function AIConfigForm() {
               type="password"
               placeholder={config ? "已配置，留空保持不变" : "输入 API Key"}
               {...form.register("apiKey")}
+              className="h-11 sm:h-10"
             />
             {form.formState.errors.apiKey && (
               <p className="text-sm text-destructive">{form.formState.errors.apiKey.message}</p>
@@ -130,17 +131,25 @@ export function AIConfigForm() {
           {/* Model */}
           <div className="space-y-2">
             <label className="text-sm font-medium">模型 (可选)</label>
-            <Input placeholder="例如 gpt-4, claude-3-opus" {...form.register("model")} />
+            <Input
+              placeholder="例如 gpt-4, claude-3-opus"
+              {...form.register("model")}
+              className="h-11 sm:h-10"
+            />
           </div>
 
           {/* Base URL */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Base URL (可选)</label>
-            <Input placeholder="自定义 API 地址" {...form.register("baseUrl")} />
+            <Input
+              placeholder="自定义 API 地址"
+              {...form.register("baseUrl")}
+              className="h-11 sm:h-10"
+            />
           </div>
         </CardContent>
-        <CardFooter className="flex gap-3">
-          <Button type="submit" disabled={saveMutation.isPending}>
+        <CardFooter className="flex flex-col gap-3 sm:flex-row">
+          <Button type="submit" disabled={saveMutation.isPending} className="w-full sm:w-auto">
             {saveMutation.isPending ? "保存中..." : "保存配置"}
           </Button>
           <Button
@@ -148,6 +157,7 @@ export function AIConfigForm() {
             variant="outline"
             disabled={testMutation.isPending}
             onClick={handleTest}
+            className="w-full sm:w-auto"
           >
             {testMutation.isPending ? "测试中..." : "测试连接"}
           </Button>

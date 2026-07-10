@@ -1,3 +1,4 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -11,12 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  CheckCircle2Outlined,
-  RotateCcwOutlined,
-  BookOpenOutlined,
-  ArrowLeftOutlined,
-} from "@/components/ui/icons";
+import { CheckCircle2Outlined, RotateCcwOutlined } from "@/components/ui/icons";
 import { useErrorBook, useChapters, useMasterError, useSubmitQuiz } from "../api";
 import { DIFFICULTY_TAG } from "../constants";
 import type { ErrorBookItem } from "../types";
@@ -161,14 +157,12 @@ export function ErrorBookList() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
-          <BookOpenOutlined className="h-6 w-6" />
-          错题本
-        </h2>
+    <SectionPageLayout
+      title="错题本"
+      description="错题记录与重练"
+      actions={
         <Select value={chapter} onValueChange={(v) => setChapter(v === "all" ? "" : (v ?? ""))}>
-          <SelectTrigger className="w-64">
+          <SelectTrigger className="w-full sm:w-64">
             <SelectValue placeholder="按章节筛选" />
           </SelectTrigger>
           <SelectContent>
@@ -180,8 +174,8 @@ export function ErrorBookList() {
             ))}
           </SelectContent>
         </Select>
-      </div>
-
+      }
+    >
       {error && (
         <div className="text-sm text-red-600">
           {error instanceof Error ? error.message : "加载失败"}
@@ -208,7 +202,7 @@ export function ErrorBookList() {
           {items.map((item) => (
             <Card key={item.id} className="overflow-hidden">
               <CardHeader className="pb-3">
-                <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="secondary">{DIFFICULTY_TAG[item.difficulty]}</Badge>
                     <Badge variant="outline">章节 {item.chapter}</Badge>
@@ -274,6 +268,6 @@ export function ErrorBookList() {
           ))}
         </div>
       )}
-    </div>
+    </SectionPageLayout>
   );
 }

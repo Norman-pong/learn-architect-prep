@@ -85,6 +85,7 @@ const proseClasses = [
 ].join(" ");
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  const stripped = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
   return (
     <div className={proseClasses}>
       <ReactMarkdown
@@ -117,7 +118,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
         }}
       >
-        {content}
+        {stripped}
       </ReactMarkdown>
     </div>
   );

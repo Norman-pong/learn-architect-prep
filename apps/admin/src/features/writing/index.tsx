@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { SectionPageLayout } from "@/components/layout";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 import {
   FileTextOutlined,
   PlusOutlined,
@@ -231,51 +233,52 @@ export function WritingWorkbench() {
   })();
 
   return (
-    <div className="space-y-6">
+    <SectionPageLayout title="论文写作工作台" description="分节编辑 · 实时字数 · 30s 自动保存">
       <Card>
-        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <FileTextOutlined className="h-5 w-5 text-primary" />
-              论文写作工作台
-            </CardTitle>
-            <CardDescription>分节编辑 · 实时字数 · 30s 自动保存</CardDescription>
+        <CardContent className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-1">
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                <FileTextOutlined className="h-5 w-5 text-primary" />
+                论文写作工作台
+              </CardTitle>
+              <CardDescription>分节编辑 · 实时字数 · 30s 自动保存</CardDescription>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+              <Input
+                placeholder="论文标题"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  setDirty(true);
+                }}
+                className="w-full sm:w-72"
+                maxLength={120}
+              />
+              <Button variant="outline" onClick={startNewDraft} className="w-full sm:w-auto">
+                <PlusOutlined className="mr-1 h-4 w-4" />
+                新建论文
+              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => toast.info("AI 评分将在 FR-WR-03 中开放")}
+                      className="w-full sm:w-auto"
+                    >
+                      <RobotOutlined className="mr-1 h-4 w-4" />
+                      AI 评分
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>请先在设置 → AI 配置中配置 API Key</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Input
-              placeholder="论文标题"
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                setDirty(true);
-              }}
-              className="w-full sm:w-72"
-              maxLength={120}
-            />
-            <Button variant="outline" onClick={startNewDraft}>
-              <PlusOutlined className="mr-1 h-4 w-4" />
-              新建论文
-            </Button>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    onClick={() => toast.info("AI 评分将在 FR-WR-03 中开放")}
-                  >
-                    <RobotOutlined className="mr-1 h-4 w-4" />
-                    AI 评分
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>请先在设置 → AI 配置中配置 API Key</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </CardHeader>
 
-        <CardContent className="space-y-6">
           <WritingList
             items={list ?? []}
             activeId={activeId}
@@ -321,17 +324,39 @@ export function WritingWorkbench() {
                   })}
                 </TabsList>
 
-                {THESIS_SECTIONS.map((key) => (
-                  <SectionEditor
-                    key={key}
-                    sectionKey={key}
-                    value={sections[key]}
-                    onChange={(v) => patchSection(key, v)}
-                  />
-                ))}
+                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="min-w-0">
+                    {THESIS_SECTIONS.map((key) => (
+                      <TabsContent key={key} value={key} className="mt-0">
+                        <SectionEditor
+                          sectionKey={key}
+                          value={sections[key]}
+                          onChange={(v) => patchSection(key, v)}
+                        />
+                      </TabsContent>
+                    ))}
+                  </div>
+
+                  <div className="hidden min-w-0 md:block">
+                    <Card className="h-full">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">实时预览</CardTitle>
+                      </CardHeader>
+                      <CardContent className="max-h-[600px] overflow-y-auto">
+                        {sections[activeTab] ? (
+                          <div className="prose prose-sm max-w-none">
+                            <MarkdownRenderer content={sections[activeTab]} />
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">开始输入后将在此预览</p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </Tabs>
 
-              <div className="sticky bottom-4 z-10 flex flex-wrap items-center gap-4 rounded-lg border border-border bg-card p-4 shadow-sm">
+              <div className="sticky bottom-4 z-10 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3 shadow-sm sm:gap-4 sm:p-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">总字数</span>
                   <span className="font-mono tabular-nums text-sm">
@@ -340,9 +365,7 @@ export function WritingWorkbench() {
                   <Badge variant={totalStatus.variant}>{totalStatus.label}</Badge>
                 </div>
 
-                <div className="hidden flex-1 md:block" />
-
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-1 flex-wrap items-center gap-2 overflow-x-auto">
                   {THESIS_SECTIONS.map((k) => (
                     <Button
                       key={k}
@@ -355,9 +378,7 @@ export function WritingWorkbench() {
                   ))}
                 </div>
 
-                <div className="hidden flex-1 md:block" />
-
-                <div className="flex items-center gap-2">
+                <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                   {saveBadge}
                   <Button
                     size="sm"
@@ -378,7 +399,7 @@ export function WritingWorkbench() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </SectionPageLayout>
   );
 }
 

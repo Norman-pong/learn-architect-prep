@@ -164,14 +164,14 @@ export function CostDashboard() {
   const loading = summaryLoading || statsLoading;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <SummaryCards summary={summary} loading={summaryLoading} />
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader className="flex flex-col gap-2 pb-4 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base font-medium">按功能分类</CardTitle>
           <Select value={providerFilter} onValueChange={(v) => setProviderFilter(v ?? "all")}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-full sm:w-40">
               <SelectValue placeholder="全部 provider" />
             </SelectTrigger>
             <SelectContent>
@@ -184,7 +184,7 @@ export function CostDashboard() {
             </SelectContent>
           </Select>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           {loading ? (
             <div className="space-y-2">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -194,7 +194,7 @@ export function CostDashboard() {
           ) : tableData.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">暂无 AI 调用记录</p>
           ) : (
-            <div className="rounded-md border">
+            <div className="min-w-[600px] rounded-md border">
               <Table>
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (

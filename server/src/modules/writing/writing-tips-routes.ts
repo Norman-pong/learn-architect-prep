@@ -1,7 +1,8 @@
 import { Elysia } from "elysia";
 import path from "node:path";
+import { DATA_DIR } from "../../config/paths";
 
-const TIPS_DIR = path.resolve(import.meta.dir, "../../../data/writing/tips");
+const TIPS_DIR = path.join(DATA_DIR, "writing/tips");
 
 async function readJson(fileName: string) {
   const file = Bun.file(path.join(TIPS_DIR, fileName));

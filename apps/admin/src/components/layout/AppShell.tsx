@@ -21,7 +21,7 @@ import {
   LogoutOutlined,
   LineChartOutlined,
 } from "../../components/ui/icons";
-import { Button } from "../../components/ui/button";
+import { Button, buttonVariants } from "../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import {
   Drawer,
@@ -120,20 +120,22 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size={collapsed ? "icon" : "default"}
-            onClick={handleClick}
-            className={cn(
-              "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-              collapsed ? "h-9 w-9" : "w-full justify-start gap-3 px-3",
-            )}
-            aria-label={label}
-          >
-            <span className="shrink-0 text-[1.1rem]">{THEME_ICON[mode]}</span>
-            {!collapsed && <span className="text-sm">{label}</span>}
-          </Button>
+        <TooltipTrigger
+          render={
+            <button
+              type="button"
+              onClick={handleClick}
+              className={cn(
+                buttonVariants({ variant: "ghost", size: collapsed ? "icon" : "default" }),
+                "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                collapsed ? "h-9 w-9" : "w-full justify-start gap-3 px-3",
+              )}
+              aria-label={label}
+            />
+          }
+        >
+          <span className="shrink-0 text-[1.1rem]">{THEME_ICON[mode]}</span>
+          {!collapsed && <span className="text-sm">{label}</span>}
         </TooltipTrigger>
         <TooltipContent side="right">{label}</TooltipContent>
       </Tooltip>
@@ -153,22 +155,24 @@ function LogoutButton({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size={collapsed ? "icon" : "default"}
-            onClick={handleLogout}
-            className={cn(
-              "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-              collapsed ? "h-9 w-9" : "w-full justify-start gap-3 px-3",
-            )}
-            aria-label="退出登录"
-          >
-            <span className="shrink-0 text-[1.1rem]">
-              <LogoutOutlined />
-            </span>
-            {!collapsed && <span className="text-sm">退出</span>}
-          </Button>
+        <TooltipTrigger
+          render={
+            <button
+              type="button"
+              onClick={handleLogout}
+              className={cn(
+                buttonVariants({ variant: "ghost", size: collapsed ? "icon" : "default" }),
+                "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                collapsed ? "h-9 w-9" : "w-full justify-start gap-3 px-3",
+              )}
+              aria-label="退出登录"
+            />
+          }
+        >
+          <span className="shrink-0 text-[1.1rem]">
+            <LogoutOutlined />
+          </span>
+          {!collapsed && <span className="text-sm">退出</span>}
         </TooltipTrigger>
         <TooltipContent side="right">退出登录</TooltipContent>
       </Tooltip>

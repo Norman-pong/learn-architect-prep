@@ -54,7 +54,7 @@ export function ProgressCalendar({ data, selectedDate, onSelect }: MonthlyCalend
         }
         const isSelected = day.date === selectedDate;
         const hasData = day.count > 0 || day.duration > 0;
-        const dayNum = Number(day.date.slice(8, 10));
+        const dayNum = Number(String(day.date ?? "").slice(8, 10));
         const heatLevel = Math.min(4, Math.max(1, Math.ceil(day.duration / 15) + 1));
         return (
           <button
@@ -62,7 +62,7 @@ export function ProgressCalendar({ data, selectedDate, onSelect }: MonthlyCalend
             type="button"
             onClick={() => onSelect(day.date)}
             className={cn(
-              "relative flex min-h-[56px] flex-col rounded-md p-1.5 text-left transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+              "relative flex min-h-[48px] flex-col rounded-md p-1 text-left transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:min-h-[56px] sm:p-1.5",
               isSelected && "ring-2 ring-primary",
               !hasData && "border border-border bg-card text-foreground",
             )}

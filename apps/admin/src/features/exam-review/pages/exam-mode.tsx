@@ -1,3 +1,4 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
@@ -404,8 +405,8 @@ export function ExamModePage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-6rem)] p-4 sm:p-6 lg:p-8">
+    <SectionPageLayout title="模拟考试" description="选择考试模式与科目，开始计时模拟练习">
       {started ? renderExam() : renderSelector()}
-    </div>
+    </SectionPageLayout>
   );
 }

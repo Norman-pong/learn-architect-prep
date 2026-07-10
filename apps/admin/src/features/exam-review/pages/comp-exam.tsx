@@ -1,3 +1,4 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -40,7 +41,7 @@ function QuestionCard({
   return (
     <Card className="flex-1">
       <CardHeader className="pb-3">
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <span className="text-sm font-medium text-muted-foreground">
             第 {index + 1} 题 / 共 {total} 题
           </span>
@@ -58,7 +59,7 @@ function QuestionCard({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="space-y-4 sm:space-y-5">
         <p className="text-base leading-relaxed text-foreground whitespace-pre-wrap">
           {question.question}
         </p>
@@ -83,7 +84,7 @@ function QuestionCard({
                   checked={checked}
                   onChange={() => onSelect(key)}
                   disabled={disabled}
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+                  className="mt-1 h-4 w-4 shrink-0 accent-primary sm:mt-0.5"
                 />
                 <span className="text-sm leading-relaxed text-foreground">
                   <span className="font-semibold">{key}.</span> {value}
@@ -289,90 +290,93 @@ export default function CompExamPage() {
   // Loading / initializing skeleton
   if (!paper || !examId || !currentQuestion) {
     return (
-      <div className="mx-auto w-full max-w-6xl space-y-4 py-6">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-8 w-32" />
-        </div>
-        <div className="flex gap-6">
-          <Skeleton className="h-[520px] w-[220px] shrink-0" />
-          <div className="flex-1 space-y-4">
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-64 w-full" />
+      <SectionPageLayout title="综合知识模拟考" description="75 道选择题，150 分钟">
+        <div className="mx-auto w-full max-w-6xl space-y-4 py-6">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-8 w-32" />
+          </div>
+          <div className="flex gap-6">
+            <Skeleton className="h-[520px] w-[220px] shrink-0" />
+            <div className="flex-1 space-y-4">
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-64 w-full" />
+            </div>
           </div>
         </div>
-      </div>
+      </SectionPageLayout>
     );
   }
-
   return (
-    <div className="mx-auto flex w-full max-w-6xl gap-6 py-6">
-      <div className="flex-1 space-y-6">
-        {/* Top bar */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-xl font-semibold tracking-tight">综合知识模拟考</h1>
-                <p className="text-sm text-muted-foreground">
-                  已答 <strong className="text-foreground">{answerCount}</strong> /{" "}
-                  {TOTAL_COMP_QUESTIONS} 题
-                </p>
+    <SectionPageLayout title="综合知识模拟考" description="75 道选择题，150 分钟">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 sm:gap-6">
+        <div className="flex-1 space-y-4 sm:space-y-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h1 className="text-lg font-semibold tracking-tight sm:text-xl">
+                    综合知识模拟考
+                  </h1>
+                  <p className="text-sm text-muted-foreground">
+                    已答 <strong className="text-foreground">{answerCount}</strong> /{" "}
+                    {TOTAL_COMP_QUESTIONS} 题
+                  </p>
+                </div>
+                <ExamTimer remaining={remaining} isRunning={isRunning} />
               </div>
-              <ExamTimer remaining={remaining} isRunning={isRunning} />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Question card */}
-        <QuestionCard
-          question={currentQuestion}
-          index={currentIndex}
-          total={TOTAL_COMP_QUESTIONS}
-          selectedAnswer={answers[currentQuestion.id]}
-          onSelect={(value) => handleSelect(currentQuestion.id, value)}
-          disabled={finishCompExam.isPending}
-        />
-
-        {/* Bottom navigation */}
-        <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
-            disabled={currentIndex === 0 || finishCompExam.isPending}
-          >
-            上一题
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setCurrentIndex((i) => Math.min(TOTAL_COMP_QUESTIONS - 1, i + 1))}
-            disabled={currentIndex === TOTAL_COMP_QUESTIONS - 1 || finishCompExam.isPending}
-          >
-            下一题
-          </Button>
-        </div>
-
-        {/* Submit */}
-        <div className="flex justify-center">
-          <Button
-            variant="destructive"
-            size="lg"
-            onClick={handleFinish}
+          <QuestionCard
+            question={currentQuestion}
+            index={currentIndex}
+            total={TOTAL_COMP_QUESTIONS}
+            selectedAnswer={answers[currentQuestion.id]}
+            onSelect={(value) => handleSelect(currentQuestion.id, value)}
             disabled={finishCompExam.isPending}
-          >
-            {finishCompExam.isPending ? "提交中…" : "提交试卷"}
-          </Button>
-        </div>
-      </div>
+          />
 
-      {/* Answer sheet */}
-      <AnswerSheet
-        items={navItems}
-        currentIndex={currentIndex}
-        onSelect={setCurrentIndex}
-        className="hidden lg:block"
-      />
-    </div>
+          <div className="flex items-center justify-between gap-3">
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none"
+              onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
+              disabled={currentIndex === 0 || finishCompExam.isPending}
+            >
+              上一题
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none"
+              onClick={() => setCurrentIndex((i) => Math.min(TOTAL_COMP_QUESTIONS - 1, i + 1))}
+              disabled={currentIndex === TOTAL_COMP_QUESTIONS - 1 || finishCompExam.isPending}
+            >
+              下一题
+            </Button>
+          </div>
+
+          <div className="flex justify-center">
+            <Button
+              variant="destructive"
+              size="lg"
+              className="w-full sm:w-auto"
+              onClick={handleFinish}
+              disabled={finishCompExam.isPending}
+            >
+              {finishCompExam.isPending ? "提交中…" : "提交试卷"}
+            </Button>
+          </div>
+        </div>
+
+        <AnswerSheet
+          items={navItems}
+          currentIndex={currentIndex}
+          onSelect={setCurrentIndex}
+          className="hidden lg:block"
+        />
+      </div>
+    </SectionPageLayout>
   );
 }

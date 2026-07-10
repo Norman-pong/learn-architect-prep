@@ -305,7 +305,13 @@
 
 /* ── Utility helpers ── */
 .app-content {
-  padding: var(--space-4);
+  padding: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .app-content {
+    padding: var(--space-4);
+  }
 }
 
 @media (min-width: 768px) {

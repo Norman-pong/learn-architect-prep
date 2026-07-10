@@ -3,6 +3,8 @@ import { startExam, getExamById, finishExam, type ExamRecord } from "./exam-serv
 import { scoreEssay } from "./ai-scoring-service";
 import { upsertWriting } from "../writing/writings-service";
 import type { ThesisSections } from "@archprep/shared";
+import path from "node:path";
+import { DATA_DIR } from "../../config/paths";
 
 export interface EssayQuestion {
   id: string;
@@ -142,7 +144,7 @@ let cachedEssays: EssayQuestion[] | null = null;
 let cacheTime = 0;
 const CACHE_TTL_MS = 5_000;
 
-const ESSAYS_FILE_PATH = `${import.meta.dir}/../../../data/quiz/essays.json`;
+const ESSAYS_FILE_PATH = path.join(DATA_DIR, "quiz/essays.json");
 
 async function loadEssays(): Promise<EssayQuestion[]> {
   if (cachedEssays && Date.now() - cacheTime < CACHE_TTL_MS) {

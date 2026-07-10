@@ -1,6 +1,7 @@
 import path from "node:path";
 import { getDb } from "../../db";
 import { loadQuestions } from "../quiz/quiz-service";
+import { DATA_DIR } from "../../config/paths";
 
 export interface ChapterStats {
   chapterId: string;
@@ -71,7 +72,7 @@ function buildWhereClause(
 
 async function loadChapterMap(): Promise<Map<string, ChapterMeta>> {
   if (cachedChapters) return cachedChapters;
-  const file = path.resolve(import.meta.dir, "../../../data/knowledge/index.json");
+  const file = path.join(DATA_DIR, "knowledge/index.json");
   const raw = await Bun.file(file).json();
   const map = new Map<string, ChapterMeta>();
   for (const ch of raw.chapters) {
@@ -83,7 +84,7 @@ async function loadChapterMap(): Promise<Map<string, ChapterMeta>> {
 
 async function loadKnowledgePointMap(): Promise<Map<string, KnowledgePointMeta>> {
   if (cachedKnowledgePoints) return cachedKnowledgePoints;
-  const base = path.resolve(import.meta.dir, "../../../data/knowledge");
+  const base = path.join(DATA_DIR, "knowledge");
   const map = new Map<string, KnowledgePointMeta>();
   const indexFile = path.join(base, "index.json");
   const raw = await Bun.file(indexFile).json();

@@ -13,4 +13,6 @@ export const chapterMetaSchema = z.object({
   knowledgePoints: z.array(knowledgePointLiteSchema).default([]),
 });
 
-export const chapterMetaArraySchema = z.array(chapterMetaSchema);
+export const chapterMetaArraySchema = z.object({
+  chapters: z.array(chapterMetaSchema),
+});

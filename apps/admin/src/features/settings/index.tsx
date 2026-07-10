@@ -1,18 +1,19 @@
+import { SectionPageLayout } from "@/components/layout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AIConfigForm } from "./components/ai-config-form";
 import { CostDashboard } from "./components/cost-dashboard";
 
 export function SettingsAI() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">AI 设置</h1>
-        <p className="text-sm text-muted-foreground">管理 AI 配置和成本监控</p>
-      </div>
+    <SectionPageLayout title="设置" description="AI 配置与系统设置">
       <Tabs defaultValue="config">
-        <TabsList>
-          <TabsTrigger value="config">AI 配置</TabsTrigger>
-          <TabsTrigger value="cost">AI 成本</TabsTrigger>
+        <TabsList className="flex w-full flex-col sm:flex-row">
+          <TabsTrigger value="config" className="flex-1">
+            AI 配置
+          </TabsTrigger>
+          <TabsTrigger value="cost" className="flex-1">
+            AI 成本
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="config" className="mt-4">
           <AIConfigForm />
@@ -21,7 +22,7 @@ export function SettingsAI() {
           <CostDashboard />
         </TabsContent>
       </Tabs>
-    </div>
+    </SectionPageLayout>
   );
 }
 

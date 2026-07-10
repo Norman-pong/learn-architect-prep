@@ -59,14 +59,14 @@ export function ExamHistoryTable({
       {
         accessorKey: "startedAt",
         header: "日期",
-        cell: ({ getValue }) => formatStartedAt(getValue<string>()),
+        cell: ({ getValue }) => formatStartedAt(String(getValue() ?? "")),
         size: 160,
       },
       {
         accessorKey: "examType",
         header: "科目",
         cell: ({ getValue }) => {
-          const t = getValue<string>();
+          const t = String(getValue() ?? "");
           return examLabels[t] ?? t;
         },
         size: 120,
@@ -75,7 +75,7 @@ export function ExamHistoryTable({
         accessorKey: "mode",
         header: "模式",
         cell: ({ getValue }) => {
-          const m = getValue<string>();
+          const m = String(getValue() ?? "");
           return modeLabels[m] ?? m;
         },
         size: 100,
@@ -84,7 +84,8 @@ export function ExamHistoryTable({
         accessorKey: "score",
         header: "分数",
         cell: ({ getValue }) => {
-          const score = getValue<number | null>();
+          const raw = getValue();
+          const score = typeof raw === "number" ? raw : raw == null ? null : Number(raw);
           if (score == null) return <span className="text-muted-foreground">未交卷</span>;
           return <Badge variant={scoreVariant(score, passScore)}>{score}</Badge>;
         },
@@ -93,14 +94,18 @@ export function ExamHistoryTable({
       {
         accessorKey: "duration",
         header: "用时",
-        cell: ({ getValue }) => formatDuration(getValue<number>()),
+        cell: ({ getValue }) => {
+          const raw = getValue();
+          const v = typeof raw === "number" ? raw : Number(raw);
+          return formatDuration(v);
+        },
         size: 100,
       },
       {
         accessorKey: "passed",
         header: "合格",
         cell: ({ row, getValue }) => {
-          const passed = getValue<boolean | null>();
+          const passed = getValue() as boolean | null | undefined;
           if (row.original.status !== "finished" || passed == null) {
             return <Badge variant="outline">—</Badge>;
           }

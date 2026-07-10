@@ -1,7 +1,7 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileTextOutlined } from "@/components/ui/icons";
 import { useTemplates, useTemplate } from "./api";
 import { TemplateCard } from "./components/template-card";
 
@@ -11,17 +11,7 @@ export function TemplatesPage() {
   const { data: detail, isLoading: detailLoading } = useTemplate(expandedId);
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
-          <FileTextOutlined className="h-6 w-6 text-primary" />
-          论文模板库
-        </h1>
-        <p className="text-muted-foreground">
-          选择适合论文主题的模板，点击卡片展开查看结构与填写引导。
-        </p>
-      </div>
-
+    <SectionPageLayout title="论文模板" description="结构化论文模板">
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -47,7 +37,7 @@ export function TemplatesPage() {
           ))}
         </div>
       )}
-    </div>
+    </SectionPageLayout>
   );
 }
 

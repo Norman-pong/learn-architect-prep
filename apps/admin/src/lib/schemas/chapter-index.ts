@@ -8,7 +8,5 @@ export const knowledgePointIndexSchema = z.object({
 });
 
 export const chapterIndexSchema = z.object({
-  id: z.string(),
-  title: z.string(),
   knowledgePoints: z.array(knowledgePointIndexSchema),
 });

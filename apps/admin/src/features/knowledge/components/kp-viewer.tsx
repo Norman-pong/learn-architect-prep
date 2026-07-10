@@ -102,7 +102,9 @@ export function KpViewer({
             className="prose prose-sm max-w-none outline-none dark:prose-invert"
           >
             {content ? (
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "")}
+              </ReactMarkdown>
             ) : (
               <p className="text-muted-foreground">请从左侧选择一个知识点查看详情。</p>
             )}

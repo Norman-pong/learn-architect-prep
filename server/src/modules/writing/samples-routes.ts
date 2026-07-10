@@ -1,7 +1,8 @@
 import { Elysia, t } from "elysia";
 import path from "node:path";
+import { DATA_DIR } from "../../config/paths";
 
-const SAMPLES_DIR = path.resolve(import.meta.dir, "../../../data/writing/samples");
+const SAMPLES_DIR = path.join(DATA_DIR, "writing/samples");
 
 export const sampleRoutes = new Elysia({ prefix: "/api/samples" })
   .get(

@@ -1,3 +1,4 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -8,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BarChartOutlined } from "@/components/ui/icons";
 import { useHeatmap, useCalendar, useChapterProgress } from "./api";
 import { Heatmap, HeatmapLegend } from "./components/heatmap";
 import { ProgressCalendar } from "./components/progress-calendar";
@@ -86,11 +88,9 @@ export function ProgressPage() {
   const palette = isDark ? HEAT_LEVEL_BG_DARK : HEAT_LEVEL_BG_LIGHT;
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold">学习进度追踪</h2>
-
+    <SectionPageLayout title="学习进度" description="学习日历与热力图">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardHeader className="flex flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base">年度学习热力图</CardTitle>
           <YearSelector value={year} onChange={setYear} />
         </CardHeader>
@@ -102,7 +102,7 @@ export function ProgressPage() {
             </div>
           ) : heatmap ? (
             <>
-              <div className="flex flex-wrap gap-6 text-sm">
+              <div className="flex flex-wrap gap-4 text-sm sm:gap-6">
                 <div className="space-y-0.5">
                   <p className="text-xs text-muted-foreground">活跃天数</p>
                   <p className="font-semibold">{heatmap.totalActiveDays} 天</p>
@@ -122,15 +122,19 @@ export function ProgressPage() {
               </div>
             </>
           ) : (
-            <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-              暂无热力图数据
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="mb-4 rounded-full bg-muted p-4">
+                <BarChartOutlined className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">暂无热力图数据</p>
+              <p className="mt-1 text-xs text-muted-foreground">选择其他年份查看历史数据</p>
             </div>
           )}
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardHeader className="flex flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base">月度学习日历</CardTitle>
           <MonthSelector value={month} onChange={setMonth} />
         </CardHeader>
@@ -146,8 +150,12 @@ export function ProgressPage() {
               onSelect={setSelectedDate}
             />
           ) : (
-            <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-              暂无日历数据
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="mb-4 rounded-full bg-muted p-4">
+                <BarChartOutlined className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">暂无日历数据</p>
+              <p className="mt-1 text-xs text-muted-foreground">选择其他月份查看历史数据</p>
             </div>
           )}
         </CardContent>
@@ -167,12 +175,16 @@ export function ProgressPage() {
           ) : chapters && chapters.length > 0 ? (
             <ChapterProgressList chapters={chapters} />
           ) : (
-            <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-              暂无章节进度数据
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="mb-4 rounded-full bg-muted p-4">
+                <BarChartOutlined className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">暂无章节进度数据</p>
+              <p className="mt-1 text-xs text-muted-foreground">完成练习后系统将自动统计掌握度</p>
             </div>
           )}
         </CardContent>
       </Card>
-    </div>
+    </SectionPageLayout>
   );
 }

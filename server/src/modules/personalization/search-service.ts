@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { DATA_DIR } from "../../config/paths";
 
-const KNOWLEDGE_DIR = path.resolve(import.meta.dir, "../../../data/knowledge");
+const KNOWLEDGE_DIR = path.join(DATA_DIR, "knowledge");
 
 export interface SearchResult {
   kpId: string;
@@ -78,7 +79,7 @@ async function loadChapterIndex(dir: string): Promise<ChapterIndex | null> {
   try {
     const parsed: unknown = JSON.parse(await file.text());
     if (!isRecord(parsed)) return null;
-    if (typeof parsed.id !== "string" || typeof parsed.title !== "string") return null;
+    if (typeof parsed.id !== "string") parsed.id = dir.replace(/^chapter-/, "ch");
     const rawKps = parsed.knowledgePoints;
     if (!Array.isArray(rawKps)) return null;
     const knowledgePoints = rawKps.filter(isRecord).map((kp) => ({
@@ -86,7 +87,7 @@ async function loadChapterIndex(dir: string): Promise<ChapterIndex | null> {
       title: typeof kp.title === "string" ? kp.title : "",
       file: typeof kp.file === "string" ? kp.file : "",
     }));
-    return { id: parsed.id, title: parsed.title, knowledgePoints };
+    return { id: parsed.id as string, title: (parsed.title as string) ?? dir, knowledgePoints };
   } catch {
     return null;
   }

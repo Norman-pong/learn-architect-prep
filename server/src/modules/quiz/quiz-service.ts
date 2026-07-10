@@ -1,6 +1,7 @@
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { getDb } from "../../db";
+import { DATA_DIR } from "../../config/paths";
 
 export interface CaseQuestion {
   id: string;
@@ -35,7 +36,7 @@ export interface PublicQuestion {
   year: number;
 }
 
-const QUIZ_DIR = path.resolve(import.meta.dir, "../../../data/quiz");
+const QUIZ_DIR = path.join(DATA_DIR, "quiz");
 const QUESTIONS_FILE = path.join(QUIZ_DIR, "questions.json");
 
 let cachedQuestions: QuizQuestion[] | null = null;

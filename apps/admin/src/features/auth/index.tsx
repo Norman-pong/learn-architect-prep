@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Icon } from "../../components/ui/icon";
-import { toast } from "../../components/ui/toast";
-import { useAuthStore } from "../../stores/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { MailOutlined, LockOutlined } from "@/components/ui/icons";
+import { toast } from "@/components/ui/toast";
+import { useAuthStore } from "@/stores/auth";
 import { sendCode, verifyCode } from "./api";
 import { loginSchema, type LoginValues } from "./lib/schema";
 
@@ -69,11 +69,11 @@ export function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-[420px] rounded-2xl border border-border bg-card p-8 shadow-xl sm:p-10">
+    <div className="min-h-screen bg-background px-4 py-8">
+      <div className="mx-auto mt-20 w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-xl sm:p-10">
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Icon name="Lock" size={24} />
+            <LockOutlined className="h-6 w-6" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-card-foreground">ArchPrep</h1>
           <p className="mt-2 text-sm text-muted-foreground">系统架构设计师备考平台</p>
@@ -85,11 +85,7 @@ export function LoginForm() {
               邮箱
             </label>
             <div className="relative">
-              <Icon
-                name="Mail"
-                size={16}
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-              />
+              <MailOutlined className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
@@ -142,3 +138,5 @@ export function LoginForm() {
     </div>
   );
 }
+
+export default LoginForm;

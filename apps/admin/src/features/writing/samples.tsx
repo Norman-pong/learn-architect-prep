@@ -1,3 +1,4 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useState } from "react";
 import { useSamples, useSample } from "./api";
 import { SampleViewer } from "./components/sample-viewer";
@@ -13,14 +14,16 @@ export function SamplesPage() {
   };
 
   return (
-    <SampleViewer
-      samples={samples ?? []}
-      activeId={activeId}
-      activeContent={content ?? null}
-      loading={isLoading}
-      loadingContent={contentLoading}
-      onSelect={handleSelect}
-    />
+    <SectionPageLayout title="论文范文" description="10 大高频主题范文">
+      <SampleViewer
+        samples={samples ?? []}
+        activeId={activeId}
+        activeContent={content ?? null}
+        loading={isLoading}
+        loadingContent={contentLoading}
+        onSelect={handleSelect}
+      />
+    </SectionPageLayout>
   );
 }
 

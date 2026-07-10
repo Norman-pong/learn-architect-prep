@@ -1,10 +1,19 @@
+import { SectionPageLayout } from "@/components/layout";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOutlined } from "@/components/ui/icons";
+import { BookOutlined, MenuOutlined } from "@/components/ui/icons";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { api } from "@/lib/api";
 import { useChapters, useChapterIndex, useAskQuestion } from "./api";
 import { ChatMessageBubble } from "./components/chat-message";
@@ -122,116 +131,170 @@ export function QAPage() {
   }, [chapterInfo, question, ask, history]);
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] gap-4 overflow-hidden p-4">
-      {/* Sidebar */}
-      <Card className="flex w-72 shrink-0 flex-col overflow-hidden">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold">选择知识点</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1 overflow-auto p-3 pt-0">
-          {loadingChapters ? (
-            <div className="space-y-2">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-full" />
-              ))}
+    <SectionPageLayout title="AI 知识点答疑" description="选中知识点后向 AI 提问">
+      <div className="flex h-[calc(100vh-3.5rem)] flex-col gap-2 overflow-hidden p-2 sm:gap-4 sm:p-4 md:flex-row">
+        <QASidebar
+          chapters={chapters}
+          loadingChapters={loadingChapters}
+          chapterInfo={chapterInfo}
+          chapterIndex={chapterIndex}
+          expandChapter={expandChapter}
+          selectKnowledgePoint={selectKnowledgePoint}
+        />
+
+        <Card className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          <CardHeader className="border-b border-border pb-3">
+            {chapterInfo ? (
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">{chapterInfo.chapterTitle}</Badge>
+                <span className="truncate text-sm font-semibold">{chapterInfo.kpTitle}</span>
+              </div>
+            ) : (
+              <CardTitle className="text-sm font-semibold">AI 知识点答疑</CardTitle>
+            )}
+          </CardHeader>
+
+          {!chapterInfo ? (
+            <div className="flex flex-1 items-center justify-center p-4 text-center text-muted-foreground">
+              请从左侧选择一个知识点开始提问
             </div>
           ) : (
-            <div className="space-y-2">
-              {chapters.map((ch) => {
-                const active = chapterInfo?.chapterId === ch.id;
-                return (
-                  <div
-                    key={ch.id}
-                    className={`rounded-lg border p-2 transition-colors ${
-                      active
-                        ? "border-primary/40 bg-primary/5"
-                        : "border-border/60 bg-card hover:bg-accent/50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 text-sm font-medium">
-                      <BookOutlined className="size-4 text-muted-foreground" />
-                      <span className="flex-1 truncate">{ch.title}</span>
-                    </div>
-                    {active && chapterIndex && (
-                      <div className="mt-2 space-y-1">
-                        {chapterIndex.knowledgePoints.map((kp) => (
-                          <Button
-                            key={kp.id}
-                            variant={chapterInfo?.kpId === kp.id ? "default" : "ghost"}
-                            size="sm"
-                            className="h-auto w-full justify-start gap-2 py-1.5 text-xs"
-                            onClick={() => selectKnowledgePoint(ch.id, kp.id)}
-                          >
-                            <span className="flex-1 truncate text-left">{kp.title}</span>
-                            {kp.examWeight >= 4 && (
-                              <Badge variant="destructive" className="text-[10px]">
-                                重点
-                              </Badge>
-                            )}
-                          </Button>
-                        ))}
-                      </div>
-                    )}
-                    {!active && (
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="h-auto p-0 text-xs"
-                        onClick={() => expandChapter(ch)}
-                      >
-                        展开
-                      </Button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            <>
+              <div ref={scrollRef} className="flex-1 space-y-4 overflow-auto p-3 sm:p-4">
+                {history.map((item, index) => (
+                  <ChatMessageBubble
+                    key={index}
+                    message={item}
+                    isLast={index === history.length - 1}
+                    isLoading={ask.isPending}
+                    chapterTitle={item.role === "assistant" ? chapterInfo.chapterTitle : undefined}
+                  />
+                ))}
+                {errorMessage && (
+                  <div className="text-center text-sm text-destructive">{errorMessage}</div>
+                )}
+              </div>
+              <QAInput
+                value={question}
+                onChange={setQuestion}
+                onSubmit={handleAsk}
+                loading={ask.isPending}
+              />
+            </>
           )}
-        </CardContent>
-      </Card>
+        </Card>
+      </div>
+    </SectionPageLayout>
+  );
+}
 
-      {/* Chat area */}
-      <Card className="flex flex-1 flex-col overflow-hidden">
-        <CardHeader className="border-b border-border pb-3">
-          {chapterInfo ? (
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">{chapterInfo.chapterTitle}</Badge>
-              <span className="text-sm font-semibold">{chapterInfo.kpTitle}</span>
-            </div>
-          ) : (
-            <CardTitle className="text-sm font-semibold">AI 知识点答疑</CardTitle>
-          )}
-        </CardHeader>
-
-        {!chapterInfo ? (
-          <div className="flex flex-1 items-center justify-center text-muted-foreground">
-            请从左侧选择一个知识点开始提问
+function QASidebar({
+  chapters,
+  loadingChapters,
+  chapterInfo,
+  chapterIndex,
+  expandChapter,
+  selectKnowledgePoint,
+}: {
+  chapters: { id: string; title: string }[];
+  loadingChapters: boolean;
+  chapterInfo: ChapterInfo | null;
+  chapterIndex: { knowledgePoints: KnowledgePoint[] } | undefined;
+  expandChapter: (ch: { id: string; title: string }) => void;
+  selectKnowledgePoint: (chId: string, kId: string) => void;
+}) {
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
+  const sidebar = (
+    <Card className="flex h-full w-72 shrink-0 flex-col overflow-hidden">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-semibold">选择知识点</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 overflow-auto p-3 pt-0">
+        {loadingChapters ? (
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-8 w-full" />
+            ))}
           </div>
         ) : (
-          <>
-            <div ref={scrollRef} className="flex-1 space-y-4 overflow-auto p-4">
-              {history.map((item, index) => (
-                <ChatMessageBubble
-                  key={index}
-                  message={item}
-                  isLast={index === history.length - 1}
-                  isLoading={ask.isPending}
-                  chapterTitle={item.role === "assistant" ? chapterInfo.chapterTitle : undefined}
-                />
-              ))}
-              {errorMessage && (
-                <div className="text-center text-sm text-destructive">{errorMessage}</div>
-              )}
-            </div>
-            <QAInput
-              value={question}
-              onChange={setQuestion}
-              onSubmit={handleAsk}
-              loading={ask.isPending}
-            />
-          </>
+          <div className="space-y-2">
+            {chapters.map((ch) => {
+              const active = chapterInfo?.chapterId === ch.id;
+              return (
+                <div
+                  key={ch.id}
+                  className={`rounded-lg border p-2 transition-colors ${
+                    active
+                      ? "border-primary/40 bg-primary/5"
+                      : "border-border/60 bg-card hover:bg-accent/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <BookOutlined className="size-4 text-muted-foreground" />
+                    <span className="flex-1 truncate">{ch.title}</span>
+                  </div>
+                  {active && chapterIndex && (
+                    <div className="mt-2 space-y-1">
+                      {chapterIndex.knowledgePoints.map((kp) => (
+                        <Button
+                          key={kp.id}
+                          variant={chapterInfo?.kpId === kp.id ? "default" : "ghost"}
+                          size="sm"
+                          className="h-auto w-full justify-start gap-2 py-1.5 text-xs"
+                          onClick={() => {
+                            selectKnowledgePoint(ch.id, kp.id);
+                            setOpen(false);
+                          }}
+                        >
+                          <span className="flex-1 truncate text-left">{kp.title}</span>
+                          {kp.examWeight >= 4 && (
+                            <Badge variant="destructive" className="text-[10px]">
+                              重点
+                            </Badge>
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                  {!active && (
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="h-auto p-0 text-xs"
+                      onClick={() => expandChapter(ch)}
+                    >
+                      展开
+                    </Button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         )}
-      </Card>
+      </CardContent>
+    </Card>
+  );
+  if (!isMobile) return sidebar;
+  return (
+    <div className="flex items-center gap-2 border-b border-border bg-card p-2">
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild>
+          <Button variant="outline" size="sm" className="gap-1">
+            <MenuOutlined className="h-4 w-4" />
+            知识点
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent side="left" className="w-72">
+          <DrawerHeader className="sr-only">
+            <DrawerTitle>选择知识点</DrawerTitle>
+          </DrawerHeader>
+          {sidebar}
+        </DrawerContent>
+      </Drawer>
+      <span className="truncate text-sm font-medium">
+        {chapterInfo ? chapterInfo.kpTitle : "请选择知识点"}
+      </span>
     </div>
   );
 }

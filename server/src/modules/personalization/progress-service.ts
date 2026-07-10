@@ -1,7 +1,8 @@
 import path from "node:path";
 import { getDb } from "../../db";
+import { DATA_DIR } from "../../config/paths";
 
-const KNOWLEDGE_DIR = path.resolve(import.meta.dir, "../../../data/knowledge");
+const KNOWLEDGE_DIR = path.join(DATA_DIR, "knowledge");
 
 export interface HeatmapDay {
   date: string; // YYYY-MM-DD

@@ -44,7 +44,7 @@ export function AnnotationPanel({
 
   if (loading) {
     return (
-      <Card className="w-80 shrink-0">
+      <Card className="w-full shrink-0 md:w-80">
         <CardHeader>
           <Skeleton className="h-5 w-24" />
         </CardHeader>
@@ -57,11 +57,12 @@ export function AnnotationPanel({
   }
 
   return (
-    <Card className="w-80 shrink-0 sticky top-0 self-start">
+    <Card className="w-full shrink-0 md:w-80 sticky top-0 self-start">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-sm">本知识点标注</CardTitle>
         <Badge variant="secondary">{annotations.length}</Badge>
       </CardHeader>
+
       <CardContent className="space-y-3">
         {annotations.length === 0 ? (
           <p className="text-sm text-muted-foreground">暂无标注</p>

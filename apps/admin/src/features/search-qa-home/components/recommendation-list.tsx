@@ -33,10 +33,19 @@ export function RecommendationList({
     <Card>
       <CardHeader>
         <CardTitle className="text-base font-semibold">复习推荐</CardTitle>
+        <p className="text-sm text-muted-foreground">基于最近练习的薄弱点推荐</p>
       </CardHeader>
       <CardContent className="space-y-2">
         {items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">暂无薄弱知识点，继续保持！</p>
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <div className="mb-4 rounded-full bg-muted p-4">
+              <BookOutlined className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <p className="text-sm text-muted-foreground">暂无薄弱知识点</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              继续保持，系统会在你出现错题时自动推荐
+            </p>
+          </div>
         ) : (
           items.map((item) => (
             <div

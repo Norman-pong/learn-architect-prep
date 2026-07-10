@@ -1,6 +1,17 @@
-import { useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams, useSearch } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { MenuOutlined } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
+import { SectionPageLayout } from "@/components/layout";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import {
   useChapters,
   useChapterIndex,
@@ -20,7 +31,8 @@ export function KnowledgePage() {
   const search = useSearch({ strict: false, select: (s) => s as { kpId?: string } });
   const kpId = search.kpId;
 
-  const { data: chapters = [], isLoading: loadingChapters } = useChapters();
+  const { data: chaptersData, isLoading: loadingChapters } = useChapters();
+  const chapters = chaptersData?.chapters ?? [];
   const { data: chapterIndex } = useChapterIndex(chapterId);
   const { data: content = "", isLoading: loadingContent } = useKnowledgePoint(chapterId, kpId);
   const { data: annotations = [], isLoading: loadingAnnotations } = useAnnotations(kpId);
@@ -32,40 +44,36 @@ export function KnowledgePage() {
   );
   const [draftAnnotation, setDraftAnnotation] = useState<DraftAnnotation | null>(null);
 
-  const effectiveChapterMap = useMemo(() => {
-    if (chapterIndex && chapterId) {
-      setChapterMap((prev) => ({ ...prev, [chapterId]: chapterIndex }));
-    }
-    return chapterMap;
-  }, [chapterIndex, chapterId, chapterMap]);
-
+  useEffect(() => {
+    if (!chapterId || !chapterIndex) return;
+    setChapterMap((prev) => ({ ...prev, [chapterId]: chapterIndex }));
+  }, [chapterIndex, chapterId]);
+  const effectiveChapterMap = chapterMap;
   const currentKnowledgePoint = useMemo(() => {
-    if (!chapterId || !kpId) return null;
-    return effectiveChapterMap[chapterId]?.knowledgePoints.find((kp) => kp.id === kpId) ?? null;
+    if (!chapterId || !kpId) return undefined;
+    const index = effectiveChapterMap[chapterId];
+    if (!index) return undefined;
+    return index.knowledgePoints.find((p) => p.id === kpId);
   }, [chapterId, kpId, effectiveChapterMap]);
 
   const handleCreateAnnotation = useCallback(
     (type: AnnotationType, annotationContent: string, selection: SelectionState) => {
-      if (!kpId) return;
-      const trimmed = annotationContent.trim();
-      if (!trimmed) {
-        toast.warning(type === "highlight" ? "请选择要高亮的文本" : "请先填写标注内容");
+      if (!kpId) {
+        toast.error("请先选择知识点");
         return;
       }
-      const fullContent = type === "highlight" ? trimmed : `「${selection.text}」\n${trimmed}`;
       createMutation.mutate(
         {
           knowledgePointId: kpId,
           type,
-          content: fullContent,
+          content: annotationContent,
+          selectionText: selection.text,
           startOffset: selection.startOffset,
           endOffset: selection.endOffset,
         },
         {
           onSuccess: () => {
-            toast.success("标注已保存");
             setDraftAnnotation(null);
-            window.getSelection()?.removeAllRanges();
           },
         },
       );
@@ -75,50 +83,110 @@ export function KnowledgePage() {
 
   const handleDeleteAnnotation = useCallback(
     (id: string) => {
-      deleteMutation.mutate(id, {
-        onSuccess: () => toast.success("标注已删除"),
-      });
+      deleteMutation.mutate(id);
     },
     [deleteMutation],
   );
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
-      <aside className="w-72 shrink-0 overflow-y-auto border-r border-border bg-sidebar">
-        <ChapterTree
+    <SectionPageLayout
+      title="知识体系"
+      description="按章节组织的教材知识点"
+      className="flex h-[calc(100vh-3.5rem)] flex-col"
+    >
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border md:flex-row">
+        <ChapterTreeDrawer
           chapters={chapters}
           chapterIndexMap={effectiveChapterMap}
           chapterId={chapterId}
           kpId={kpId}
           loading={loadingChapters}
         />
-      </aside>
 
-      <main className="flex flex-1 gap-4 overflow-y-auto p-4">
-        <KpViewer
+        <main className="flex flex-1 min-w-0 flex-col gap-3 overflow-y-auto p-2 sm:gap-4 sm:p-3 md:flex-row md:p-4">
+          <KpViewer
+            chapterId={chapterId}
+            kpId={kpId}
+            knowledgePoint={currentKnowledgePoint}
+            content={content}
+            loading={loadingContent}
+            onDraftChange={setDraftAnnotation}
+            onCreateAnnotation={handleCreateAnnotation}
+            savingAnnotation={createMutation.isPending}
+          />
+
+          {kpId && (
+            <AnnotationPanel
+              annotations={annotations}
+              draftAnnotation={draftAnnotation}
+              loading={loadingAnnotations}
+              savingAnnotation={createMutation.isPending}
+              deletingAnnotationId={deleteMutation.variables ?? null}
+              onCreateAnnotation={handleCreateAnnotation}
+              onDeleteAnnotation={handleDeleteAnnotation}
+              onDraftChange={setDraftAnnotation}
+            />
+          )}
+        </main>
+      </div>
+    </SectionPageLayout>
+  );
+}
+
+function ChapterTreeDrawer({
+  chapters,
+  chapterIndexMap,
+  chapterId,
+  kpId,
+  loading,
+}: {
+  chapters: Parameters<typeof ChapterTree>[0]["chapters"];
+  chapterIndexMap: Record<
+    string,
+    NonNullable<Parameters<typeof ChapterTree>[0]["chapterIndexMap"]>[string]
+  >;
+  chapterId?: string;
+  kpId?: string;
+  loading?: boolean;
+}) {
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
+  if (!isMobile) {
+    return (
+      <aside className="hidden w-72 shrink-0 overflow-y-auto border-r border-border bg-sidebar md:block">
+        <ChapterTree
+          chapters={chapters}
+          chapterIndexMap={chapterIndexMap}
           chapterId={chapterId}
           kpId={kpId}
-          knowledgePoint={currentKnowledgePoint}
-          content={content}
-          loading={loadingContent}
-          onDraftChange={setDraftAnnotation}
-          onCreateAnnotation={handleCreateAnnotation}
-          savingAnnotation={createMutation.isPending}
+          loading={loading}
         />
-
-        {kpId && (
-          <AnnotationPanel
-            annotations={annotations}
-            draftAnnotation={draftAnnotation}
-            loading={loadingAnnotations}
-            savingAnnotation={createMutation.isPending}
-            deletingAnnotationId={deleteMutation.variables ?? null}
-            onCreateAnnotation={handleCreateAnnotation}
-            onDeleteAnnotation={handleDeleteAnnotation}
-            onDraftChange={setDraftAnnotation}
+      </aside>
+    );
+  }
+  return (
+    <div className="flex items-center gap-2 border-b border-border bg-sidebar p-2">
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild>
+          <Button variant="outline" size="sm" className="gap-1">
+            <MenuOutlined className="h-4 w-4" />
+            章节
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent side="left" className="w-72">
+          <DrawerHeader className="sr-only">
+            <DrawerTitle>知识体系</DrawerTitle>
+          </DrawerHeader>
+          <ChapterTree
+            chapters={chapters}
+            chapterIndexMap={chapterIndexMap}
+            chapterId={chapterId}
+            kpId={kpId}
+            loading={loading}
           />
-        )}
-      </main>
+        </DrawerContent>
+      </Drawer>
+      <span className="truncate text-sm font-medium">{chapterId ? "当前章节" : "请选择章节"}</span>
     </div>
   );
 }
