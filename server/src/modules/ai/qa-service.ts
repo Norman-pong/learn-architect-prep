@@ -16,7 +16,10 @@ function chapterDirName(chapterId: string): string {
   return `chapter-${num.padStart(2, "0")}`;
 }
 
-async function loadKnowledgeContent(chapterId: string, kpId: string): Promise<{ title: string; content: string; chapterTitle: string } | null> {
+async function loadKnowledgeContent(
+  chapterId: string,
+  kpId: string,
+): Promise<{ title: string; content: string; chapterTitle: string } | null> {
   const dir = chapterDirName(chapterId);
   const indexFile = Bun.file(path.join(KNOWLEDGE_DIR, dir, "index.json"));
   if (!(await indexFile.exists())) return null;
@@ -57,7 +60,13 @@ function createProviderInstance(provider: Provider, apiKey: string, baseUrl?: st
   }
 }
 
-function buildQaPrompt(knowledgeTitle: string, chapterTitle: string, knowledgeContent: string, question: string, history?: { role: "user" | "assistant"; content: string }[]): ModelMessage[] {
+function buildQaPrompt(
+  knowledgeTitle: string,
+  chapterTitle: string,
+  knowledgeContent: string,
+  question: string,
+  history?: { role: "user" | "assistant"; content: string }[],
+): ModelMessage[] {
   const systemContent = `你是一位系统架构设计师备考辅导专家。请基于以下教材知识点回答用户问题。
 
 ## 回答要求
@@ -146,7 +155,13 @@ export async function answerQuestion(
   const baseUrl = config.baseUrl;
 
   const aiProvider = createProviderInstance(provider, apiKey, baseUrl);
-  const messages = buildQaPrompt(knowledge.title, knowledge.chapterTitle, knowledge.content, question, history);
+  const messages = buildQaPrompt(
+    knowledge.title,
+    knowledge.chapterTitle,
+    knowledge.content,
+    question,
+    history,
+  );
 
   const { textStream, usage } = streamText({
     model: aiProvider(model),

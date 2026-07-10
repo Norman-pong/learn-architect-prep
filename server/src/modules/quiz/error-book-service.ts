@@ -1,6 +1,11 @@
 import { createHash } from "node:crypto";
 import { getDb } from "../../db";
-import { getQuestionById, loadQuestions, toPublicQuestion, type PublicQuestion } from "./quiz-service";
+import {
+  getQuestionById,
+  loadQuestions,
+  toPublicQuestion,
+  type PublicQuestion,
+} from "./quiz-service";
 
 export interface ErrorBookItem extends PublicQuestion {
   selectedAnswer: string;

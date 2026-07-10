@@ -1,0 +1,96 @@
+/*
+ * Optional theme presets for the ArchPrep admin.
+ *
+ * Each preset overrides a subset of tokens. To activate a preset,
+ * add the corresponding `data-preset` attribute to `<html>` and
+ * import this file *after* theme.css.
+ *
+ * Example:
+ *   <html data-theme="light" data-preset="ocean">
+ *
+ * Presets currently defined:
+ *   - ocean:  teal-forward primary, cool greys
+ *   - amber:  warm amber primary, warm greys
+ *   - rose:   rose primary, slightly warmer neutrals
+ */
+
+/* ── Ocean preset ── */
+[data-preset="ocean"] {
+  --primary: oklch(52% 0.2 195);
+  --primary-foreground: oklch(100% 0 0);
+  --primary-hover: oklch(47% 0.2 195);
+  --primary-subtle: oklch(94% 0.03 195);
+  --accent: oklch(94% 0.03 195);
+  --accent-foreground: oklch(24.2% 0.04 280);
+  --ring: oklch(52% 0.2 195);
+  --sidebar-primary: oklch(52% 0.2 195);
+  --sidebar-accent: oklch(94% 0.03 195);
+  --chart-1: oklch(52% 0.2 195);
+}
+
+[data-theme="dark"][data-preset="ocean"] {
+  --primary: oklch(65% 0.18 195);
+  --primary-foreground: oklch(14.5% 0.02 280);
+  --primary-hover: oklch(70% 0.18 195);
+  --primary-subtle: oklch(24.2% 0.04 195);
+  --accent: oklch(24.2% 0.04 195);
+  --accent-foreground: oklch(96.7% 0.01 280);
+  --ring: oklch(65% 0.18 195);
+  --sidebar-primary: oklch(65% 0.18 195);
+  --sidebar-accent: oklch(24.2% 0.04 195);
+  --chart-1: oklch(65% 0.18 195);
+}
+
+/* ── Amber preset ── */
+[data-preset="amber"] {
+  --primary: oklch(60% 0.18 75);
+  --primary-foreground: oklch(100% 0 0);
+  --primary-hover: oklch(55% 0.18 75);
+  --primary-subtle: oklch(96% 0.03 75);
+  --accent: oklch(96% 0.03 75);
+  --accent-foreground: oklch(24.2% 0.04 280);
+  --ring: oklch(60% 0.18 75);
+  --sidebar-primary: oklch(60% 0.18 75);
+  --sidebar-accent: oklch(96% 0.03 75);
+  --chart-1: oklch(60% 0.18 75);
+}
+
+[data-theme="dark"][data-preset="amber"] {
+  --primary: oklch(72% 0.16 75);
+  --primary-foreground: oklch(14.5% 0.02 280);
+  --primary-hover: oklch(77% 0.16 75);
+  --primary-subtle: oklch(24.2% 0.04 75);
+  --accent: oklch(24.2% 0.04 75);
+  --accent-foreground: oklch(96.7% 0.01 280);
+  --ring: oklch(72% 0.16 75);
+  --sidebar-primary: oklch(72% 0.16 75);
+  --sidebar-accent: oklch(24.2% 0.04 75);
+  --chart-1: oklch(72% 0.16 75);
+}
+
+/* ── Rose preset ── */
+[data-preset="rose"] {
+  --primary: oklch(55% 0.22 15);
+  --primary-foreground: oklch(100% 0 0);
+  --primary-hover: oklch(50% 0.22 15);
+  --primary-subtle: oklch(95% 0.03 15);
+  --accent: oklch(95% 0.03 15);
+  --accent-foreground: oklch(24.2% 0.04 280);
+  --ring: oklch(55% 0.22 15);
+  --sidebar-primary: oklch(55% 0.22 15);
+  --sidebar-accent: oklch(95% 0.03 15);
+  --chart-1: oklch(55% 0.22 15);
+}
+
+[data-theme="dark"][data-preset="rose"] {
+  --primary: oklch(68% 0.2 15);
+  --primary-foreground: oklch(14.5% 0.02 280);
+  --primary-hover: oklch(73% 0.2 15);
+  --primary-subtle: oklch(24.2% 0.04 15);
+  --accent: oklch(24.2% 0.04 15);
+  --accent-foreground: oklch(96.7% 0.01 280);
+  --ring: oklch(68% 0.2 15);
+  --sidebar-primary: oklch(68% 0.2 15);
+  --sidebar-accent: oklch(24.2% 0.04 15);
+  --chart-1: oklch(68% 0.2 15);
+}

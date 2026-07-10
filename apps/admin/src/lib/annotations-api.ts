@@ -1,4 +1,4 @@
-import { apiRequest } from "../api/client";
+import { apiRequest } from "@/lib/api";
 
 export type AnnotationType = "highlight" | "note" | "question";
 

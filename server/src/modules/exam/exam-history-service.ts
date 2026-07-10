@@ -199,9 +199,7 @@ export function getScoreTrends(userId: string, days = 90, examType?: string): Sc
   }
 
   // 选定展示的科目列表
-  const types: ExamType[] = filterExamType
-    ? [filterExamType]
-    : EXAM_TYPES.slice();
+  const types: ExamType[] = filterExamType ? [filterExamType] : EXAM_TYPES.slice();
 
   // 构造每天一个点的序列
   const today = new Date();

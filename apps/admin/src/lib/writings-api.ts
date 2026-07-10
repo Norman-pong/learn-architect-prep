@@ -1,4 +1,4 @@
-import { apiRequest } from "../api/client";
+import { apiRequest } from "@/lib/api";
 import type { Writing, WritingSummary, WritingUpsertBody } from "@archprep/shared";
 
 const BASE = "/api/writings";

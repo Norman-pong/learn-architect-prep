@@ -6,28 +6,48 @@
   "scripts": {
     "dev": "vp dev",
     "build": "tsc -b && vp build",
+    "test": "vitest --run",
     "lint": "vp lint",
     "preview": "vp preview"
   },
   "dependencies": {
-    "@ant-design/icons": "^6.3.2",
-    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@archprep/shared": "workspace:*",
+    "@base-ui/react": "^1.6.0",
     "@elysiajs/eden": "^1.4.9",
-    "antd": "^6.5.0",
+    "@hookform/resolvers": "^5.4.0",
+    "@hugeicons/core-free-icons": "^4.2.2",
+    "@tailwindcss/postcss": "^4.3.2",
+    "@tanstack/react-query": "^5.101.2",
+    "@tanstack/react-router": "^1.170.17",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.14.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-hook-form": "^7.81.0",
     "react-markdown": "^9.0.0",
-    "react-router": "^8.1.0",
-    "remark-gfm": "^4.0.0"
+    "remark-gfm": "^4.0.0",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.2",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@archprep/server": "workspace:*",
+    "@tanstack/router-plugin": "^1.168.19",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/bun": "^1.3.14",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "elysia": "1.4.29",
+    "jsdom": "^29.1.1",
     "typescript": "~6.0.2",
-    "vite-plus": "^0.2.2"
+    "vite-plus": "^0.2.4",
+    "vitest": "^1.6.0"
   }
 }

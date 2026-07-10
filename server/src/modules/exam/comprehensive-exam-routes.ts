@@ -1,6 +1,11 @@
 import { Elysia, t } from "elysia";
 import { getUserIdFromToken } from "../auth/auth-service";
-import { generateExamPaper, submitAnswer, gradeExam, getExamReport } from "./comprehensive-exam-service";
+import {
+  generateExamPaper,
+  submitAnswer,
+  gradeExam,
+  getExamReport,
+} from "./comprehensive-exam-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 

@@ -1,5 +1,10 @@
 import { getDb } from "../../db";
-import { loadQuestions, toPublicQuestion, type QuizQuestion, type PublicQuestion } from "../quiz/quiz-service";
+import {
+  loadQuestions,
+  toPublicQuestion,
+  type QuizQuestion,
+  type PublicQuestion,
+} from "../quiz/quiz-service";
 import { getWeakPoints, type WeakPoint } from "../stats/weakness-service";
 import { getConfig, getDecryptedKey } from "../ai/ai-config-service";
 import { generateText } from "ai";

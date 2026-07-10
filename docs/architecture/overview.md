@@ -60,7 +60,11 @@ graph LR
 |:---|:---|:---|
 | 前端框架 | React 19 + TypeScript | 组件化 UI、类型安全 |
 | 前端构建 | Vite（vite-plus） | 开发服务器、构建、HMR |
-| 前端组件 | antd 6（[即将替换为 Base UI + Tailwind v4，见 PRD 2026-07-09](../prd/2026-07-09-frontend-refactor-to-base-ui.md)） | 表单、表格、模态、布局 |
+| 前端组件 | Base UI 1.x + Tailwind v4 | 表单、表格、模态、布局 |
+| 前端路由 | TanStack Router | 类型安全路由、嵌套路由、loader |
+| 状态管理 | zustand | 轻量全局状态 |
+| 数据获取 | Eden Treaty + TanStack Query | 类型安全 API 调用 + 服务端状态管理 |
+| 图标 | hugeicons | 矢量图标库 |
 | 后端框架 | Elysia + TypeScript | REST API、路由、中间件 |
 | 数据库 | SQLite（bun:sqlite） | 用户学习数据持久化 |
 | 运行时 | Bun | 后端执行与构建 |

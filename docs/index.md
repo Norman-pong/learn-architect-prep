@@ -43,13 +43,13 @@
 | [2026-07-08](phase/2026-07-08-quizbank-ai.md) | [Phase 3: 题库与AI集成](phase/2026-07-08-quizbank-ai.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 题库拉取+AI选题+AI评分 |
 | [2026-07-08](phase/2026-07-08-writing-exam.md) | [Phase 4: 写作指导与模拟考](phase/2026-07-08-writing-exam.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 论文模板+工作台+模拟考 |
 | [2026-07-08](phase/2026-07-08-personalization.md) | [Phase 5: 个性化与P1增强](phase/2026-07-08-personalization.md) | 未开始 | [ArchPrep PRD](prd/2026-07-08-archprep.md) | 搜索+提醒+推荐+成本展示 |
-| [2026-07-09](phase/2026-07-09-frontend-refactor.md) | [Phase F: 前端栈重构](phase/2026-07-09-frontend-refactor.md) | 未开始 | [前端栈重构 PRD](prd/2026-07-09-frontend-refactor-to-base-ui.md) | antd 6 → Base UI + Tailwind v4，与 Phase 2-5 并行，不改业务逻辑 |
+| [2026-07-09](phase/2026-07-09-frontend-refactor.md) | [Phase F: 前端栈重构](phase/2026-07-09-frontend-refactor.md) | 已完成 | [前端栈重构 PRD](prd/2026-07-09-frontend-refactor-to-base-ui.md) | antd 6 → Base UI + Tailwind v4，与 Phase 2-5 并行，不改业务逻辑 |
 
 ## 架构文档（Architecture）
 
 | 文档名称 | 主题 | 最后更新 | 说明 |
 |---------|------|---------|------|
-| [架构总览](architecture/overview.md) | 系统架构 | 2026-07-08 | vite-plus 全栈架构，AI 服务层，数据架构 |
+| [架构总览](architecture/overview.md) | 系统架构 | 2026-07-10 | vite-plus 全栈架构，AI 服务层，数据架构 |
 | [架构决策记录](architecture/decisions.md) | ADR | 2026-07-08 | 架构决策记录（待填充） |
 
 ## 参考资料（Reference）
@@ -67,4 +67,4 @@
 - 架构文档：2
 - 参考资料：1
 
-最后更新：2026-07-09
+最后更新：2026-07-10

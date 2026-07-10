@@ -85,9 +85,7 @@ function isEssaySnapshot(value: unknown): value is EssaySnapshot {
   return isRecord(value);
 }
 
-function isEssayDimension(
-  value: unknown,
-): value is EssayExamReport["dimensions"][number] {
+function isEssayDimension(value: unknown): value is EssayExamReport["dimensions"][number] {
   return (
     isRecord(value) &&
     typeof value.name === "string" &&
@@ -109,9 +107,7 @@ function isEssaySectionFeedback(
   );
 }
 
-function isEssayDeduction(
-  value: unknown,
-): value is EssayExamReport["deductions"][number] {
+function isEssayDeduction(value: unknown): value is EssayExamReport["deductions"][number] {
   return (
     isRecord(value) &&
     typeof value.reason === "string" &&
@@ -182,7 +178,8 @@ function normalizeEssay(raw: unknown): EssayQuestion | null {
   const requirements = Array.isArray(raw.requirements)
     ? raw.requirements.map((r) => (typeof r === "string" ? r : ""))
     : [];
-  const referenceOutline = typeof raw.referenceOutline === "string" ? raw.referenceOutline : undefined;
+  const referenceOutline =
+    typeof raw.referenceOutline === "string" ? raw.referenceOutline : undefined;
   const source = typeof raw.source === "string" ? raw.source : "";
   const year = Number(raw.year ?? 0) || null;
   const hash = typeof raw.hash === "string" ? raw.hash : "";
@@ -381,12 +378,7 @@ export async function gradeEssayExam(
     }
   }
 
-  const finishedRecord = await finishExam(
-    userId,
-    examId,
-    { ...snapshot },
-    score ?? undefined,
-  );
+  const finishedRecord = await finishExam(userId, examId, { ...snapshot }, score ?? undefined);
   if (!finishedRecord) return null;
 
   const startedAt = new Date(exam.startedAt).getTime();

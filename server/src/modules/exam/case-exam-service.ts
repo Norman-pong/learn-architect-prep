@@ -106,7 +106,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-function isCaseAnswerMap(value: unknown): value is Record<string, { answer: string; mermaid?: string }> {
+function isCaseAnswerMap(
+  value: unknown,
+): value is Record<string, { answer: string; mermaid?: string }> {
   if (!isRecord(value)) return false;
   for (const key of Object.keys(value)) {
     const item = value[key];
@@ -428,7 +430,8 @@ export async function getCaseExamPaper(
   if (!row || row.exam_type !== "case") return null;
 
   const parsed: unknown = JSON.parse(row.answers_snapshot || "{}");
-  const questionIds = isRecord(parsed) && isStringArray(parsed.questionIds) ? parsed.questionIds : [];
+  const questionIds =
+    isRecord(parsed) && isStringArray(parsed.questionIds) ? parsed.questionIds : [];
 
   const all = await loadCaseQuestions();
   const questions = questionIds
@@ -496,7 +499,8 @@ export async function gradeCaseExam(
   if (!row || row.status !== "in_progress") return null;
 
   const parsed: unknown = JSON.parse(row.answers_snapshot || "{}");
-  const questionIds = isRecord(parsed) && isStringArray(parsed.questionIds) ? parsed.questionIds : [];
+  const questionIds =
+    isRecord(parsed) && isStringArray(parsed.questionIds) ? parsed.questionIds : [];
   const answers = isRecord(parsed) && isCaseAnswerMap(parsed.answers) ? parsed.answers : {};
 
   const all = await loadCaseQuestions();
@@ -587,14 +591,7 @@ export async function gradeCaseExam(
 
   db.prepare(
     "UPDATE exam_records SET status = 'finished', finished_at = ?, score = ?, answers_snapshot = ?, detail_json = ? WHERE id = ? AND user_id = ?;",
-  ).run(
-    finishedAt,
-    finalScore,
-    JSON.stringify(parsed),
-    JSON.stringify(detailJson),
-    examId,
-    userId,
-  );
+  ).run(finishedAt, finalScore, JSON.stringify(parsed), JSON.stringify(detailJson), examId, userId);
 
   return {
     examId: row.id,
@@ -632,7 +629,10 @@ export async function getCaseExamReport(
   if (!row) return null;
 
   const snapshotParsed: unknown = JSON.parse(row.answers_snapshot || "{}");
-  const answers = isRecord(snapshotParsed) && isCaseAnswerMap(snapshotParsed.answers) ? snapshotParsed.answers : {};
+  const answers =
+    isRecord(snapshotParsed) && isCaseAnswerMap(snapshotParsed.answers)
+      ? snapshotParsed.answers
+      : {};
 
   const detail = row.detail_json
     ? ((): Record<string, unknown> | null => {

@@ -89,7 +89,7 @@ function getLastMockScore(userId: string, db: Database): number | null {
       `SELECT score
        FROM exam_records
        WHERE user_id = ?
-       ORDER BY created_at DESC
+       ORDER BY started_at DESC
        LIMIT 1`,
     )
     .get(userId);

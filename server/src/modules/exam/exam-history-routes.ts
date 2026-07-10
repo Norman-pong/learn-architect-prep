@@ -1,6 +1,12 @@
 import { Elysia, t } from "elysia";
 import { getUserIdFromToken } from "../auth/auth-service";
-import { EXAM_MODE_LABELS, EXAM_TYPE_LABELS, PASS_SCORE, getExamHistory, getScoreTrends } from "./exam-history-service";
+import {
+  EXAM_MODE_LABELS,
+  EXAM_TYPE_LABELS,
+  PASS_SCORE,
+  getExamHistory,
+  getScoreTrends,
+} from "./exam-history-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 

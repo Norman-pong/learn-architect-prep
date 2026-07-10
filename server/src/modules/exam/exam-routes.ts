@@ -1,6 +1,13 @@
 import { Elysia, t } from "elysia";
 import { getUserIdFromToken } from "../auth/auth-service";
-import { getConfigs, startExam, pauseExam, resumeExam, finishExam, getActiveExam } from "./exam-service";
+import {
+  getConfigs,
+  startExam,
+  pauseExam,
+  resumeExam,
+  finishExam,
+  getActiveExam,
+} from "./exam-service";
 
 const ErrorResponse = t.Object({ error: t.String() });
 

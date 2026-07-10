@@ -1,9 +1,5 @@
 import { Elysia, t } from "elysia";
-import {
-  fetchRemoteQuiz,
-  readQuestionBank,
-  type ChoiceQuestion,
-} from "./quiz-bank-service";
+import { fetchRemoteQuiz, readQuestionBank, type ChoiceQuestion } from "./quiz-bank-service";
 import { getUserIdFromToken } from "../auth/auth-service";
 
 const QuestionSchema = t.Object({
