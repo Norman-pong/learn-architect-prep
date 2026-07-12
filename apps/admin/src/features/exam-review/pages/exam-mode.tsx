@@ -1,5 +1,5 @@
 import { SectionPageLayout } from "@/components/layout";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ import {
   usePauseExam,
   useFinishExam,
 } from "../api";
+import useCountdown from "../lib/useCountdown";
 import { ExamTimer } from "../components/exam-timer";
 import type { ExamType, ExamMode, ActiveExam, ExamConfig } from "../types";
 
@@ -53,32 +54,27 @@ const SUBJECT_META: Record<SingleExamType, SubjectMeta> = {
 };
 
 function useExamTimer(exam: ActiveExam | null, onTimeUp: () => void) {
-  const [remaining, setRemaining] = useState(exam?.remainingTime ?? 0);
   const [isRunning, setIsRunning] = useState(false);
-  const onTimeUpRef = useRef(onTimeUp);
-  onTimeUpRef.current = onTimeUp;
+  const { remaining: countdownRemaining, reset: setRemaining } = useCountdown({
+    initialSeconds: exam?.remainingTime ?? 0,
+    running: isRunning,
+    onExpire: onTimeUp,
+  });
+  const [remaining, setRemainingDisplay] = useState(countdownRemaining);
 
+  // 外部传入新 exam 时同步剩余时间并自动启动。
   useEffect(() => {
     if (exam) {
       setRemaining(exam.remainingTime);
+      setRemainingDisplay(exam.remainingTime);
       setIsRunning(exam.status === "active");
     }
-  }, [exam?.id, exam?.remainingTime, exam?.status]);
+  }, [exam?.id, exam?.remainingTime, exam?.status, setRemaining]);
 
+  // 保持 useCountdown 返回的倒计时与本地状态同步。
   useEffect(() => {
-    if (!isRunning || remaining <= 0) return;
-    const timer = setInterval(() => {
-      setRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          onTimeUpRef.current();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [isRunning, remaining]);
+    setRemainingDisplay(countdownRemaining);
+  }, [countdownRemaining]);
 
   return { remaining, isRunning, setIsRunning, setRemaining };
 }

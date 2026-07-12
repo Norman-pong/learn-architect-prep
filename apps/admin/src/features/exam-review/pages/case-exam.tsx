@@ -11,6 +11,7 @@ import {
   useResumeExam,
   useFinishCaseExam,
 } from "../api";
+import useCountdown from "../lib/useCountdown";
 import { ExamTimer } from "../components/exam-timer";
 import { AnswerSheet } from "../components/answer-sheet";
 import { CaseReportView } from "../components/case-report";
@@ -49,6 +50,7 @@ export default function CaseExamPage() {
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [answers, setAnswers] = useState<Record<string, CaseAnswer>>({});
+  const [seedRemaining, setSeedRemaining] = useState(0);
   const [remaining, setRemaining] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -56,14 +58,26 @@ export default function CaseExamPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const initializedRef = useRef(false);
-  const timerRef = useRef<number | null>(null);
+  const handleFinishRef = useRef<(auto: boolean) => void>(() => {});
 
+  const { remaining: countdownRemaining } = useCountdown({
+    initialSeconds: seedRemaining,
+    running: isRunning && !isPaused && !report,
+    onExpire: () => handleFinishRef.current(true),
+  });
+
+  // 用 hook 返回的倒计时覆盖本地状态（保持最小改动）
+  useEffect(() => {
+    setRemaining(countdownRemaining);
+  }, [countdownRemaining]);
+
+  // 初始化：恢复进行中的案例考试或开始新考试。
   useEffect(() => {
     if (initializedRef.current || statusLoading) return;
     initializedRef.current = true;
     if (activeExam?.examType === "case" && activeExam.status === "in_progress") {
       setExamId(activeExam.id);
-      setRemaining(activeExam.remainingTime);
+      setSeedRemaining(activeExam.remainingTime);
       setIsRunning(true);
       const snapshot = (activeExam.answersSnapshot ?? {}) as Snapshot;
       if (snapshot.selected) setSelected(new Set(snapshot.selected));
@@ -74,7 +88,7 @@ export default function CaseExamPage() {
         {
           onSuccess: (data) => {
             setExamId(data.id);
-            setRemaining(data.remainingTime);
+            setSeedRemaining(data.remainingTime);
             setIsRunning(true);
           },
           onError: (err) => toast.error(err.message || "启动考试失败"),
@@ -83,37 +97,54 @@ export default function CaseExamPage() {
     }
   }, [activeExam, statusLoading, startExam]);
 
+  // 试卷加载后用服务端剩余时间兜底（本地剩余时间大于 0 时保持本地）。
   useEffect(() => {
     if (paper && !report) {
-      setRemaining((prev) => (prev > 0 ? prev : paper.remainingTime));
+      setSeedRemaining((prev) => (prev > 0 ? prev : paper.remainingTime));
     }
   }, [paper, report]);
 
-  useEffect(() => {
-    if (isRunning && !isPaused && remaining > 0 && !report) {
-      timerRef.current = window.setInterval(() => {
-        setRemaining((prev) => {
-          if (prev <= 1) {
-            if (timerRef.current) window.clearInterval(timerRef.current);
-            timerRef.current = null;
-            void handleFinish(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
+  // 已暂停时由外部控制 running 状态，倒计时 hook 会自动停止。
+  const handlePause = async () => {
+    if (!examId) return;
+    setIsPaused(true);
+    try {
+      await syncSnapshot();
+    } catch (err) {
+      setIsPaused(false);
+      toast.error(err instanceof Error ? err.message : "暂停失败");
     }
-    return () => {
-      if (timerRef.current) {
-        window.clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [isRunning, isPaused, report]);
+  };
 
+  const handleResume = async () => {
+    if (!examId) return;
+    try {
+      await resumeExam.mutateAsync({ examId });
+      setIsPaused(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "继续失败");
+    }
+  };
+
+  const handleFinish = async (auto = false) => {
+    if (!examId || report) return;
+    if (!auto && selectedCount < CASE_CHOOSE_COUNT) {
+      setConfirmOpen(true);
+      return;
+    }
+    setIsPaused(true);
+    try {
+      await syncSnapshot();
+      const r = await finishCaseExam.mutateAsync({ examId });
+      setReport(r);
+      setIsRunning(false);
+      setIsPaused(false);
+    } catch (err) {
+      setIsPaused(false);
+      toast.error(err instanceof Error ? err.message : "提交失败");
+    }
+  };
+  handleFinishRef.current = handleFinish;
   const snapshot = useMemo<Snapshot>(() => {
     const cleaned: Record<string, CaseAnswer> = {};
     for (const [id, ans] of Object.entries(answers)) {
@@ -160,50 +191,6 @@ export default function CaseExamPage() {
       remainingTime: Math.max(0, remaining),
       answersSnapshot: snapshot as Record<string, unknown>,
     });
-  };
-
-  const handlePause = async () => {
-    if (!examId) return;
-    setIsPaused(true);
-    try {
-      await syncSnapshot();
-    } catch (err) {
-      setIsPaused(false);
-      toast.error(err instanceof Error ? err.message : "暂停失败");
-    }
-  };
-
-  const handleResume = async () => {
-    if (!examId) return;
-    try {
-      await resumeExam.mutateAsync({ examId });
-      setIsPaused(false);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "继续失败");
-    }
-  };
-
-  const handleFinish = async (auto = false) => {
-    if (!examId || report) return;
-    if (!auto && selectedCount < CASE_CHOOSE_COUNT) {
-      setConfirmOpen(true);
-      return;
-    }
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setIsPaused(true);
-    try {
-      await syncSnapshot();
-      const r = await finishCaseExam.mutateAsync({ examId });
-      setReport(r);
-      setIsRunning(false);
-      setIsPaused(false);
-    } catch (err) {
-      setIsPaused(false);
-      toast.error(err instanceof Error ? err.message : "提交失败");
-    }
   };
 
   const navItems = useMemo(

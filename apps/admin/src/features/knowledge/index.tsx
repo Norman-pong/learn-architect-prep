@@ -167,12 +167,14 @@ function ChapterTreeDrawer({
   return (
     <div className="flex items-center gap-2 border-b border-border bg-sidebar p-2">
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-1">
-            <MenuOutlined className="h-4 w-4" />
-            章节
-          </Button>
-        </DrawerTrigger>
+        <DrawerTrigger
+          render={
+            <Button variant="outline" size="sm" className="gap-1">
+              <MenuOutlined className="h-4 w-4" />
+              章节
+            </Button>
+          }
+        />
         <DrawerContent side="left" className="w-72">
           <DrawerHeader className="sr-only">
             <DrawerTitle>知识体系</DrawerTitle>

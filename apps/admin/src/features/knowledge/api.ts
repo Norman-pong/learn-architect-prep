@@ -108,15 +108,16 @@ export function useCreateAnnotation() {
 export function useDeleteAnnotation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (annotationId: string) => {
-      const { error } = await api.api.annotations[annotationId].delete();
+    mutationFn: async (input: { annotationId: string; kpId?: string }) => {
+      const { error } = await api.api.annotations[input.annotationId].delete();
       if (error) throw new Error(typeof error.value === "string" ? error.value : "删除批注失败");
-      return { success: true };
+      return { success: true, kpId: input.kpId ?? null };
     },
-    onSuccess: (_, _annotationId, context) => {
-      const kpId = (context as { kpId?: string } | undefined)?.kpId;
-      if (kpId) {
-        queryClient.invalidateQueries({ queryKey: annotationsQueryKey(kpId) });
+    onSuccess: (data) => {
+      if (data.kpId) {
+        queryClient.invalidateQueries({ queryKey: annotationsQueryKey(data.kpId) });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["annotations"] });
       }
     },
     onError: (err) => {

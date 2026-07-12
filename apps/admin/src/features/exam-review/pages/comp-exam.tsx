@@ -1,5 +1,5 @@
 import { SectionPageLayout } from "@/components/layout";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   useExamStatus,
@@ -8,6 +8,7 @@ import {
   useSubmitCompAnswer,
   useFinishCompExam,
 } from "../api";
+import useCountdown from "../lib/useCountdown";
 import { ExamTimer } from "../components/exam-timer";
 import { AnswerSheet } from "../components/answer-sheet";
 import { ExamReport } from "../components/exam-report";
@@ -164,21 +165,46 @@ export default function CompExamPage() {
   const finishCompExam = useFinishCompExam();
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [seedRemaining, setSeedRemaining] = useState(0);
   const [remaining, setRemaining] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [report, setReport] = useState<CompReport | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const initializedRef = useRef(false);
-  const timerRef = useRef<number | null>(null);
+  const handleFinishRef = useRef<() => void>(() => {});
 
+  // 处理时间到自动交卷（提前声明以满足 useCountdown 依赖）。
+  const handleFinish = useCallback(async () => {
+    if (!examId || report) return;
+    try {
+      const r = await finishCompExam.mutateAsync({ examId });
+      setReport(r);
+      setIsRunning(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "提交失败");
+    }
+  }, [examId, report, finishCompExam]);
+  handleFinishRef.current = handleFinish;
+
+  const { remaining: countdownRemaining } = useCountdown({
+    initialSeconds: seedRemaining,
+    running: isRunning && !report,
+    onExpire: () => handleFinishRef.current(),
+  });
+
+  // 用 hook 返回的倒计时覆盖本地状态（保持最小改动）
+  useEffect(() => {
+    setRemaining(countdownRemaining);
+  }, [countdownRemaining]);
   // Initialize: restore active comprehensive exam or start a new one.
+  // 初始化：恢复进行中的综合考试或开始新考试。
   useEffect(() => {
     if (initializedRef.current || statusLoading) return;
     initializedRef.current = true;
 
     if (activeExam?.examType === "comprehensive" && activeExam.status === "in_progress") {
       setExamId(activeExam.id);
-      setRemaining(activeExam.remainingTime);
+      setSeedRemaining(activeExam.remainingTime);
       setIsRunning(true);
       const snapshot = (activeExam.answersSnapshot ?? {}) as unknown as CompSnapshot;
       if (snapshot.answers) setAnswers(snapshot.answers);
@@ -188,7 +214,7 @@ export default function CompExamPage() {
         {
           onSuccess: (data) => {
             setExamId(data.id);
-            setRemaining(data.remainingTime);
+            setSeedRemaining(data.remainingTime);
             setIsRunning(true);
           },
           onError: (err) => toast.error(err.message || "启动考试失败"),
@@ -197,39 +223,14 @@ export default function CompExamPage() {
     }
   }, [activeExam, statusLoading, startExam]);
 
-  // Sync paper remaining time when it loads.
+  // 试卷加载后用服务端剩余时间兜底（本地剩余时间大于 0 时保持本地）。
   useEffect(() => {
     if (paper && !report) {
-      setRemaining((prev) => (prev > 0 ? prev : paper.remainingTime));
+      setSeedRemaining((prev) => (prev > 0 ? prev : paper.remainingTime));
     }
   }, [paper, report]);
 
-  // Timer countdown.
-  useEffect(() => {
-    if (isRunning && remaining > 0 && !report) {
-      timerRef.current = window.setInterval(() => {
-        setRemaining((prev) => {
-          if (prev <= 1) {
-            if (timerRef.current) window.clearInterval(timerRef.current);
-            timerRef.current = null;
-            void handleFinish();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    return () => {
-      if (timerRef.current) {
-        window.clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [isRunning, report]);
-
+  // handleFinish 已提前到 useCountdown 之前声明，避免 TS2448 警告
   const currentQuestion = paper?.questions[currentIndex] ?? null;
   const answerCount = useMemo(() => Object.keys(answers).length, [answers]);
 
@@ -242,22 +243,6 @@ export default function CompExamPage() {
       );
     }
   };
-
-  const handleFinish = async () => {
-    if (!examId || report) return;
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    try {
-      const r = await finishCompExam.mutateAsync({ examId });
-      setReport(r);
-      setIsRunning(false);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "提交失败");
-    }
-  };
-
   const navItems = useMemo(
     () =>
       paper?.questions.map((q, i) => ({

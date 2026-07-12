@@ -1,3 +1,4 @@
+import { useViewportHeight } from "@/hooks/useViewportHeight";
 import { SectionPageLayout } from "@/components/layout";
 import * as React from "react";
 import { useNavigate } from "@tanstack/react-router";
@@ -42,6 +43,7 @@ function isStringRecord(value: unknown): value is Record<string, string> {
 
 export function EssayExamPage() {
   const navigate = useNavigate();
+  const vh = useViewportHeight();
   const [phase, setPhase] = React.useState<"loading" | "select" | "write" | "report">("loading");
   const [examId, setExamId] = React.useState<string | null>(null);
   const [selectedQuestionId, setSelectedQuestionId] = React.useState<string | null>(null);
@@ -283,7 +285,10 @@ export function EssayExamPage() {
 
   return (
     <SectionPageLayout title="论文模拟考" description="4 选 1，120 分钟">
-      <div className="flex h-[calc(100vh-3.5rem)] flex-col gap-3 py-3 sm:gap-4 sm:py-4">
+      <div
+        style={{ "--app-h": vh > 0 ? `${vh}px` : "100vh" } as React.CSSProperties}
+        className="flex h-[calc(var(--app-h)-3.5rem)] flex-col gap-3 py-3 sm:gap-4 sm:py-4"
+      >
         <div className="flex flex-col gap-3 rounded-lg border bg-card px-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <FileTextOutlined className="h-5 w-5 text-primary" />
