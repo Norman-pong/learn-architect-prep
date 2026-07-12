@@ -261,15 +261,19 @@ export function WritingWorkbench() {
               </Button>
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={() => toast.info("AI 评分将在 FR-WR-03 中开放")}
-                      className="w-full sm:w-auto"
-                    >
-                      <RobotOutlined className="mr-1 h-4 w-4" />
-                      AI 评分
-                    </Button>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        onClick={() => toast.info("AI 评分将在 FR-WR-03 中开放")}
+                        className="w-full sm:w-auto"
+                      >
+                        <RobotOutlined className="mr-1 h-4 w-4" />
+                        AI 评分
+                      </Button>
+                    }
+                  >
+                    <span className="sr-only">AI 评分</span>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>请先在设置 → AI 配置中配置 API Key</p>

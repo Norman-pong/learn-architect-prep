@@ -1,17 +1,21 @@
-import * as React from "react";
 import { Tooltip as BaseTooltip } from "@base-ui/react/tooltip";
+import * as React from "react";
 import { cn } from "../../lib/utils";
 
 const TooltipProvider = BaseTooltip.Provider;
 const Tooltip = BaseTooltip.Root;
 
-const TooltipTrigger = React.forwardRef<
-  HTMLElement,
-  React.HTMLAttributes<HTMLElement> & { asChild?: boolean }
->(({ asChild, ...props }, ref) => (
-  // @ts-expect-error Base UI runtime prop
-  <BaseTooltip.Trigger ref={ref} asChild={asChild} {...props} />
-));
+interface TooltipTriggerProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
+  children?: React.ReactNode;
+}
+
+const TooltipTrigger = React.forwardRef<HTMLElement, TooltipTriggerProps>(
+  ({ children, ...props }, ref) => (
+    <BaseTooltip.Trigger ref={ref as unknown as React.Ref<HTMLDivElement>} {...props}>
+      {children}
+    </BaseTooltip.Trigger>
+  ),
+);
 TooltipTrigger.displayName = "TooltipTrigger";
 
 const TooltipContent = React.forwardRef<

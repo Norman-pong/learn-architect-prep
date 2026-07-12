@@ -279,12 +279,14 @@ function QASidebar({
   return (
     <div className="flex items-center gap-2 border-b border-border bg-card p-2">
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-1">
-            <MenuOutlined className="h-4 w-4" />
-            知识点
-          </Button>
-        </DrawerTrigger>
+        <DrawerTrigger
+          render={
+            <Button variant="outline" size="sm" className="gap-1">
+              <MenuOutlined className="h-4 w-4" />
+              知识点
+            </Button>
+          }
+        />
         <DrawerContent side="left" className="w-72">
           <DrawerHeader className="sr-only">
             <DrawerTitle>选择知识点</DrawerTitle>

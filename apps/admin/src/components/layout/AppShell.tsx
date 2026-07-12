@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import { useState, useCallback } from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { cn } from "../../lib/utils";
 import { useAuthStore } from "../../stores/auth";
@@ -16,6 +17,7 @@ import {
   SettingOutlined,
   CloudUploadOutlined,
   MenuFoldOutlined,
+  MenuUnfoldOutlined,
   MoonOutlined,
   SunOutlined,
   LogoutOutlined,
@@ -82,7 +84,7 @@ const navItems: NavItem[] = [
 ];
 
 const THEME_ICON: Record<ThemeMode, React.ReactNode> = {
-  system: <SunOutlined />,
+  system: <DesktopOutlined />,
   light: <SunOutlined />,
   dark: <MoonOutlined />,
 };
@@ -93,19 +95,8 @@ const THEME_LABEL: Record<ThemeMode, string> = {
   dark: "深色",
 };
 
-/* ── Helpers ── */
-
-function useIsMobile(): boolean {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mql = window.matchMedia("(max-width: 768px)");
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    setIsMobile(mql.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, []);
-  return isMobile;
-}
+/* ── Sidebar no-op for desktop fixed sidebar ── */
+const NOOP = () => undefined;
 
 /* ── Sub-components ── */
 
@@ -214,11 +205,13 @@ function NavGroup({
   activePrefix,
   collapsed,
   onNavigate,
+  pathname,
 }: {
   item: NavItem;
   activePrefix: boolean;
   collapsed: boolean;
   onNavigate: () => void;
+  pathname: string;
 }) {
   const [open, setOpen] = useState(activePrefix);
 
@@ -250,7 +243,7 @@ function NavGroup({
               onClick={onNavigate}
               className={cn(
                 "rounded-lg px-3 py-1.5 text-sm transition-colors",
-                activePrefix && location.pathname.startsWith(child.to)
+                activePrefix && pathname.startsWith(child.to)
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                   : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               )}
@@ -284,6 +277,7 @@ function SidebarContent({ collapsed, onNavigate }: { collapsed: boolean; onNavig
               activePrefix={item.children.some((c) => pathname.startsWith(c.to))}
               collapsed={collapsed}
               onNavigate={onNavigate}
+              pathname={pathname}
             />
           ) : (
             <NavLink
@@ -315,16 +309,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen">
       {isMobile ? (
         <Drawer open={mobileOpen} onOpenChange={setMobileOpen}>
-          <DrawerTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="fixed left-2 top-2 z-50"
-              aria-label="打开菜单"
-            >
-              <MenuFoldOutlined />
-            </Button>
-          </DrawerTrigger>
+          <DrawerTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="fixed left-2 top-2 z-50"
+                aria-label="打开菜单"
+              >
+                <MenuFoldOutlined />
+              </Button>
+            }
+          />
           <DrawerContent side="left" className="w-64">
             <DrawerHeader className="sr-only">
               <DrawerTitle>导航</DrawerTitle>
@@ -340,7 +336,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             collapsed ? "w-16" : "w-64",
           )}
         >
-          <SidebarContent collapsed={collapsed} onNavigate={() => undefined} />
+          <SidebarContent collapsed={collapsed} onNavigate={NOOP} />
         </aside>
       )}
       <button
@@ -352,7 +348,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         )}
         aria-label="切换边栏"
       >
-        {collapsed ? <MenuFoldOutlined /> : <MenuFoldOutlined />}
+        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
       </button>
       <main
         className={cn(

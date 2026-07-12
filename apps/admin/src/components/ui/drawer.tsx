@@ -6,28 +6,41 @@ import { cn } from "../../lib/utils";
 const Drawer = BaseDialog.Root;
 const DrawerClose = BaseDialog.Close;
 
-const DrawerTrigger = React.forwardRef<
-  HTMLElement,
-  React.HTMLAttributes<HTMLElement> & { asChild?: boolean }
->(({ asChild, ...props }, ref) => (
-  // @ts-expect-error Base UI runtime prop
-  <BaseDialog.Trigger ref={ref} asChild={asChild} {...props} />
-));
+interface DrawerTriggerProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
+  children?: React.ReactNode;
+}
+
+/**
+ * Drawer trigger uses Base UI 1.x's render prop (not Radix's `asChild`).
+ * Pass the desired element via the `render` prop (e.g.
+ * `<DrawerTrigger render={<Button>...</Button>} />`), or let Base UI
+ * render its default `<button>` (no asChild required).
+ */
+const DrawerTrigger = React.forwardRef<HTMLElement, DrawerTriggerProps>(
+  ({ children, ...props }, ref) => (
+    <BaseDialog.Trigger ref={ref as React.Ref<HTMLButtonElement>} {...props}>
+      {children}
+    </BaseDialog.Trigger>
+  ),
+);
 DrawerTrigger.displayName = "DrawerTrigger";
 
-const drawerVariants = cva("fixed z-50 gap-4 bg-card p-6 shadow-lg duration-300 ease-in-out", {
-  variants: {
-    side: {
-      top: "inset-x-0 top-0 border-b border-border",
-      bottom: "inset-x-0 bottom-0 border-t border-border",
-      left: "inset-y-0 left-0 h-full w-3/4 border-r border-border sm:max-w-sm",
-      right: "inset-y-0 right-0 h-full w-3/4 border-l border-border sm:max-w-sm",
+const drawerVariants = cva(
+  "fixed z-50 gap-4 bg-card p-6 shadow-lg duration-300 ease-in-out pt-[max(env(safe-area-inset-top),0.5rem)] pb-[max(env(safe-area-inset-bottom),0.5rem)]",
+  {
+    variants: {
+      side: {
+        top: "inset-x-0 top-0 border-b border-border",
+        bottom: "inset-x-0 bottom-0 border-t border-border",
+        left: "inset-y-0 left-0 h-full w-3/4 border-r border-border sm:max-w-sm",
+        right: "inset-y-0 right-0 h-full w-3/4 border-l border-border sm:max-w-sm",
+      },
+    },
+    defaultVariants: {
+      side: "right",
     },
   },
-  defaultVariants: {
-    side: "right",
-  },
-});
+);
 
 interface DrawerContentProps
   extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof drawerVariants> {}
