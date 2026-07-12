@@ -97,7 +97,7 @@ export function StatsTable({ type, data }: StatsTableProps) {
   });
 
   return (
-    <div className="rounded-md border">
+    <div className="overflow-x-auto rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((hg) => (

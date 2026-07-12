@@ -152,7 +152,10 @@ export function ExamHistoryTable({
   const totalHeight = virtualizer.getTotalSize();
 
   return (
-    <div ref={containerRef} className="relative max-h-[480px] overflow-auto rounded-md border">
+    <div
+      ref={containerRef}
+      className="relative max-h-[480px] overflow-x-auto overflow-y-auto rounded-md border"
+    >
       <Table>
         <TableHeader className="sticky top-0 z-10 bg-background">
           {table.getHeaderGroups().map((hg) => (
