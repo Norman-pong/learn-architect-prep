@@ -22,7 +22,7 @@ const DEFAULT_MODELS: Record<Provider, string | undefined> = {
 
 interface AIConfigInput {
   provider: Provider;
-  apiKey: string;
+  apiKey?: string;
   model?: string;
   baseUrl?: string;
 }
@@ -47,7 +47,6 @@ function isProvider(value: unknown): value is Provider {
     value === "custom"
   );
 }
-
 function toPublic(row: AIConfigRow): AIConfig {
   const provider = isProvider(row.provider) ? row.provider : "custom";
   return {
@@ -60,29 +59,61 @@ function toPublic(row: AIConfigRow): AIConfig {
   };
 }
 
+export function getMaskedKey(userId: string): { masked: string } | null {
+  const db = getDb();
+  const row = db
+    .query<{ api_key_encrypted: string }, [string]>(
+      "SELECT api_key_encrypted FROM ai_configs WHERE user_id = ? LIMIT 1",
+    )
+    .get(userId);
+  if (!row) return null;
+  const plain = decrypt(row.api_key_encrypted);
+  const tail = plain.slice(-4);
+  return { masked: `sk-…${tail}` };
+}
+
 export function saveConfig(userId: string, input: AIConfigInput): AIConfig | null {
   const db = getDb();
   const id = crypto.randomUUID();
   const updatedAt = new Date().toISOString();
-  const encryptedKey = encrypt(input.apiKey);
   const model = input.model?.trim() || DEFAULT_MODELS[input.provider] || null;
   const baseUrl = input.baseUrl?.trim() || DEFAULT_BASE_URLS[input.provider] || null;
 
+  if (input.apiKey) {
+    const encryptedKey = encrypt(input.apiKey);
+    const row = db
+      .query<AIConfigRow, [string, string, string, string, string | null, string | null, string]>(
+        `
+        INSERT INTO ai_configs (id, user_id, provider, api_key_encrypted, model, base_url, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET
+          provider = excluded.provider,
+          api_key_encrypted = excluded.api_key_encrypted,
+          model = excluded.model,
+          base_url = excluded.base_url,
+          updated_at = excluded.updated_at
+        RETURNING *
+        `,
+      )
+      .get(id, userId, input.provider, encryptedKey, model, baseUrl, updatedAt);
+
+    if (!row) return null;
+    return toPublic(row);
+  }
+
+  // Preserve existing API key — only update provider / model / baseUrl
+  const existing = getConfig(userId);
+  if (!existing) return null;
   const row = db
-    .query<AIConfigRow, [string, string, string, string, string | null, string | null, string]>(
+    .query<AIConfigRow, [string, string | null, string | null, string, string]>(
       `
-      INSERT INTO ai_configs (id, user_id, provider, api_key_encrypted, model, base_url, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(user_id) DO UPDATE SET
-        provider = excluded.provider,
-        api_key_encrypted = excluded.api_key_encrypted,
-        model = excluded.model,
-        base_url = excluded.base_url,
-        updated_at = excluded.updated_at
+      UPDATE ai_configs
+      SET provider = ?, model = ?, base_url = ?, updated_at = ?
+      WHERE user_id = ?
       RETURNING *
       `,
     )
-    .get(id, userId, input.provider, encryptedKey, model, baseUrl, updatedAt);
+    .get(input.provider, model, baseUrl, updatedAt, userId);
 
   if (!row) return null;
   return toPublic(row);

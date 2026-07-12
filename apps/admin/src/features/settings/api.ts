@@ -42,6 +42,18 @@ export function useSaveAIConfig() {
   });
 }
 
+export function useMaskedKey() {
+  return useQuery<{ masked: string } | null>({
+    queryKey: ["ai-config", "masked-key"],
+    queryFn: async () => {
+      const { data, error } = await api.api["ai-config"]["masked-key"].get();
+      if (error) return null;
+      return data ?? null;
+    },
+    enabled: false,
+  });
+}
+
 export function useTestAIConfig() {
   return useMutation<TestConnectionResult, Error, void>({
     mutationFn: async () => {
@@ -69,7 +81,6 @@ export function useAICostSummary() {
     queryFn: async () => {
       const { data, error } = await api.api["ai-cost"].summary.get();
       if (error) throw new Error(getEdenError(error, "获取汇总失败"));
-      if (!data) throw new Error("获取汇总失败");
       return data as AICostSummary;
     },
   });
@@ -81,7 +92,6 @@ export function useFeatureUsage() {
     queryFn: async () => {
       const { data, error } = await api.api["ai-cost"]["by-feature"].get();
       if (error) throw new Error(getEdenError(error, "获取明细失败"));
-      if (!data) throw new Error("获取明细失败");
       return data as FeatureUsage[];
     },
   });

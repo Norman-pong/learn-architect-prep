@@ -21,12 +21,12 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PROVIDERS } from "../constants";
-import { useAIConfig, useSaveAIConfig, useTestAIConfig } from "../api";
+import { useAIConfig, useMaskedKey, useSaveAIConfig, useTestAIConfig } from "../api";
 import type { AIConfigFormData } from "../types";
 
 const schema = z.object({
   provider: z.enum(["openai", "anthropic", "deepseek", "minimax", "kimi", "custom"]),
-  apiKey: z.string().min(1, "API Key 不能为空"),
+  apiKey: z.string().optional(),
   model: z.string().optional(),
   baseUrl: z.string().optional(),
 });
@@ -37,7 +37,7 @@ export function AIConfigForm() {
   const { data: config, isLoading } = useAIConfig();
   const saveMutation = useSaveAIConfig();
   const testMutation = useTestAIConfig();
-
+  const maskedQuery = useMaskedKey();
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -56,11 +56,16 @@ export function AIConfigForm() {
         model: config.model ?? "",
         baseUrl: config.baseUrl ?? "",
       });
+      maskedQuery.refetch();
     }
-  }, [config, form]);
+  }, [config, form, maskedQuery]);
 
   const onSubmit = (values: FormValues) => {
-    saveMutation.mutate(values as AIConfigFormData);
+    const trimmed = values.apiKey?.trim() ?? "";
+    saveMutation.mutate({
+      ...values,
+      apiKey: trimmed.length > 0 ? trimmed : undefined,
+    } as AIConfigFormData);
   };
 
   const handleTest = () => {
@@ -116,13 +121,25 @@ export function AIConfigForm() {
 
           {/* API Key */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">API Key</label>
+            <div className="flex items-center justify-between gap-2">
+              <label className="text-sm font-medium">API Key</label>
+              {maskedQuery.data && (
+                <span className="rounded-full bg-success-subtle px-2 py-0.5 font-mono text-xs text-success">
+                  已配置 · {maskedQuery.data.masked}
+                </span>
+              )}
+            </div>
             <Input
               type="password"
               placeholder={config ? "已配置，留空保持不变" : "输入 API Key"}
               {...form.register("apiKey")}
               className="h-11 sm:h-10"
             />
+            <p className="text-xs text-muted-foreground">
+              {config
+                ? "留空表示保留当前密钥；填写新值将立即覆盖。"
+                : "首次配置：请填入完整的 API Key。"}
+            </p>
             {form.formState.errors.apiKey && (
               <p className="text-sm text-destructive">{form.formState.errors.apiKey.message}</p>
             )}

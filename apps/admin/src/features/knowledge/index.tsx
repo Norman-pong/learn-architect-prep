@@ -5,6 +5,7 @@ import { MenuOutlined } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { SectionPageLayout } from "@/components/layout";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useViewportHeight } from "@/hooks/useViewportHeight";
 import {
   Drawer,
   DrawerTrigger,
@@ -39,6 +40,7 @@ export function KnowledgePage() {
   const createMutation = useCreateAnnotation();
   const deleteMutation = useDeleteAnnotation();
 
+  const vh = useViewportHeight();
   const [chapterMap, setChapterMap] = useState<Record<string, NonNullable<typeof chapterIndex>>>(
     {},
   );
@@ -92,9 +94,13 @@ export function KnowledgePage() {
     <SectionPageLayout
       title="知识体系"
       description="按章节组织的教材知识点"
-      className="flex h-[calc(100vh-3.5rem)] flex-col"
+      className="flex flex-col"
+      style={{ "--app-h": vh > 0 ? `${vh}px` : "100vh" } as React.CSSProperties}
     >
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border md:flex-row">
+      <div
+        className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border md:flex-row"
+        style={{ height: "calc(var(--app-h, 100vh) - 3.5rem)" }}
+      >
         <ChapterTreeDrawer
           chapters={chapters}
           chapterIndexMap={effectiveChapterMap}

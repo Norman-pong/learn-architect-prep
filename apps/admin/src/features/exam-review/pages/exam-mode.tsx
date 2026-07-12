@@ -302,19 +302,32 @@ export function ExamModePage() {
       )}
 
       {mode === "full" && (
-        <Card className="border-dashed">
+        <Card className="border-dashed bg-primary/5">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">全模块模式</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Hugeicon iconData={TrophyIcon} size={18} className="text-primary" />
+              全模块模式
+            </CardTitle>
             <CardDescription>
-              综合知识与案例分析连续进行，共 240 分钟；论文模块（120 分钟）需单独进入。
+              全模块模式：综合 + 案例 连续计时 240
+              分钟。点击开始后系统会引导你先进入综合知识模块，完成后再进入案例分析模块。
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+          <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
               <Badge variant="outline">综合知识</Badge>
               <Badge variant="outline">案例分析</Badge>
               <span>连续计时，不可拆分</span>
             </div>
+            <Button
+              size="sm"
+              className="gap-1.5"
+              onClick={() => void navigate({ to: "/exam/comp" })}
+              disabled={loadingConfigs || loadingStatus}
+            >
+              <Hugeicon iconData={PlayIcon} size={14} />
+              开始考试（先进入综合）
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -391,9 +404,32 @@ export function ExamModePage() {
               </Button>
             </div>
 
-            <div className="rounded-lg border border-dashed bg-muted/50 p-6 text-center text-sm text-muted-foreground">
-              答题界面将在后续迭代中实现。当前页面展示模式选择、计时与暂停/继续功能。
-            </div>
+            <Card className="border-dashed bg-muted/40">
+              <CardContent className="flex flex-col items-center gap-2 p-8 text-center">
+                <Hugeicon iconData={BookOpen01Icon} size={28} className="text-muted-foreground" />
+                <p className="text-sm font-medium text-foreground">答题界面与试卷管理</p>
+                <p className="max-w-md text-xs text-muted-foreground">
+                  该模块的完整答题体验由独立的 答题卡 / 报告 组件承担。
+                  你可以从下方链接进入对应的模块化答题页继续作答；暂停与计时数据会与后端保持同步。
+                </p>
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void navigate({ to: "/exam/comp" })}
+                  >
+                    进入综合知识答题
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void navigate({ to: "/exam/case" })}
+                  >
+                    进入案例分析答题
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </CardContent>
         </Card>
       </div>

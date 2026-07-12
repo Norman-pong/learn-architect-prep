@@ -3,7 +3,15 @@ import { SectionPageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { MetricCard } from "@/components/ui/metric-card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { BulbOutlined, TrophyOutlined, SunOutlined, EditOutlined } from "@/components/ui/icons";
+import {
+  BulbOutlined,
+  TrophyOutlined,
+  SunOutlined,
+  EditOutlined,
+  ArrowRightOutlined,
+  BookOutlined,
+  DesktopOutlined,
+} from "@/components/ui/icons";
 import { useDashboard, useRecommendations } from "./api";
 import { RecommendationList } from "./components/recommendation-list";
 
@@ -35,8 +43,60 @@ export function HomePage() {
     <SectionPageLayout
       title="学习仪表盘"
       description="基于最近练习的薄弱点推荐"
-      actions={<Button onClick={() => navigate({ to: "/review" })}>去复习</Button>}
+      actions={
+        <Button onClick={() => navigate({ to: "/review" })}>
+          去复习
+          <ArrowRightOutlined className="ml-1 h-4 w-4" />
+        </Button>
+      }
     >
+      {/* ── Today's tasks hero band ── */}
+      <section
+        aria-label="今日任务"
+        className="rounded-xl border border-border bg-gradient-to-br from-primary/8 via-primary/4 to-transparent p-4 sm:p-6"
+      >
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-base font-semibold tracking-tight text-foreground">今日任务</h2>
+          <p className="text-sm text-muted-foreground">
+            优先攻克薄弱点，配合模考巩固 —— 三步走，今日可见进展。
+          </p>
+        </div>
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
+          <Button
+            onClick={() => navigate({ to: "/quiz" })}
+            className="h-auto justify-between gap-2 px-4 py-3 text-sm"
+          >
+            <span className="flex items-center gap-2">
+              <EditOutlined className="h-4 w-4" />
+              开始练习
+            </span>
+            <ArrowRightOutlined className="h-4 w-4 opacity-80" />
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate({ to: "/review" })}
+            className="h-auto justify-between gap-2 px-4 py-3 text-sm"
+          >
+            <span className="flex items-center gap-2">
+              <BookOutlined className="h-4 w-4" />
+              进入复习
+            </span>
+            <ArrowRightOutlined className="h-4 w-4 opacity-80" />
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate({ to: "/exam/comp" })}
+            className="h-auto justify-between gap-2 px-4 py-3 text-sm"
+          >
+            <span className="flex items-center gap-2">
+              <DesktopOutlined className="h-4 w-4" />
+              开始模考
+            </span>
+            <ArrowRightOutlined className="h-4 w-4 opacity-80" />
+          </Button>
+        </div>
+      </section>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           icon={<EditOutlined className="h-5 w-5" />}

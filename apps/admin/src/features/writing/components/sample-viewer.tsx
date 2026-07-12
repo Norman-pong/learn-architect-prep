@@ -52,7 +52,6 @@ export function SampleViewer({
   loadingContent,
   onSelect,
 }: SampleViewerProps) {
-  const [search, setSearch] = useState("");
   const [topicFilter, setTopicFilter] = useState<string | null>(null);
 
   const topics = [...new Set(samples.map((s) => s.topic))].toSorted();
@@ -106,7 +105,7 @@ export function SampleViewer({
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
-        <Card className="h-[calc(100vh-380px)] min-h-[400px]">
+        <Card className="min-h-[400px]" style={{ height: "calc(var(--app-h, 100vh) - 380px)" }}>
           <CardHeader>
             <CardTitle className="text-sm">
               {loading ? "范文列表（加载中…）" : `范文列表（${filtered.length} 篇）`}

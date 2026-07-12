@@ -12,7 +12,6 @@ import {
   SearchOutlined,
   EditOutlined,
   BarChartOutlined,
-  WarningOutlined,
   DesktopOutlined,
   SettingOutlined,
   CloudUploadOutlined,
@@ -22,6 +21,7 @@ import {
   SunOutlined,
   LogoutOutlined,
   LineChartOutlined,
+  FileTextOutlined,
 } from "../../components/ui/icons";
 import { Button, buttonVariants } from "../../components/ui/button";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
@@ -61,12 +61,12 @@ const navItems: NavItem[] = [
       { label: "测验", to: "/quiz" },
       { label: "错题本", to: "/error-book" },
       { label: "薄弱点", to: "/weakness" },
+      { label: "题库管理", to: "/quiz-bank" },
     ],
   },
   { label: "搜索", to: "/search", icon: <SearchOutlined /> },
   { label: "复习", to: "/review", icon: <EditOutlined /> },
-  { label: "写作", to: "/writing", icon: <EditOutlined /> },
-  { label: "错题/测验", to: "/quiz-bank", icon: <WarningOutlined /> },
+  { label: "写作", to: "/writing", icon: <FileTextOutlined /> },
   { label: "数据迁移", to: "/data-transfer", icon: <CloudUploadOutlined /> },
   {
     label: "考试",
@@ -221,6 +221,8 @@ function NavGroup({
         variant="ghost"
         size={collapsed ? "icon" : "default"}
         onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-controls={`navgroup-${item.label}`}
         className={cn(
           "w-full justify-start gap-3 px-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
           collapsed && "justify-center px-2",
@@ -235,7 +237,7 @@ function NavGroup({
         )}
       </Button>
       {open && !collapsed && (
-        <div className="ml-4 flex flex-col gap-1 border-l pl-2">
+        <div id={`navgroup-${item.label}`} className="ml-4 flex flex-col gap-1 border-l pl-2">
           {item.children!.map((child) => (
             <Link
               key={child.to}
@@ -306,58 +308,54 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex min-h-screen">
-      {isMobile ? (
-        <Drawer open={mobileOpen} onOpenChange={setMobileOpen}>
-          <DrawerTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="fixed left-2 top-2 z-50"
-                aria-label="打开菜单"
-              >
-                <MenuFoldOutlined />
-              </Button>
-            }
-          />
-          <DrawerContent side="left" className="w-64">
-            <DrawerHeader className="sr-only">
-              <DrawerTitle>导航</DrawerTitle>
-            </DrawerHeader>
-            <SidebarContent collapsed={false} onNavigate={() => setMobileOpen(false)} />
-            <DrawerClose className="sr-only">关闭</DrawerClose>
-          </DrawerContent>
-        </Drawer>
-      ) : (
-        <aside
-          className={cn(
-            "fixed left-0 top-0 z-40 h-screen border-r bg-sidebar transition-[width]",
-            collapsed ? "w-16" : "w-64",
-          )}
-        >
-          <SidebarContent collapsed={collapsed} onNavigate={NOOP} />
-        </aside>
+    <div className="flex min-h-screen flex-col bg-background">
+      {isMobile && (
+        <header className="sticky top-0 z-40 flex h-14 items-center gap-2 border-b border-border bg-header px-3 text-header-foreground">
+          <Drawer open={mobileOpen} onOpenChange={setMobileOpen}>
+            <DrawerTrigger
+              render={
+                <Button variant="ghost" size="icon" aria-label="打开菜单">
+                  <MenuFoldOutlined />
+                </Button>
+              }
+            />
+            <DrawerContent side="left" className="w-72">
+              <DrawerHeader className="sr-only">
+                <DrawerTitle>导航</DrawerTitle>
+              </DrawerHeader>
+              <SidebarContent collapsed={false} onNavigate={() => setMobileOpen(false)} />
+              <DrawerClose className="sr-only">关闭</DrawerClose>
+            </DrawerContent>
+          </Drawer>
+          <span className="text-sm font-semibold tracking-tight">ArchPrep</span>
+        </header>
       )}
-      <button
-        type="button"
-        onClick={() => setCollapsed((c) => !c)}
-        className={cn(
-          "fixed bottom-4 z-50 hidden rounded-full border bg-background p-2 shadow-sm lg:block",
-          collapsed ? "left-20" : "left-72",
+      <div className="flex min-h-0 flex-1">
+        {!isMobile && (
+          <aside
+            className={cn(
+              "sticky top-0 z-40 h-screen border-r bg-sidebar transition-[width]",
+              collapsed ? "w-16" : "w-64",
+            )}
+          >
+            <SidebarContent collapsed={collapsed} onNavigate={NOOP} />
+          </aside>
         )}
-        aria-label="切换边栏"
-      >
-        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      </button>
-      <main
-        className={cn(
-          "flex-1 transition-[margin-left] duration-200",
-          isMobile ? "ml-0" : collapsed ? "ml-16" : "ml-64",
+        {!isMobile && (
+          <button
+            type="button"
+            onClick={() => setCollapsed((c) => !c)}
+            className={cn(
+              "fixed bottom-4 z-50 hidden rounded-full border bg-background p-2 shadow-sm lg:block",
+              collapsed ? "left-20" : "left-72",
+            )}
+            aria-label="切换边栏"
+          >
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </button>
         )}
-      >
-        {children}
-      </main>
+        <main className="min-w-0 flex-1">{children}</main>
+      </div>
     </div>
   );
 }

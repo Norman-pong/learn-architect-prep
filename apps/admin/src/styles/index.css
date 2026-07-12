@@ -125,10 +125,10 @@
     font-family: var(--font-mono);
   }
 
-  /* Smooth color transitions for theme switching */
-  *,
-  *::before,
-  *::after {
+  /* Scoped transitions for interactive elements only — avoids stutter on initial
+     paint, theme switch, and animated layout. `:where()` keeps specificity 0
+     so component-level `transition-` utilities still win. */
+  :where(a, button, [role="button"], input, select, textarea, [data-state]) {
     transition-property: background-color, border-color, color, fill, stroke, box-shadow;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
@@ -141,6 +141,7 @@
     color: var(--foreground);
     max-width: 65ch;
     line-height: var(--line-height-relaxed);
+    overflow-wrap: anywhere;
   }
 
   .prose h1,

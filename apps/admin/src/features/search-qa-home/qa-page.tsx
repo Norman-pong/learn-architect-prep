@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOutlined, MenuOutlined } from "@/components/ui/icons";
+import { EmptyState } from "@/components/ui/empty-state";
+import { BookOutlined, MenuOutlined, BulbOutlined } from "@/components/ui/icons";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useViewportHeight } from "@/hooks/useViewportHeight";
 import {
   Drawer,
   DrawerTrigger,
@@ -40,6 +42,8 @@ export function QAPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const ask = useAskQuestion();
+
+  const vh = useViewportHeight();
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -132,7 +136,10 @@ export function QAPage() {
 
   return (
     <SectionPageLayout title="AI 知识点答疑" description="选中知识点后向 AI 提问">
-      <div className="flex h-[calc(100vh-3.5rem)] flex-col gap-2 overflow-hidden p-2 sm:gap-4 sm:p-4 md:flex-row">
+      <div
+        style={{ "--app-h": vh > 0 ? `${vh}px` : "100vh" } as React.CSSProperties}
+        className="flex h-[calc(var(--app-h)-3.5rem)] flex-col gap-2 overflow-hidden p-2 sm:gap-4 sm:p-4 md:flex-row"
+      >
         <QASidebar
           chapters={chapters}
           loadingChapters={loadingChapters}
@@ -153,10 +160,21 @@ export function QAPage() {
               <CardTitle className="text-sm font-semibold">AI 知识点答疑</CardTitle>
             )}
           </CardHeader>
-
           {!chapterInfo ? (
-            <div className="flex flex-1 items-center justify-center p-4 text-center text-muted-foreground">
-              请从左侧选择一个知识点开始提问
+            <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
+              <EmptyState
+                icon={<BulbOutlined className="h-5 w-5" />}
+                title="选择一个知识点开始提问"
+                description="从左侧目录中挑一个你想深入的知识点，AI 会基于教材上下文回答你的问题。"
+                action={
+                  chapters.length > 0 && !loadingChapters ? (
+                    <Button size="sm" onClick={() => expandChapter(chapters[0])} className="mt-1">
+                      <BookOutlined className="mr-1 h-4 w-4" />
+                      进入第一章节
+                    </Button>
+                  ) : undefined
+                }
+              />
             </div>
           ) : (
             <>

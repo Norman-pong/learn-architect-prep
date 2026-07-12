@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/icons";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAIConfig } from "@/features/settings/api";
+import { AiScoringPanel } from "@/features/exam-review/components/ai-scoring-panel";
 import {
   THESIS_SECTIONS,
   THESIS_SECTION_TARGETS,
@@ -61,10 +63,12 @@ export function WritingWorkbench() {
   const [saveState, setSaveState] = useState<SaveState>({ kind: "idle" });
   const [dirty, setDirty] = useState(false);
   const [loadingPaper, setLoadingPaper] = useState(false);
+  const [showAiScoring, setShowAiScoring] = useState(false);
 
   const { data: paper } = useWriting(activeId);
   const saveMutation = useSaveWriting();
   const deleteMutation = useDeleteWriting();
+  const { data: aiConfig } = useAIConfig();
 
   const dirtyRef = useRef(dirty);
   dirtyRef.current = dirty;
@@ -265,7 +269,19 @@ export function WritingWorkbench() {
                     render={
                       <Button
                         variant="outline"
-                        onClick={() => toast.info("AI 评分将在 FR-WR-03 中开放")}
+                        onClick={() => {
+                          if (!aiConfig) {
+                            toast.warning("请先在 设置 → AI 配置 中启用 AI 评分");
+                            return;
+                          }
+                          if (!activeId) {
+                            toast.warning("请先保存当前论文后再触发 AI 评分");
+                            return;
+                          }
+                          setShowAiScoring((v) => !v);
+                        }}
+                        disabled={!aiConfig}
+                        aria-disabled={!aiConfig}
                         className="w-full sm:w-auto"
                       >
                         <RobotOutlined className="mr-1 h-4 w-4" />
@@ -276,7 +292,11 @@ export function WritingWorkbench() {
                     <span className="sr-only">AI 评分</span>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>请先在设置 → AI 配置中配置 API Key</p>
+                    <p>
+                      {aiConfig
+                        ? "基于当前论文内容调用 AI 服务进行评分"
+                        : "请先在 设置 → AI 配置 中启用 AI 评分"}
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -328,7 +348,7 @@ export function WritingWorkbench() {
                   })}
                 </TabsList>
 
-                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="mt-4 grid grid-cols-1 gap-4 pb-28 md:grid-cols-2">
                   <div className="min-w-0">
                     {THESIS_SECTIONS.map((key) => (
                       <TabsContent key={key} value={key} className="mt-0">
@@ -360,6 +380,7 @@ export function WritingWorkbench() {
                 </div>
               </Tabs>
 
+              {showAiScoring && activeId && <AiScoringPanel writingId={activeId} key={activeId} />}
               <div className="sticky bottom-4 z-10 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3 shadow-sm sm:gap-4 sm:p-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">总字数</span>

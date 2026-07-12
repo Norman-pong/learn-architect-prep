@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { getUserIdFromToken } from "../auth/auth-service";
-import { getConfig, saveConfig, testConnection } from "./ai-config-service";
+import { getConfig, getMaskedKey, saveConfig, testConnection } from "./ai-config-service";
 import type { AIConfig } from "@archprep/shared";
 
 const providerSchema = t.Union([
@@ -23,7 +23,7 @@ const aiConfigResponseSchema = t.Object({
 
 const aiConfigBodySchema = t.Object({
   provider: providerSchema,
-  apiKey: t.String({ minLength: 1 }),
+  apiKey: t.Optional(t.String()),
   model: t.Optional(t.String()),
   baseUrl: t.Optional(t.String()),
 });
@@ -96,9 +96,10 @@ export const aiConfigRoutes = new Elysia({ prefix: "/api/ai-config" })
     "/",
     async ({ body, set }): Promise<typeof aiConfigResponseSchema.static | { error: string }> => {
       const userId = getUserIdFromSet(set);
+      const trimmedKey = body.apiKey?.trim();
       const result = saveConfig(userId, {
         provider: body.provider,
-        apiKey: body.apiKey,
+        apiKey: trimmedKey && trimmedKey.length > 0 ? trimmedKey : undefined,
         model: body.model,
         baseUrl: body.baseUrl,
       });
@@ -135,6 +136,30 @@ export const aiConfigRoutes = new Elysia({ prefix: "/api/ai-config" })
       },
       detail: {
         summary: "Test AI connection",
+        tags: ["AI Config"],
+        security: [{ bearerAuth: [] }],
+      },
+    },
+  )
+  .get(
+    "/masked-key",
+    async ({ set }) => {
+      const userId = getUserIdFromSet(set);
+      const result = getMaskedKey(userId);
+      if (!result) {
+        set.status = 404;
+        return { error: "未配置 API Key" };
+      }
+      return result;
+    },
+    {
+      response: {
+        200: t.Object({ masked: t.String() }),
+        401: errorResponseSchema,
+        404: errorResponseSchema,
+      },
+      detail: {
+        summary: "Get masked API key preview",
         tags: ["AI Config"],
         security: [{ bearerAuth: [] }],
       },

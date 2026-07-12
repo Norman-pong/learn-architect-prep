@@ -41,7 +41,9 @@ export function ChatMessageBubble({
             <Skeleton className="h-2 w-2 rounded-full" />
           </div>
         ) : (
-          <div className="whitespace-pre-wrap break-words">{message.content}</div>
+          <div className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
+            {message.content}
+          </div>
         )}
 
         {!isUser && message.content && chapterTitle && (
